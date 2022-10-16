@@ -15,4 +15,6 @@ dependencies {
      * Other Modules
      */
     implementation project(':FtcRobotController')
+    implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
+    implementation 'org.ftclib.ftclib:core:2.0.1' // core
 }
