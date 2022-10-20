@@ -10,6 +10,5 @@ public class DriveOpMode extends BaseOpMode {
     @Override
     public void initialize() {
         super.initialize();
-
     }
 }
