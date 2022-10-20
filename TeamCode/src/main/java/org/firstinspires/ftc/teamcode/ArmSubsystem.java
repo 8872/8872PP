@@ -1,29 +1,29 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class ArmSubsystem extends SubsystemBase {
 
     private final ServoEx claw, slide;
-    private final MotorEx dr4bLeft, dr4bRight;
+    private final MotorEx dr4bLeftMotor, dr4bRightMotor;
 
     // PID coefficients for left dr4b motor
-    private final static double dr4b_left_kP = 1;
-    private final static double dr4b_left_kI = 0;
-    private final static double dr4b_left_kD = 0;
+    private final static double left_kP = 1;
+    private final static double left_kI = 0;
+    private final static double left_kD = 0;
+    private final static double left_kF = 0;
+    private PIDFController left_pidf = new PIDFController(left_kP, left_kI, left_kD, left_kF);
 
     // PID coefficients for right dr4b motor
-    private final static double dr4b_right_kP = 1;
-    private final static double dr4b_right_kI = 0;
-    private final static double dr4b_right_kD = 0;
-
+    private final static double right_kP = 1;
+    private final static double right_kI = 0;
+    private final static double right_kD = 0;
+    private final static double right_kF = 0;
+    private PIDFController right_pidf = new PIDFController(right_kP, right_kI, right_kD, right_kF);
     private enum Junction {
         GROUND,
         LOW,
@@ -35,8 +35,11 @@ public class ArmSubsystem extends SubsystemBase {
     public ArmSubsystem(ServoEx claw, ServoEx slide, MotorEx dr4bLeft, MotorEx dr4bRight) {
         this.claw = claw;
         this.slide = slide;
-        this.dr4bLeft = dr4bLeft;
-        this.dr4bRight = dr4bRight;
+        this.dr4bLeftMotor = dr4bLeft;
+        this.dr4bRightMotor = dr4bRight;
+
+        dr4bLeft.setRunMode(Motor.RunMode.VelocityControl);
+        dr4bRight.setRunMode(Motor.RunMode.VelocityControl);
     }
 
     // grab cone with a certain angle (for tuning)
@@ -71,8 +74,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // moves dr4b to specified position
     private void moveDr4b(Junction junct){
-        dr4bLeft.setRunMode(Motor.RunMode.VelocityControl);
-        dr4bRight.setRunMode(Motor.RunMode.VelocityControl);
+//        double output = left_pidf.calculate(dr4bLeftMotor.getCurrentPosition())
 
         // pid loop for motors
 

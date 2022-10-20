@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import java.math.BigDecimal;
@@ -27,10 +28,10 @@ public class BaseOpMode extends CommandOpMode {
     }
 
     protected void initHardware() {
-        fL = hardwareMap.get(MotorEx.class, "leftFront");
-        fR = hardwareMap.get(MotorEx.class, "rightFront");
-        bL = hardwareMap.get(MotorEx.class, "leftBack");
-        bR = hardwareMap.get(MotorEx.class, "rightBack");
+        fL = new MotorEx(hardwareMap, "leftFront");
+        fR = new MotorEx(hardwareMap, "rightFront");
+        bL = new MotorEx(hardwareMap, "leftBack");
+        bR = new MotorEx(hardwareMap, "rightBack");
     }
 
     protected void composeTelemetry() {
