@@ -1,12 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.command;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
 
 import java.util.function.DoubleSupplier;
 
 public class DefaultFieldCentricDrive extends CommandBase {
-    private DriveSubsystem drive;
-    private DoubleSupplier strafeSpeed,  forwardSpeed, turnSpeed, gyroAngle;
+    private final DriveSubsystem drive;
+    private final DoubleSupplier strafeSpeed,  forwardSpeed, turnSpeed, gyroAngle;
 
     public DefaultFieldCentricDrive(DriveSubsystem drive, DoubleSupplier strafeSpeed, DoubleSupplier forwardSpeed,
                                     DoubleSupplier turnSpeed, DoubleSupplier gyroAngle){

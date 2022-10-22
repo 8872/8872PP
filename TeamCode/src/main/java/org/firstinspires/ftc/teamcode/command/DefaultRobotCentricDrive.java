@@ -1,12 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.command;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
 
 import java.util.function.DoubleSupplier;
 
 public class DefaultRobotCentricDrive extends CommandBase {
-    private DriveSubsystem drive;
-    private DoubleSupplier strafeSpeed,  forwardSpeed, turnSpeed;
+    private final DriveSubsystem drive;
+    private final DoubleSupplier strafeSpeed,  forwardSpeed, turnSpeed;
 
     public DefaultRobotCentricDrive(DriveSubsystem drive, DoubleSupplier strafeSpeed, DoubleSupplier forwardSpeed,
                                     DoubleSupplier turnSpeed){
