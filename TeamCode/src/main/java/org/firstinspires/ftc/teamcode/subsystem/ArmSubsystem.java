@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
@@ -33,9 +32,9 @@ public class ArmSubsystem extends SubsystemBase {
         HIGH
     }
 
-    public ArmSubsystem(ServoEx claw, ServoEx slide, ServoEx slide2 , MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor) {
+    public ArmSubsystem(ServoEx claw, ServoEx slide1, ServoEx slide2 , MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor) {
         this.claw = claw;
-        this.slide1 = slide;
+        this.slide1 = slide1;
         this.slide2 = slide2;
         this.dr4bLeftMotor = dr4bLeftMotor;
         this.dr4bRightMotor = dr4bLeftMotor;
@@ -82,6 +81,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     // moves dr4b to specified position
+    // rewrite
     private void moveDr4b(Junction junction){
         switch(junction){
             case GROUND:
@@ -106,7 +106,7 @@ public class ArmSubsystem extends SubsystemBase {
         while(!left_pidf.atSetPoint() && !right_pidf.atSetPoint()){
             double outputLeft = left_pidf.calculate(dr4bLeftMotor.getCurrentPosition());
             double outputRight = right_pidf.calculate(dr4bRightMotor.getCurrentPosition());
-            dr4bLeftMotor.setVelocity(outputLeft);
+            dr4bLeftMotor.setVelocity(outputLeft); // setPower() instead?
             dr4bRightMotor.setVelocity(outputRight);
         }
 
