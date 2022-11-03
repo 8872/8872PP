@@ -12,18 +12,12 @@ public class ArmSubsystem extends SubsystemBase {
     private final MotorEx dr4bLeftMotor, dr4bRightMotor;
 
     // PID coefficients for left dr4b motor
-    private final static double left_kP = 1; // tune
-    private final static double left_kI = 0;
-    private final static double left_kD = 0;
-    private final static double left_kF = 0;
-    private PIDFController left_pidf = new PIDFController(left_kP, left_kI, left_kD, left_kF);
+    private final static double dr4b_kP = 0; // tune
+    private final static double dr4b_kI = 0;
+    private final static double dr4b_kD = 0;
+    private final static double dr4b_kF = 0;
+    private PIDFController dr4b_pidf = new PIDFController(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
 
-    // PID coefficients for right dr4b motor
-    private final static double right_kP = 1; // tune
-    private final static double right_kI = 0;
-    private final static double right_kD = 0;
-    private final static double right_kF = 0;
-    private PIDFController right_pidf = new PIDFController(right_kP, right_kI, right_kD, right_kF);
     // enum representing different junction levels
     private enum Junction {
         GROUND,
@@ -48,8 +42,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     // grab cone with a certain angle (for tuning)
-    public void grab(double angle) {
-        claw.turnToAngle(angle);
+    public void moveClaw(double pos) {
+        claw.rotateBy(pos);
     }
 
     // grab cone
@@ -65,7 +59,8 @@ public class ArmSubsystem extends SubsystemBase {
     // move slide to a specified position
     // remove this function?
     public void moveSlide(double pos){
-        slide1.setPosition(pos);
+        slide1.rotateBy(pos);
+        slide2.rotateBy(pos);
     }
 
     // moves slide to the in most position
@@ -80,39 +75,38 @@ public class ArmSubsystem extends SubsystemBase {
         slide2.setPosition(1);
     }
 
+    public void moveDr4b(double velocity){
+        dr4bLeftMotor.setVelocity(velocity);
+        dr4bRightMotor.setVelocity(velocity);
+    }
+
     // moves dr4b to specified position
     // rewrite
     private void moveDr4b(Junction junction){
         switch(junction){
             case GROUND:
-                left_pidf.setSetPoint(0); // to be tuned later
-                right_pidf.setSetPoint(0);
+                dr4b_pidf.setSetPoint(0);
                 break;
             case LOW:
-                left_pidf.setSetPoint(20);
-                right_pidf.setSetPoint(20);
+                dr4b_pidf.setSetPoint(20);
                 break;
             case MEDIUM:
-                left_pidf.setSetPoint(40);
-                right_pidf.setSetPoint(40);
+                dr4b_pidf.setSetPoint(40);
                 break;
             case HIGH:
-                left_pidf.setSetPoint(60);
-                right_pidf.setSetPoint(60);
+                dr4b_pidf.setSetPoint(60); // tune later
                 break;
         }
 
-        // control loop for pid
-        while(!left_pidf.atSetPoint() && !right_pidf.atSetPoint()){
-            double outputLeft = left_pidf.calculate(dr4bLeftMotor.getCurrentPosition());
-            double outputRight = right_pidf.calculate(dr4bRightMotor.getCurrentPosition());
-            dr4bLeftMotor.setVelocity(outputLeft); // setPower() instead?
-            dr4bRightMotor.setVelocity(outputRight);
+        while(dr4b_pidf.atSetPoint()){
+            double output = dr4b_pidf.calculate((dr4bLeftMotor.getCurrentPosition()
+                    + dr4bRightMotor.getCurrentPosition()) / 2.0);
+            dr4bLeftMotor.set(output);
+            dr4bRightMotor.set(output);
         }
-
-        // stop motors; should break.
         dr4bLeftMotor.stopMotor();
         dr4bRightMotor.stopMotor();
+
     }
 
     // move dr4b to ground

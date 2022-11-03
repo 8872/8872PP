@@ -4,23 +4,27 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.command.claw.MoveClaw;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultFieldCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
+import org.firstinspires.ftc.teamcode.command.lift.MoveLift;
+import org.firstinspires.ftc.teamcode.command.slide.MoveSlide;
 
-// for use with the test chassis
-@TeleOp(name = "Basic Drive Test")
-public class DriveOpModeTest extends BaseOpModeTest {
-
+@Disabled // remove later
+@TeleOp(name = "Test Mechanisms")
+public class TestMechanismsOpMode extends BaseOpMode {
     private GamepadEx driverOp1;
     private GamepadEx driverOp2;
 
     private DefaultFieldCentricDrive fieldCentricDrive;
     private DefaultRobotCentricDrive robotCentricDrive;
+    private MoveSlide moveSlide;
+    private MoveClaw moveClaw;
+    private MoveLift moveLift;
 
     private Button changeCenter;
-
-
 
     @Override
     public void initialize() {
@@ -36,6 +40,10 @@ public class DriveOpModeTest extends BaseOpModeTest {
 
         changeCenter = (new GamepadButton(driverOp1, GamepadKeys.Button.A)).
                 toggleWhenPressed(fieldCentricDrive, robotCentricDrive);
+
+//        moveSlide = new MoveSlide(arm, () -> )
+
+
 
         register(drive);
         drive.setDefaultCommand(robotCentricDrive);

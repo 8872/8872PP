@@ -6,8 +6,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.command.DefaultFieldCentricDrive;
-import org.firstinspires.ftc.teamcode.command.DefaultRobotCentricDrive;
+import org.firstinspires.ftc.teamcode.command.drive.DefaultFieldCentricDrive;
+import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
 
 @Disabled // remove later
 @TeleOp(name = "Basic Drive")
