@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultFieldCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
 
-@Disabled // remove later
 @TeleOp(name = "Basic Drive")
 public class DriveOpMode extends BaseOpMode {
 
@@ -36,7 +35,7 @@ public class DriveOpMode extends BaseOpMode {
         changeCenter = (new GamepadButton(driverOp1, GamepadKeys.Button.A)).
                 toggleWhenPressed(fieldCentricDrive, robotCentricDrive);
 
-        register(drive);
+        register(drive, arm);
         drive.setDefaultCommand(robotCentricDrive);
     }
 }

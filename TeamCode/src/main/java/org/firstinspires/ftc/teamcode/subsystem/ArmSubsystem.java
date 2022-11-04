@@ -12,7 +12,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final MotorEx dr4bLeftMotor, dr4bRightMotor;
 
     // PID coefficients for left dr4b motor
-    private final static double dr4b_kP = 0; // tune
+    private final static double dr4b_kP = 1; // tune
     private final static double dr4b_kI = 0;
     private final static double dr4b_kD = 0;
     private final static double dr4b_kF = 0;
@@ -33,9 +33,9 @@ public class ArmSubsystem extends SubsystemBase {
         this.dr4bLeftMotor = dr4bLeftMotor;
         this.dr4bRightMotor = dr4bLeftMotor;
 
-        dr4bLeftMotor.setRunMode(Motor.RunMode.VelocityControl);
-        dr4bRightMotor.setRunMode(Motor.RunMode.VelocityControl);
-        // brake ;-; ?
+        dr4bLeftMotor.setRunMode(Motor.RunMode.RawPower);
+        dr4bRightMotor.setRunMode(Motor.RunMode.RawPower);
+        // brake ;-; ????
         dr4bLeftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         dr4bRightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
@@ -75,13 +75,12 @@ public class ArmSubsystem extends SubsystemBase {
         slide2.setPosition(1);
     }
 
-    public void moveDr4b(double velocity){
-        dr4bLeftMotor.setVelocity(velocity);
-        dr4bRightMotor.setVelocity(velocity);
+    public void moveDr4b(double power){
+        dr4bLeftMotor.set(power);
+        dr4bRightMotor.set(power);
     }
 
     // moves dr4b to specified position
-    // rewrite
     private void moveDr4b(Junction junction){
         switch(junction){
             case GROUND:

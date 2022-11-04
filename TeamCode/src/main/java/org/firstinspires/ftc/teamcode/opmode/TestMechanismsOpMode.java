@@ -41,11 +41,12 @@ public class TestMechanismsOpMode extends BaseOpMode {
         changeCenter = (new GamepadButton(driverOp1, GamepadKeys.Button.A)).
                 toggleWhenPressed(fieldCentricDrive, robotCentricDrive);
 
-//        moveSlide = new MoveSlide(arm, () -> )
+        moveSlide = new MoveSlide(arm, () -> driverOp2.getLeftY());
+        moveClaw = new MoveClaw(arm, () -> driverOp2.getRightX());
+        moveLift = new MoveLift(arm, () -> driverOp2.getRightY());
 
-
-
-        register(drive);
+        register(drive, arm);
         drive.setDefaultCommand(robotCentricDrive);
     }
+
 }

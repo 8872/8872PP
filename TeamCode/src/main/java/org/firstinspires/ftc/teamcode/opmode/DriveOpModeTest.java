@@ -4,11 +4,13 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultFieldCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
 
 // for use with the test chassis
+@Disabled
 @TeleOp(name = "Basic Drive Test")
 public class DriveOpModeTest extends BaseOpModeTest {
 
