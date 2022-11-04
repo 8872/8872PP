@@ -18,7 +18,7 @@ public class DriveOpMode extends BaseOpMode {
     private DefaultFieldCentricDrive fieldCentricDrive;
     private DefaultRobotCentricDrive robotCentricDrive;
 
-    private Button changeCenter;
+    private Button changeCenter, moveGround, moveLow, moveMedium, moveHigh;
 
     @Override
     public void initialize() {
@@ -32,8 +32,14 @@ public class DriveOpMode extends BaseOpMode {
         robotCentricDrive = new DefaultRobotCentricDrive(drive, () -> driverOp1.getLeftX(),
                 () -> driverOp1.getLeftY(), () -> driverOp1.getRightX());
 
-        changeCenter = (new GamepadButton(driverOp1, GamepadKeys.Button.A)).
+        changeCenter = (new GamepadButton(driverOp1, GamepadKeys.Button.LEFT_STICK_BUTTON)).
                 toggleWhenPressed(fieldCentricDrive, robotCentricDrive);
+
+//        moveGround = (new GamepadButton(driverOp1, GamepadKeys.Button.A)).whenPressed()
+
+
+
+
 
         register(drive, arm);
         drive.setDefaultCommand(robotCentricDrive);

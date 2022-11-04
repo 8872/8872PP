@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.command.drive.DefaultFieldCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
 
 // for use with the test chassis
-@Disabled
 @TeleOp(name = "Basic Drive Test")
 public class DriveOpModeTest extends BaseOpModeTest {
 
