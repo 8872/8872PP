@@ -19,7 +19,7 @@ public class CVTestOpMode extends OpMode {
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new Test1(telemetry);
+        pipeline = new Test1();
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -40,8 +40,9 @@ public class CVTestOpMode extends OpMode {
 
     @Override
     public void loop() {
-        int[] info = pipeline.getInfo();
-        telemetry.addData("Pos", info[0] + ", " + info[1]);
+        /*
+        telemetry.addData("center", info[0] + ", " + info[1]);
         telemetry.update();
+         */
     }
 }

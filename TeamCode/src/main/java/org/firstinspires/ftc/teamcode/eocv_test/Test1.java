@@ -1,79 +1,94 @@
 package org.firstinspires.ftc.teamcode.eocv_test;
 
-import static org.opencv.core.Core.inRange;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import com.acmerobotics.dashboard.config.Config;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+@Config
 public class Test1 extends OpenCvPipeline {
-    public int x_pos = 0;
-    public int y_pos = 0;
-    Mat YCrCb = new Mat();
 
-    static final Scalar GREEN = new Scalar(0, 255, 0);
+    Point[] centers;
+    public static boolean showThresh = false;
 
-    Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-
-    Scalar lowerThreshold = new Scalar(0.0, 141.0, 0.0);
-    Scalar upperThreshold = new Scalar(255.0, 230.0, 95.0);
-
-    Mat filtered = new Mat();
-
-    List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-
-    MatOfPoint largest = new MatOfPoint();
-
-    Rect rect = new Rect();
-
-    Telemetry telemetry;
-    public Test1(Telemetry telemetry){
-        this.telemetry = telemetry;
-    }
     @Override
     public Mat processFrame(Mat input) {
 
-        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Imgproc.erode(YCrCb, YCrCb, kernel);
+        Scalar RED = new Scalar(255,0,0);
+        Scalar GREEN = new Scalar(0,255,0);
+        Scalar BLUE = new Scalar(0,0,255);
 
-        inRange(YCrCb, lowerThreshold, upperThreshold, filtered);
+        Mat mat = new Mat();
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
+
+        Scalar lowThresh = new Scalar(0.0, 141.0, 0.0);
+        Scalar highThresh = new Scalar(255.0, 230.0, 95.0);
+        Mat thresh = new Mat();
+
+        Core.inRange(mat, lowThresh, highThresh, thresh);
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
+        Imgproc.GaussianBlur(thresh, thresh, new Size(5.0, 5.0), 0);
+
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5,5));
+        Imgproc.erode(thresh, thresh, kernel);
 
 
+        Mat edges = new Mat();
+        Imgproc.Canny(thresh, edges, 100, 300);
 
-        Imgproc.findContours(filtered, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        largest = contours.get(0);
-        int largestIndex = 0;
-        for(int i = 0; i < contours.size(); i++){
-            if(Imgproc.contourArea(contours.get(i)) > Imgproc.contourArea(largest)) {
-                largest = contours.get(i);
-                largestIndex = i;
-            }
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+
+        MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
+        Rect[] boundRect = new Rect[contours.size()];
+        centers = new Point[contours.size()];
+        float[][] radius = new float[contours.size()][1];
+        for (int i = 0; i < contours.size(); i++) {
+            contoursPoly[i] = new MatOfPoint2f();
+            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
+            boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+            centers[i] = new Point();
+            Imgproc.minEnclosingCircle(contoursPoly[i], centers[i], radius[i]);
         }
 
 
-        x_pos = rect.x + (rect.width/2);
-        y_pos = rect.y + (rect.height/2);
+        List<MatOfPoint> contoursPolyList = new ArrayList<>(contoursPoly.length);
+        for (MatOfPoint2f poly : contoursPoly) {
+            contoursPolyList.add(new MatOfPoint(poly.toArray()));
+        }
+        for (int i = 0; i < contours.size(); i++) {
+            Imgproc.drawContours(input, contoursPolyList, i, BLUE);
+            Imgproc.rectangle(input, boundRect[i].tl(), boundRect[i].br(), GREEN, 2);
+            Imgproc.circle(input, centers[i], (int) radius[i][0], RED, 2);
+        }
 
-
-
-        YCrCb.release();
-
-        return input;
-        //return filtered;
-
+        mat.release();
+        //thresh.release();
+        kernel.release();
+        edges.release();
+        hierarchy.release();
+//        input.push_back(thresh);
+        if(showThresh) {
+            input.release();
+            return thresh;
+        }
+        else {
+            thresh.release();
+            return input;
+        }
     }
-    public int[] getInfo(){
-        int[] output = new int[2];
-        output[0] = x_pos;
-        output[1] = y_pos;
-        return output;
+
+    public Point[] getCenters(){
+        return centers;
     }
+
 }
 
