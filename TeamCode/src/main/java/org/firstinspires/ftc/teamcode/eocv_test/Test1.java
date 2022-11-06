@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class Test1 extends OpenCvPipeline {
+    public int x_pos = 0;
+    public int y_pos = 0;
     Mat YCrCb = new Mat();
 
     static final Scalar GREEN = new Scalar(0, 255, 0);
@@ -36,10 +38,13 @@ public class Test1 extends OpenCvPipeline {
     }
     @Override
     public Mat processFrame(Mat input) {
+
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Imgproc.erode(YCrCb, YCrCb, kernel);
 
         inRange(YCrCb, lowerThreshold, upperThreshold, filtered);
+
+
 
         Imgproc.findContours(filtered, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -51,17 +56,24 @@ public class Test1 extends OpenCvPipeline {
                 largestIndex = i;
             }
         }
-        Imgproc.drawContours(filtered, contours, largestIndex, GREEN);
-        rect = Imgproc.boundingRect(largest);
 
-        telemetry.addData("Red Contour ", "%7d,%7d", rect.x + (rect.width/2), rect.y + (rect.height/2));
+
+        x_pos = rect.x + (rect.width/2);
+        y_pos = rect.y + (rect.height/2);
+
 
 
         YCrCb.release();
-        telemetry.update();
 
-        return filtered;
+        return input;
+        //return filtered;
 
+    }
+    public int[] getInfo(){
+        int[] output = new int[2];
+        output[0] = x_pos;
+        output[1] = y_pos;
+        return output;
     }
 }
 
