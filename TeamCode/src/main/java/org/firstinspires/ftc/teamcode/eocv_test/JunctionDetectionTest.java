@@ -10,10 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-public class Test1 extends OpenCvPipeline {
+public class JunctionDetectionTest extends OpenCvPipeline {
 
     Point[] centers;
     public static boolean showThresh = false;
+    public static double low_Y = 0.0;
+    public static double low_Cr = 141.0;
+    public static double low_Cb = 0.0;
+    public static double high_Y = 255.0;
+    public static double high_Cr = 230.0;
+    public static double high_Cb = 95.0;
+
 
     @Override
     public Mat processFrame(Mat input) {
@@ -25,8 +32,8 @@ public class Test1 extends OpenCvPipeline {
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
-        Scalar lowThresh = new Scalar(0.0, 141.0, 0.0);
-        Scalar highThresh = new Scalar(255.0, 230.0, 95.0);
+        Scalar lowThresh = new Scalar(low_Y, low_Cr, low_Cb);
+        Scalar highThresh = new Scalar(high_Y, high_Cr, high_Cb);
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowThresh, highThresh, thresh);
@@ -71,24 +78,16 @@ public class Test1 extends OpenCvPipeline {
         }
 
         mat.release();
-        //thresh.release();
         kernel.release();
         edges.release();
         hierarchy.release();
-//        input.push_back(thresh);
         if(showThresh) {
             input.release();
             return thresh;
-        }
-        else {
+        } else {
             thresh.release();
             return input;
         }
     }
-
-    public Point[] getCenters(){
-        return centers;
-    }
-
 }
 
