@@ -47,27 +47,39 @@ public class TargetJunctionTest extends OpenCvPipeline {
 
 
         MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
-        Rect boundRect;
-        Rect largestRect = new Rect(0, 0, 0, 0);
+        RotatedRect boundRect;
+        RotatedRect largestRect = new RotatedRect();
+        double largestWidth = 0;
         int largestIndex = -1;
         center = new Point();
         float[] radius = new float[1];
+        Point[] rectanglePoints = new Point[4];
         ;
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
             Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
-            boundRect = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
-            if(boundRect.height/boundRect.width >= 2 && boundRect.width > largestRect.width){
+            boundRect = Imgproc.minAreaRect(new MatOfPoint2f(contoursPoly[i].toArray()));
+
+            boundRect.points(rectanglePoints);
+            double width = Math.sqrt(Math.pow(rectanglePoints[2].x-rectanglePoints[1].x, 2)+
+                    Math.pow(rectanglePoints[2].y-rectanglePoints[1].y, 2));
+            double height = Math.sqrt(Math.pow(rectanglePoints[0].x-rectanglePoints[1].x, 2)+
+                    Math.pow(rectanglePoints[0].y-rectanglePoints[1].y, 2));
+
+            if(height/width >= 2 && width > largestWidth){
+                largestWidth = width;
                 largestRect = boundRect.clone();
                 largestIndex = i;
             }
 
         }
 
-
         if(largestIndex >= 0){
             Imgproc.minEnclosingCircle(contoursPoly[largestIndex], center, radius);
-            Imgproc.rectangle(input, largestRect.tl(), largestRect.br(), GREEN, 2);
+            largestRect.points(rectanglePoints);
+            for (int j = 0; j < 4; j++) {
+                Imgproc.line(input, rectanglePoints[j], rectanglePoints[(j+1) % 4], GREEN, 3);
+            }
             Imgproc.circle(input, center, (int) radius[0], RED, 2);
         }
 

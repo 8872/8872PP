@@ -9,15 +9,15 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp
-public class CVTestOpMode extends OpMode {
+public class ThreshTest extends OpMode {
     private OpenCvCamera camera;
-    TargetJunctionTest pipeline;
+    JunctionDetectionTest pipeline;
     @Override
     public void init() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new TargetJunctionTest();
+        pipeline = new JunctionDetectionTest();
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -33,10 +33,5 @@ public class CVTestOpMode extends OpMode {
 
     @Override
     public void loop() {
-        Point center = pipeline.getCenter();
-        if(center != null) {
-            telemetry.addData("center", center.x + ", " + center.y);
-            telemetry.update();
-        }
     }
 }

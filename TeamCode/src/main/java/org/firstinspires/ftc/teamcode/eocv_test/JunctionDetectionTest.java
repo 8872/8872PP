@@ -13,7 +13,7 @@ import java.util.List;
 public class JunctionDetectionTest extends OpenCvPipeline {
 
     Point[] centers;
-    public static boolean showThresh = false;
+    public static boolean showThresh = true;
     public static double low_Y = 0.0;
     public static double low_Cr = 141.0;
     public static double low_Cb = 0.0;
@@ -82,7 +82,6 @@ public class JunctionDetectionTest extends OpenCvPipeline {
         edges.release();
         hierarchy.release();
         if(showThresh) {
-            input.release();
             return thresh;
         } else {
             thresh.release();
