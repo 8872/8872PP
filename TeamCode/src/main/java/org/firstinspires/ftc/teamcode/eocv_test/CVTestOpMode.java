@@ -34,8 +34,10 @@ public class CVTestOpMode extends OpMode {
     @Override
     public void loop() {
         Point center = pipeline.getCenter();
-        if(center != null) {
-            telemetry.addData("center", center.x + ", " + center.y);
+        if(center!=null) {
+            double x = center.x;
+            double y = center.y;
+            telemetry.addData("center", x + ", " + y);
             telemetry.update();
         }
     }
