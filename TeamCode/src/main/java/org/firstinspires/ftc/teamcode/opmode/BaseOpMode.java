@@ -13,7 +13,7 @@ import java.math.RoundingMode;
 
 public class BaseOpMode extends CommandOpMode {
     protected MotorEx fL, fR, bL, bR, dr4bLeftMotor, dr4bRightMotor;
-    protected SimpleServo claw, slide1, slide2;
+    protected SimpleServo claw, slide;
     protected DriveSubsystem drive;
     protected ArmSubsystem arm;
     protected RevIMU imu;
@@ -23,7 +23,7 @@ public class BaseOpMode extends CommandOpMode {
         initHardware();
         setUpHardwareDevices();
         drive = new DriveSubsystem(fL, fR, bL, bR);
-        arm = new ArmSubsystem(claw, slide1, dr4bLeftMotor, dr4bRightMotor);
+        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor);
         imu = new RevIMU(hardwareMap);
         imu.init();
 
@@ -41,7 +41,7 @@ public class BaseOpMode extends CommandOpMode {
         dr4bRightMotor = new MotorEx(hardwareMap, "dr4bRight");
         // what the proper min and max?
         claw = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slide1 = new SimpleServo(hardwareMap, "slide", 0, 120);
+        slide = new SimpleServo(hardwareMap, "slide", 0, 120);
 //        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
 
     }

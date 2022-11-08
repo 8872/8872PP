@@ -7,9 +7,9 @@ import java.util.function.DoubleSupplier;
 
 public class MoveLift extends SimpleArmCommand {
     private final DoubleSupplier liftSpeed;
-    public MoveLift(ArmSubsystem arm, DoubleSupplier slideSpeed) {
+    public MoveLift(ArmSubsystem arm, DoubleSupplier liftSpeed) {
         super(arm);
-        this.liftSpeed = slideSpeed;
+        this.liftSpeed = liftSpeed;
     }
 
     @Override
