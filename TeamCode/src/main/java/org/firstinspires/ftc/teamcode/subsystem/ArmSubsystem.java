@@ -8,7 +8,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 public class ArmSubsystem extends SubsystemBase {
 
-    private final ServoEx claw, slide1, slide2;
+    private final ServoEx claw, slide;
     private final MotorEx dr4bLeftMotor, dr4bRightMotor;
 
     // PID coefficients for left dr4b motor
@@ -26,10 +26,9 @@ public class ArmSubsystem extends SubsystemBase {
         HIGH
     }
 
-    public ArmSubsystem(ServoEx claw, ServoEx slide1, ServoEx slide2 , MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor) {
+    public ArmSubsystem(ServoEx claw, ServoEx slide, MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor) {
         this.claw = claw;
-        this.slide1 = slide1;
-        this.slide2 = slide2;
+        this.slide = slide;
         this.dr4bLeftMotor = dr4bLeftMotor;
         this.dr4bRightMotor = dr4bLeftMotor;
 
@@ -59,20 +58,17 @@ public class ArmSubsystem extends SubsystemBase {
     // move slide to a specified position
     // remove this function?
     public void moveSlide(double pos){
-        slide1.rotateBy(pos);
-        slide2.rotateBy(pos);
+        slide.rotateBy(pos);
     }
 
     // moves slide to the in most position
     public void slideIn(){
-        slide1.setPosition(0);
-        slide2.setPosition(0);
+        slide.setPosition(0);
     }
 
     // moves slide to the out most position
     public void slideOut(){
-        slide1.setPosition(1);
-        slide2.setPosition(1);
+        slide.setPosition(1);
     }
 
     public void moveDr4b(double power){

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
 import org.firstinspires.ftc.teamcode.command.lift.MoveLift;
 import org.firstinspires.ftc.teamcode.command.slide.MoveSlide;
 
-@Disabled // remove later
+//@Disabled // remove later
 @TeleOp(name = "Test Mechanisms")
 public class TestMechanismsOpMode extends BaseOpMode {
     private GamepadEx driverOp1;

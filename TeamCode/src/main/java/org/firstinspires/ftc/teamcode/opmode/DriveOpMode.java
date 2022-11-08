@@ -30,7 +30,7 @@ public class DriveOpMode extends BaseOpMode {
         fieldCentricDrive = new DefaultFieldCentricDrive(drive, () -> driverOp1.getLeftX(),
                 () -> driverOp1.getLeftY(), () -> driverOp1.getRightX(), () -> imu.getHeading());
         robotCentricDrive = new DefaultRobotCentricDrive(drive, () -> driverOp1.getLeftX(),
-                () -> driverOp1.getLeftY(), () -> driverOp1.getRightX());
+                () -> driverOp1.getRightX(), () -> driverOp1.getLeftY());
 
         changeCenter = (new GamepadButton(driverOp1, GamepadKeys.Button.LEFT_STICK_BUTTON)).
                 toggleWhenPressed(fieldCentricDrive, robotCentricDrive);

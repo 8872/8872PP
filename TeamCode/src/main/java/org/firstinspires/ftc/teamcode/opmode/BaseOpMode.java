@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
@@ -20,9 +21,9 @@ public class BaseOpMode extends CommandOpMode {
     @Override
     public void initialize() {
         initHardware();
-
+        setUpHardwareDevices();
         drive = new DriveSubsystem(fL, fR, bL, bR);
-        arm = new ArmSubsystem(claw, slide1, slide2, dr4bLeftMotor, dr4bRightMotor);
+        arm = new ArmSubsystem(claw, slide1, dr4bLeftMotor, dr4bRightMotor);
         imu = new RevIMU(hardwareMap);
         imu.init();
 
@@ -40,8 +41,8 @@ public class BaseOpMode extends CommandOpMode {
         dr4bRightMotor = new MotorEx(hardwareMap, "dr4bRight");
         // what the proper min and max?
         claw = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slide1 = new SimpleServo(hardwareMap, "slide1", 0, 120);
-        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
+        slide1 = new SimpleServo(hardwareMap, "slide", 0, 120);
+//        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
 
     }
 
@@ -61,6 +62,14 @@ public class BaseOpMode extends CommandOpMode {
 
     protected void setUpHardwareDevices() {
         // reverse motors
+        //fR.setInverted(true);
+        //bR.setInverted(true);
+        fL.setInverted(true);
+        bL.setInverted(true);
+        fL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        fR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        bL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        bR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
 
