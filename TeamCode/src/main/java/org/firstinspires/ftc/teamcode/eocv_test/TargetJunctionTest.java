@@ -29,12 +29,12 @@ public class TargetJunctionTest extends OpenCvPipeline {
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowThresh, highThresh, thresh);
-        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
-        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
+        //Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
+        //Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
         Imgproc.GaussianBlur(thresh, thresh, new Size(5.0, 5.0), 0);
 
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5,5));
-        Imgproc.erode(thresh, thresh, kernel);
+        //Imgproc.erode(thresh, thresh, kernel);
 
 
         Mat edges = new Mat();
@@ -54,7 +54,7 @@ public class TargetJunctionTest extends OpenCvPipeline {
         center = new Point();
         float[] radius = new float[1];
         Point[] rectanglePoints = new Point[4];
-        ;
+
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
             Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
@@ -83,6 +83,8 @@ public class TargetJunctionTest extends OpenCvPipeline {
             Imgproc.circle(input, center, (int) radius[0], RED, 2);
         }
 
+        Imgproc.circle(input, new Point(640, 360), 8, BLUE, 8);
+
         mat.release();
         kernel.release();
         edges.release();
@@ -94,4 +96,3 @@ public class TargetJunctionTest extends OpenCvPipeline {
         return center;
     }
 }
-

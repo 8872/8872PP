@@ -38,7 +38,8 @@ public class CVTestOpMode extends OpMode {
             double x = center.x;
             double y = center.y;
             telemetry.addData("center", x + ", " + y);
-            telemetry.update();
+            telemetry.addData("error", (x-640) + ", " + (y-360));
         }
+        telemetry.update();
     }
 }

@@ -72,9 +72,9 @@ public class JunctionDetectionTest extends OpenCvPipeline {
             contoursPolyList.add(new MatOfPoint(poly.toArray()));
         }
         for (int i = 0; i < contours.size(); i++) {
-            Imgproc.drawContours(input, contoursPolyList, i, BLUE);
-            Imgproc.rectangle(input, boundRect[i].tl(), boundRect[i].br(), GREEN, 2);
-            Imgproc.circle(input, centers[i], (int) radius[i][0], RED, 2);
+            Imgproc.drawContours(thresh, contoursPolyList, i, BLUE);
+            Imgproc.rectangle(thresh, boundRect[i].tl(), boundRect[i].br(), GREEN, 2);
+            Imgproc.circle(thresh, centers[i], (int) radius[i][0], RED, 2);
         }
 
         mat.release();
