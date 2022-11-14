@@ -1,19 +1,22 @@
 package org.firstinspires.ftc.teamcode.command.lift;
 
-import org.firstinspires.ftc.teamcode.command.SimpleArmCommand;
+import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
 import java.util.function.DoubleSupplier;
 
-public class MoveLift extends SimpleArmCommand {
+public class MoveLift extends CommandBase {
     private final DoubleSupplier liftSpeed;
+    protected final ArmSubsystem arm;
+
     public MoveLift(ArmSubsystem arm, DoubleSupplier liftSpeed) {
-        super(arm);
+        this.arm = arm;
         this.liftSpeed = liftSpeed;
+        addRequirements(arm);
     }
 
     @Override
-    public void initialize() {
+    public void execute() {
         arm.moveDr4b(liftSpeed.getAsDouble());
     }
 }

@@ -1,23 +1,31 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import android.util.Log;
+import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.LogCatCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
+@Config
 public class ArmSubsystem extends SubsystemBase {
 
     private final ServoEx claw, slide;
     private final MotorEx dr4bLeftMotor, dr4bRightMotor;
 
-    // PID coefficients for left dr4b motor
-    private final static double dr4b_kP = 1; // tune
-    private final static double dr4b_kI = 0;
-    private final static double dr4b_kD = 0;
-    private final static double dr4b_kF = 0;
-    private PIDFController dr4b_pidf = new PIDFController(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
+    public static int LOW = -450;
+    public static int MEDIUM = -850;
+    public static int HIGH = -1800;
+    public static int GROUND = -100;
 
+    // PID coefficients for left dr4b motor
+    public static double dr4b_kP = 0.0008; // tune
+    public static double dr4b_kI = 0.01;
+    public static double dr4b_kD = 0.001; // 0.001
+    public static double dr4b_kF = 0;
+    private PIDFController dr4b_pidf = new PIDFController(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
+    private double output;
     // enum representing different junction levels
     private enum Junction {
         GROUND,
@@ -30,14 +38,8 @@ public class ArmSubsystem extends SubsystemBase {
         this.claw = claw;
         this.slide = slide;
         this.dr4bLeftMotor = dr4bLeftMotor;
-        this.dr4bRightMotor = dr4bLeftMotor;
-
-        dr4bLeftMotor.setRunMode(Motor.RunMode.RawPower);
-        dr4bRightMotor.setRunMode(Motor.RunMode.RawPower);
-        // brake ;-; ????
-        dr4bLeftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        dr4bRightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
+        this.dr4bRightMotor = dr4bRightMotor;
+        dr4b_pidf.setTolerance(30);
     }
 
     // grab cone with a certain angle (for tuning)
@@ -72,36 +74,50 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void moveDr4b(double power){
-        dr4bLeftMotor.set(power);
-        dr4bRightMotor.set(power);
+        dr4bRightMotor.set(power / 2);
+        dr4bLeftMotor.set(power / 2);
     }
 
     // moves dr4b to specified position
     private void moveDr4b(Junction junction){
         switch(junction){
             case GROUND:
-                dr4b_pidf.setSetPoint(0);
+                dr4b_pidf.setSetPoint(GROUND);
                 break;
             case LOW:
-                dr4b_pidf.setSetPoint(20);
+                dr4b_pidf.setSetPoint(LOW);
                 break;
             case MEDIUM:
-                dr4b_pidf.setSetPoint(40);
+                dr4b_pidf.setSetPoint(MEDIUM);
                 break;
             case HIGH:
-                dr4b_pidf.setSetPoint(60); // tune later
+                dr4b_pidf.setSetPoint(HIGH); // tune later
+                Log.d("Test", "high");
                 break;
         }
+        output = dr4b_pidf.calculate(dr4bLeftMotor.getCurrentPosition());
+        Log.d("atSetPoint", "" + dr4b_pidf.atSetPoint());
+        while(!dr4b_pidf.atSetPoint()){
 
-        while(dr4b_pidf.atSetPoint()){
-            double output = dr4b_pidf.calculate((dr4bLeftMotor.getCurrentPosition()
-                    + dr4bRightMotor.getCurrentPosition()) / 2.0);
+            output = dr4b_pidf.calculate(dr4bLeftMotor.getCurrentPosition());
+            Log.d("output", "" + output);
+            Log.d("error", "" + dr4b_pidf.getPositionError());
+            Log.d("encoder", "" + dr4bLeftMotor.getCurrentPosition());
             dr4bLeftMotor.set(output);
             dr4bRightMotor.set(output);
         }
+
         dr4bLeftMotor.stopMotor();
         dr4bRightMotor.stopMotor();
 
+    }
+
+    public double getOutput() {
+        return output;
+    }
+
+    public double getError(){
+        return dr4b_pidf.getPositionError();
     }
 
     // move dr4b to ground

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
@@ -27,7 +29,7 @@ public class BaseOpMode extends CommandOpMode {
         imu = new RevIMU(hardwareMap);
         imu.init();
 
-        composeTelemetry();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Mode", "Done initializing");
         telemetry.update();
     }
@@ -43,21 +45,28 @@ public class BaseOpMode extends CommandOpMode {
         claw = new SimpleServo(hardwareMap, "claw", 0, 120);
         slide = new SimpleServo(hardwareMap, "slide", 0, 120);
 //        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
-
     }
 
-    protected void composeTelemetry() {
-        telemetry.addData("leftFront Power", () -> round(fL.motor.getPower()));
-        telemetry.addData("leftBack Power", () -> round(bL.motor.getPower()));
-        telemetry.addData("rightFront Power", () -> round(fR.motor.getPower()));
-        telemetry.addData("rightBack Power", () -> round(bR.motor.getPower()));
-        telemetry.addData("dr4bLeftMotor Power", () -> round(dr4bLeftMotor.motor.getPower()));
-        telemetry.addData("dr4bRightMotor Power", () -> round(dr4bRightMotor.motor.getPower()));
+    @Override
+    public void run() {
+        super.run();
+        telemetry.addData("leftFront Power", round(fL.motor.getPower()));
+        telemetry.addData("leftBack Power", round(bL.motor.getPower()));
+        telemetry.addData("rightFront Power", round(fR.motor.getPower()));
+        telemetry.addData("rightBack Power", round(bR.motor.getPower()));
+        telemetry.addData("dr4bLeftMotor Power", round(dr4bLeftMotor.motor.getPower()));
+        telemetry.addData("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
+        telemetry.addData("dr4bRightMotor encoder", dr4bRightMotor.getCurrentPosition());
+        telemetry.addData("dr4bLeftMotor encoder", dr4bLeftMotor.getCurrentPosition());
 
-        telemetry.addData("claw Position", () -> claw.getPosition());
-        telemetry.addData("slide1 Position", () -> claw.getPosition());
+        telemetry.addData("pid output", arm.getOutput());
+        telemetry.addData("position error", arm.getError());
 
-        telemetry.addData("IMU Heading", () -> imu.getHeading());
+        telemetry.addData("claw Position", claw.getPosition());
+        telemetry.addData("slide1 Position", claw.getPosition());
+
+        telemetry.addData("IMU Heading", imu.getHeading());
+        telemetry.update();
     }
 
     protected void setUpHardwareDevices() {
@@ -70,6 +79,12 @@ public class BaseOpMode extends CommandOpMode {
         fR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        dr4bLeftMotor.setRunMode(Motor.RunMode.RawPower);
+        dr4bRightMotor.setRunMode(Motor.RunMode.RawPower);
+        // brake ;-; ????
+        dr4bLeftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        dr4bRightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
 

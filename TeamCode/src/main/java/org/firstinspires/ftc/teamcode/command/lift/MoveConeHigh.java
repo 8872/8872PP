@@ -10,6 +10,7 @@ public class MoveConeHigh extends SimpleArmCommand {
 
     @Override
     public void initialize() {
+        System.out.println("high gggggg");
         arm.dr4bHigh();
     }
 }
