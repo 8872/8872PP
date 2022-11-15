@@ -82,11 +82,19 @@ public class TargetJunctionTest extends OpenCvPipeline {
 
             regularRect = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
 
-            if(regularRect.height/regularRect.width >= 2 && width > largestWidth){
-                largestWidth = width;
-                largestHeight = height;
-                largestRect = boundRect.clone();
-                largestIndex = i;
+
+            if(regularRect.height/regularRect.width>= 2){
+                if(height<width){
+                    double temp = width;
+                    width = height;
+                    height = temp;
+                }
+                if(width > largestWidth){
+                    largestWidth = width;
+                    largestHeight = height;
+                    largestRect = boundRect.clone();
+                    largestIndex = i;
+                }
             }
             finalWidth = largestWidth;
             finalHeight = largestHeight;
