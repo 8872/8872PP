@@ -16,7 +16,7 @@ public class JunctionDetectionTest extends OpenCvPipeline {
     public static boolean showThresh = true;
     public static double low_Y = 0;
     public static double low_Cr = 124.7;
-    public static double low_Cb = 46.8;
+    public static double low_Cb = 0;
     public static double high_Y = 255;
     public static double high_Cr = 180;
     public static double high_Cb = 95;
