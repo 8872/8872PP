@@ -14,12 +14,12 @@ public class JunctionDetectionTest extends OpenCvPipeline {
 
     Point[] centers;
     public static boolean showThresh = true;
-    public static double low_Y = 0.0;
-    public static double low_Cr = 141.0;
-    public static double low_Cb = 0.0;
-    public static double high_Y = 255.0;
-    public static double high_Cr = 230.0;
-    public static double high_Cb = 95.0;
+    public static double low_Y = 0;
+    public static double low_Cr = 124.7;
+    public static double low_Cb = 46.8;
+    public static double high_Y = 255;
+    public static double high_Cr = 180;
+    public static double high_Cb = 95;
 
 
     @Override
@@ -89,4 +89,3 @@ public class JunctionDetectionTest extends OpenCvPipeline {
         }
     }
 }
-
