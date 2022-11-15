@@ -42,6 +42,7 @@ public class CVTestOpMode extends OpMode {
             telemetry.addData("error", (x-640) + ", " + (y-360));
         }
         telemetry.addData("width", pipeline.getWidth());
+        telemetry.addData("height", pipeline.getHeight());
         telemetry.update();
     }
 }

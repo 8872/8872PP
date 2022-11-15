@@ -12,9 +12,14 @@ import java.util.List;
 @Config
 public class TargetJunctionTest extends OpenCvPipeline {
 
+
+
     Point center;
 
     double finalWidth = -1;
+    double finalHeight = -1;
+
+    public static boolean threshThing = false;
 
     @Override
     public Mat processFrame(Mat input) {
@@ -22,6 +27,11 @@ public class TargetJunctionTest extends OpenCvPipeline {
         Scalar RED = new Scalar(255,0,0);
         Scalar GREEN = new Scalar(0,255,0);
         Scalar BLUE = new Scalar(0,0,255);
+        Scalar BLACK = new Scalar(0,0,0);
+
+
+        Imgproc.line(input, new Point(0,0), new Point(1280, 0),BLACK,10);
+        Imgproc.line(input, new Point(0,720), new Point(1280, 720),BLACK,10);
 
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
@@ -31,12 +41,12 @@ public class TargetJunctionTest extends OpenCvPipeline {
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowThresh, highThresh, thresh);
-        //Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
-        //Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, new Mat());
         Imgproc.GaussianBlur(thresh, thresh, new Size(5.0, 5.0), 0);
 
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5,5));
-        //Imgproc.erode(thresh, thresh, kernel);
+        Imgproc.erode(thresh, thresh, kernel);
 
 
         Mat edges = new Mat();
@@ -52,10 +62,12 @@ public class TargetJunctionTest extends OpenCvPipeline {
         RotatedRect boundRect;
         RotatedRect largestRect = new RotatedRect();
         double largestWidth = -1;
+        double largestHeight = -1;
         int largestIndex = -1;
         center = new Point();
         float[] radius = new float[1];
         Point[] rectanglePoints = new Point[4];
+        Rect regularRect;
 
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
@@ -68,13 +80,16 @@ public class TargetJunctionTest extends OpenCvPipeline {
             double height = Math.sqrt(Math.pow(rectanglePoints[0].x-rectanglePoints[1].x, 2)+
                     Math.pow(rectanglePoints[0].y-rectanglePoints[1].y, 2));
 
-            if(height/width >= 2 && width > largestWidth){
+            regularRect = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+
+            if(regularRect.height/regularRect.width >= 2 && width > largestWidth){
                 largestWidth = width;
+                largestHeight = height;
                 largestRect = boundRect.clone();
                 largestIndex = i;
             }
             finalWidth = largestWidth;
-
+            finalHeight = largestHeight;
         }
 
         if(largestIndex >= 0){
@@ -92,13 +107,21 @@ public class TargetJunctionTest extends OpenCvPipeline {
         kernel.release();
         edges.release();
         hierarchy.release();
-        thresh.release();
-        return input;
+
+        if(threshThing){
+            return thresh;
+        }else{
+            thresh.release();
+            return input;
+        }
     }
     public Point getCenter(){
         return center;
     }
     public double getWidth(){
         return finalWidth;
+    }
+    public double getHeight(){
+        return finalHeight;
     }
 }
