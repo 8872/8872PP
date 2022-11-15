@@ -20,8 +20,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static int GROUND = -100;
 
     // PID coefficients for left dr4b motor
-    public static double dr4b_kP = 0.0008; // tune
-    public static double dr4b_kI = 0.01;
+    public static double dr4b_kP = 0.002; // tune
+    public static double dr4b_kI = 0.2;
     public static double dr4b_kD = 0.001; // 0.001
     public static double dr4b_kF = 0;
     private PIDFController dr4b_pidf = new PIDFController(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
