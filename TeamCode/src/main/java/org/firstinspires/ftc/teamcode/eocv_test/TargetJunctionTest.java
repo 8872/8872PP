@@ -14,6 +14,8 @@ public class TargetJunctionTest extends OpenCvPipeline {
 
     Point center;
 
+    double finalWidth = -1;
+
     @Override
     public Mat processFrame(Mat input) {
 
@@ -49,7 +51,7 @@ public class TargetJunctionTest extends OpenCvPipeline {
         MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
         RotatedRect boundRect;
         RotatedRect largestRect = new RotatedRect();
-        double largestWidth = 0;
+        double largestWidth = -1;
         int largestIndex = -1;
         center = new Point();
         float[] radius = new float[1];
@@ -71,6 +73,7 @@ public class TargetJunctionTest extends OpenCvPipeline {
                 largestRect = boundRect.clone();
                 largestIndex = i;
             }
+            finalWidth = largestWidth;
 
         }
 
@@ -94,5 +97,8 @@ public class TargetJunctionTest extends OpenCvPipeline {
     }
     public Point getCenter(){
         return center;
+    }
+    public double getWidth(){
+        return finalWidth;
     }
 }
