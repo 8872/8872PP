@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
@@ -17,6 +15,7 @@ import org.firstinspires.ftc.teamcode.command.lift.*;
 import org.firstinspires.ftc.teamcode.command.slide.MoveSlide;
 import org.firstinspires.ftc.teamcode.command.slide.SlideIn;
 import org.firstinspires.ftc.teamcode.command.slide.SlideOut;
+import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
 //@Disabled // remove later
 @TeleOp(name = "Test Mechanisms")
@@ -41,10 +40,11 @@ public class TestMechanismsOpMode extends BaseOpMode {
     private SlideIn slideIn;
     private SlideOut slideOut;
 
-
+    private MoveLiftPID moveLiftPID;
+    private SetJunction setJunctionLow, setJunctionMedium, setJunctionHigh, setJunctionGround;
 
     private Button changeCenter, clawStuff, slideStuff, resetEncoders;
-    private Button moveHigh, moveMedium, moveLow;
+    private Button moveHigh, moveMedium, moveLow, moveGround;
 
     @Override
     public void initialize() {
@@ -83,23 +83,40 @@ public class TestMechanismsOpMode extends BaseOpMode {
                     dr4bLeftMotor.resetEncoder();
                     dr4bRightMotor.resetEncoder();
                 }, arm));
-        moveConeHigh = new MoveConeHigh(arm);
-        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))
-                .whenPressed(moveConeHigh);
+//        moveConeHigh = new MoveConeHigh(arm);
+//        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))
+//                .whenPressed(moveConeHigh);
+//
+//        moveConeMedium = new MoveConeMedium(arm);
+//        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_RIGHT))
+//                .whenPressed(moveConeMedium);
+//
+//        moveConeLow = new MoveConeLow(arm);
+//        moveLow = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_LEFT))
+//                .whenPressed(moveConeLow);
 
-        moveConeMedium = new MoveConeMedium(arm);
-        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_RIGHT))
-                .whenPressed(moveConeMedium);
+        moveLiftPID = new MoveLiftPID(arm);
 
-        moveConeLow = new MoveConeLow(arm);
+        setJunctionGround = new SetJunction(arm, ArmSubsystem.Junction.GROUND);
+        setJunctionLow = new SetJunction(arm, ArmSubsystem.Junction.LOW);
+        setJunctionMedium = new SetJunction(arm, ArmSubsystem.Junction.MEDIUM);
+        setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
+
+        moveGround = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_DOWN))
+                .whenPressed(setJunctionGround);
         moveLow = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_LEFT))
-                .whenPressed(moveConeLow);
+                .whenPressed(setJunctionLow);
+        moveMedium = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_RIGHT))
+                .whenPressed(setJunctionMedium);
+        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))
+                .whenPressed(setJunctionHigh);
+
 
 
 
         register(drive, arm);
         drive.setDefaultCommand(robotCentricDrive);
-        arm.setDefaultCommand(moveLift);
+        arm.setDefaultCommand(moveLiftPID);
     }
 
 

@@ -45,6 +45,8 @@ public class BaseOpMode extends CommandOpMode {
         claw = new SimpleServo(hardwareMap, "claw", 0, 120);
         slide = new SimpleServo(hardwareMap, "slide", 0, 120);
 //        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
+        dr4bLeftMotor.resetEncoder();
+        dr4bRightMotor.resetEncoder();
     }
 
     @Override
@@ -59,7 +61,7 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("dr4bRightMotor encoder", dr4bRightMotor.getCurrentPosition());
         telemetry.addData("dr4bLeftMotor encoder", dr4bLeftMotor.getCurrentPosition());
 
-        telemetry.addData("pid output", arm.getOutput());
+        telemetry.addData("pid output", arm.getOutput_left());
         telemetry.addData("position error", arm.getError());
 
         telemetry.addData("claw Position", claw.getPosition());
