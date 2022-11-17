@@ -2,6 +2,11 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.profile.MotionProfile;
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
+import com.acmerobotics.roadrunner.profile.MotionState;
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
@@ -13,6 +18,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final ServoEx claw, slide;
     private final MotorEx dr4bLeftMotor, dr4bRightMotor;
 
+    public static double kV = 0.1;
     public static int LOW = -350;
     public static int MEDIUM = -850;
     public static int HIGH = -1750;
@@ -113,6 +119,61 @@ public class ArmSubsystem extends SubsystemBase {
             dr4bRightMotor.set(output_left);
         }
 
+        dr4bLeftMotor.stopMotor();
+        dr4bRightMotor.stopMotor();
+
+    }
+
+    private void moveDr4b(Junction junction, boolean testMotionProfiling){
+        com.acmerobotics.roadrunner.control.PIDFController controller = new com.acmerobotics.roadrunner.control.PIDFController(new PIDCoefficients(dr4b_kP, dr4b_kI, dr4b_kD));
+
+        int targetPos = 0;
+        switch(junction){
+            case GROUND:
+                targetPos = GROUND;
+                break;
+            case LOW:
+                targetPos = LOW;
+                break;
+            case MEDIUM:
+                targetPos = MEDIUM;
+                break;
+            case HIGH:
+                targetPos = HIGH;
+                Log.d("Test", "high");
+                break;
+        }
+
+        NanoClock clock = NanoClock.system();
+
+
+        MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
+                new MotionState(0, 0, 0),
+                new MotionState(targetPos, 0, 0),
+                2000,
+                2000,
+                1000
+        );
+
+        double profileStart = clock.seconds();
+
+        while(true){
+            double profileTime = clock.seconds() - profileStart;
+            if (profileTime > profile.duration()) {
+                break;
+            }
+
+            MotionState motionState = profile.get(profileTime);
+
+            controller.setTargetPosition(motionState.getX());
+            controller.setTargetVelocity(motionState.getV());
+            controller.setTargetAcceleration(motionState.getA());
+
+            controller.update(dr4bLeftMotor.getCurrentPosition());
+
+
+
+        }
         dr4bLeftMotor.stopMotor();
         dr4bRightMotor.stopMotor();
 
