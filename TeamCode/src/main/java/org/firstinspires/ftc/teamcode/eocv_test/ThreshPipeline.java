@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-public class JunctionDetectionTest extends OpenCvPipeline {
-
+public class ThreshPipeline extends OpenCvPipeline {
     Point[] centers;
     public static boolean showThresh = true;
+    public static boolean red = true;
+    public static boolean blue = false;
     public static double low_Y = 0;
     public static double low_Cr = 50; //141
     public static double low_Cb = 50;
@@ -32,17 +33,27 @@ public class JunctionDetectionTest extends OpenCvPipeline {
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
+        if(red){
+            low_Cr = 150;
+            low_Cb = 0;
+            high_Cr = 255;
+            high_Cb = 255;
+        }else if(blue){
+            low_Cr = 0;
+            low_Cb = 130;
+            high_Cr = 255;
+            high_Cb = 255;
+        }
+
         Scalar lowThresh = new Scalar(low_Y, low_Cr, low_Cb);
         Scalar highThresh = new Scalar(high_Y, high_Cr, high_Cb);
+
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowThresh, highThresh, thresh);
         Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
         Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
         Imgproc.GaussianBlur(thresh, thresh, new Size(5.0, 5.0), 0);
-
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5,5));
-        Imgproc.erode(thresh, thresh, kernel);
 
 
         Mat edges = new Mat();
@@ -78,7 +89,6 @@ public class JunctionDetectionTest extends OpenCvPipeline {
         }
 
         mat.release();
-        kernel.release();
         edges.release();
         hierarchy.release();
         if(showThresh) {

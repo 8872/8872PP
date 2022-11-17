@@ -30,23 +30,18 @@ public class TargetJunctionTest extends OpenCvPipeline {
         Scalar BLACK = new Scalar(0,0,0);
 
 
-        Imgproc.line(input, new Point(0,0), new Point(1280, 0),BLACK,10);
-        Imgproc.line(input, new Point(0,720), new Point(1280, 720),BLACK,10);
+        Imgproc.line(input, new Point(0,0), new Point(1280, 0),BLACK,4);
+        Imgproc.line(input, new Point(0,720), new Point(1280, 720),BLACK,4);
 
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
-        Scalar lowThresh = new Scalar(JunctionDetectionTest.low_Y, JunctionDetectionTest.low_Cr, JunctionDetectionTest.low_Cb);
-        Scalar highThresh = new Scalar(JunctionDetectionTest.high_Y, JunctionDetectionTest.high_Cr, JunctionDetectionTest.high_Cb);
+        Scalar lowThresh = new Scalar(ThreshPipeline.low_Y, ThreshPipeline.low_Cr, ThreshPipeline.low_Cb);
+        Scalar highThresh = new Scalar(ThreshPipeline.high_Y, ThreshPipeline.high_Cr, ThreshPipeline.high_Cb);
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowThresh, highThresh, thresh);
-        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
-        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, new Mat());
         Imgproc.GaussianBlur(thresh, thresh, new Size(5.0, 5.0), 0);
-
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5,5));
-        Imgproc.erode(thresh, thresh, kernel);
 
 
         Mat edges = new Mat();
@@ -112,7 +107,6 @@ public class TargetJunctionTest extends OpenCvPipeline {
         Imgproc.circle(input, new Point(640, 360), 8, BLUE, 8);
 
         mat.release();
-        kernel.release();
         edges.release();
         hierarchy.release();
 
