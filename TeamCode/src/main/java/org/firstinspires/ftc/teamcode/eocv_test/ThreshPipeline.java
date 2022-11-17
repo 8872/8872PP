@@ -34,13 +34,15 @@ public class ThreshPipeline extends OpenCvPipeline {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
         if(red){
-            low_Cr = 150;
+            high_Y = 120;
+            low_Cr = 170;
             low_Cb = 0;
             high_Cr = 255;
             high_Cb = 255;
         }else if(blue){
+            high_Y = 100;
             low_Cr = 0;
-            low_Cb = 130;
+            low_Cb = 160;
             high_Cr = 255;
             high_Cb = 255;
         }
