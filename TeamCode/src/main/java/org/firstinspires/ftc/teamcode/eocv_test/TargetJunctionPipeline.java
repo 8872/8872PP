@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-public class TargetJunctionTest extends OpenCvPipeline {
+public class TargetJunctionPipeline extends OpenCvPipeline {
 
 
 

@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @TeleOp
 public class CVTestOpMode extends OpMode {
     private OpenCvCamera camera;
-    TargetJunctionTest pipeline;
+    TargetJunctionPipeline pipeline;
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -21,7 +21,7 @@ public class CVTestOpMode extends OpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new TargetJunctionTest();
+        pipeline = new TargetJunctionPipeline();
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
