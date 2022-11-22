@@ -33,6 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
     private PIDFController dr4b_pidf_right = new PIDFController(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
     private double output_left;
     private double output_right;
+    public static double tolerance = 10;
     // enum representing different junction levels
     public enum Junction {
         GROUND,
@@ -46,7 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
         this.slide = slide;
         this.dr4bLeftMotor = dr4bLeftMotor;
         this.dr4bRightMotor = dr4bRightMotor;
-        dr4b_pidf_left.setTolerance(30);
+        dr4b_pidf_left.setTolerance(tolerance);
         dr4b_pidf_left.setSetPoint(0); // temporary
     }
 
