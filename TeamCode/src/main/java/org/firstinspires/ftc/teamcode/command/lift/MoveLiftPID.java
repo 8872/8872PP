@@ -14,8 +14,7 @@ public class MoveLiftPID extends CommandBase {
     @Override
     public void execute() {
         if(arm.profile == null || !arm.loopPID()){
-
+            arm.keepPos();
         }
-        arm.loopPID();
     }
 }

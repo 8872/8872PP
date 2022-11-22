@@ -57,6 +57,10 @@ public class BaseOpMode extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+        telemetry.addData("target velocity", arm.getTargetVelocity());
+        telemetry.addData("left velocity", arm.getLeftVelocity());
+        telemetry.addData("right velocity", arm.getRightVelocity());
+        telemetry.addData("target power", arm.targetPower);
         telemetry.addData("leftFront Power", round(fL.motor.getPower()));
         telemetry.addData("leftBack Power", round(bL.motor.getPower()));
         telemetry.addData("rightFront Power", round(fR.motor.getPower()));

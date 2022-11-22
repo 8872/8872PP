@@ -42,10 +42,10 @@ public class TestMechanismsOpMode extends BaseOpMode {
     private SlideOut slideOut;
 
     private MoveLiftPID moveLiftPID;
-    private SetJunction setJunctionLow, setJunctionMedium, setJunctionHigh, setJunctionGround;
+    private SetJunction setJunctionLow, setJunctionMedium, setJunctionHigh, setJunctionGround, setJunctionNone;
 
     private Button changeCenter, clawStuff, slideStuff, resetEncoders;
-    private Button moveHigh, moveMedium, moveLow, moveGround;
+    private Button moveHigh, moveMedium, moveLow, moveGround, moveNone;
 
     @Override
     public void initialize() {
@@ -98,11 +98,14 @@ public class TestMechanismsOpMode extends BaseOpMode {
 
         moveLiftPID = new MoveLiftPID(arm);
 
+        setJunctionNone = new SetJunction(arm, ArmSubsystem.Junction.NONE);
         setJunctionGround = new SetJunction(arm, ArmSubsystem.Junction.GROUND);
         setJunctionLow = new SetJunction(arm, ArmSubsystem.Junction.LOW);
         setJunctionMedium = new SetJunction(arm, ArmSubsystem.Junction.MEDIUM);
         setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
 
+        moveNone = (new GamepadButton(driverOp1, GamepadKeys.Button.X))
+                .whenPressed(setJunctionNone);
         moveGround = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_DOWN))
                 .whenPressed(setJunctionGround);
         moveLow = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_LEFT))
