@@ -1,21 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 
 @Config
 public class ArmSubsystem extends SubsystemBase {
@@ -34,11 +28,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static double dr4b_kI = 0;
     public static double dr4b_kD = 0.0001;
     public static double dr4b_kF = 0;
-    private PIDFCoefficients dr4b_coeffs = new PIDFCoefficients(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
-    private double output_left;
-    private double output_right;
     private double targetPos = 0;
-    private NanoClock clock = NanoClock.system();
+    private final NanoClock clock = NanoClock.system();
     private MotionProfile profile;
     double profileStart;
     // enum representing different junction levels
@@ -54,6 +45,7 @@ public class ArmSubsystem extends SubsystemBase {
         this.slide = slide;
         this.dr4bLeftMotor = dr4bLeftMotor;
         this.dr4bRightMotor = dr4bRightMotor;
+        PIDFCoefficients dr4b_coeffs = new PIDFCoefficients(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
         this.dr4bLeftMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, dr4b_coeffs);
         this.dr4bRightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, dr4b_coeffs);
     }
@@ -100,7 +92,7 @@ public class ArmSubsystem extends SubsystemBase {
         double profileTime = clock.seconds() - profileStart;
         if (profileTime > profile.duration()) return false;
         MotionState motionState = profile.get(profileTime);
-        double targetPower = DriveConstants.kV * motionState.getV();
+        double targetPower = kV * motionState.getV();
         moveDr4b(targetPower);
         return true;
     }
@@ -123,15 +115,14 @@ public class ArmSubsystem extends SubsystemBase {
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(0, 0, 0),
                 new MotionState(targetPos, 0, 0),
-                2000,
-                2000,
+                1000,
                 1000
         );
         profileStart = clock.seconds();
     }
 
     public double getOutput_left() {
-        return output_left;
+        return 0.0;
     }
 
     public double getError(){
