@@ -7,6 +7,9 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
 
@@ -19,13 +22,14 @@ public class BaseOpMode extends CommandOpMode {
     protected DriveSubsystem drive;
     protected ArmSubsystem arm;
     protected RevIMU imu;
+    protected TouchSensor limitSwitch;
 
     @Override
     public void initialize() {
         initHardware();
         setUpHardwareDevices();
         drive = new DriveSubsystem(fL, fR, bL, bR);
-        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor);
+        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
         imu = new RevIMU(hardwareMap);
         imu.init();
 
@@ -44,6 +48,7 @@ public class BaseOpMode extends CommandOpMode {
         // what the proper min and max?
         claw = new SimpleServo(hardwareMap, "claw", 0, 120);
         slide = new SimpleServo(hardwareMap, "slide", 0, 120);
+        limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
 //        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();
@@ -68,6 +73,8 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("slide1 Position", claw.getPosition());
 
         telemetry.addData("IMU Heading", imu.getHeading());
+
+        telemetry.addData("limit pressed", limitSwitch.isPressed());
         telemetry.update();
     }
 

@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
 import org.firstinspires.ftc.teamcode.command.claw.MoveClaw;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
@@ -34,6 +36,7 @@ public class TestMechanismsOpMode extends BaseOpMode {
     private MoveConeLow moveConeLow;
     private MoveConeGround moveConeGround;
 
+
     private GrabCone grabCone;
     private ReleaseCone releaseCone;
 
@@ -41,10 +44,11 @@ public class TestMechanismsOpMode extends BaseOpMode {
     private SlideOut slideOut;
 
     private MoveLiftPID moveLiftPID;
-    private SetJunction setJunctionLow, setJunctionMedium, setJunctionHigh, setJunctionGround;
+    private SetJunction setJunctionLow, setJunctionMedium, setJunctionHigh, setJunctionGround, setJunctionNone;
 
     private Button changeCenter, clawStuff, slideStuff, resetEncoders;
-    private Button moveHigh, moveMedium, moveLow, moveGround;
+    private Button moveHigh, moveMedium, moveLow, moveGround, moveNone;
+
 
     @Override
     public void initialize() {
@@ -83,6 +87,8 @@ public class TestMechanismsOpMode extends BaseOpMode {
                     dr4bLeftMotor.resetEncoder();
                     dr4bRightMotor.resetEncoder();
                 }, arm));
+
+        
 //        moveConeHigh = new MoveConeHigh(arm);
 //        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))
 //                .whenPressed(moveConeHigh);
@@ -97,11 +103,14 @@ public class TestMechanismsOpMode extends BaseOpMode {
 
         moveLiftPID = new MoveLiftPID(arm);
 
+        setJunctionNone = new SetJunction(arm, ArmSubsystem.Junction.NONE);
         setJunctionGround = new SetJunction(arm, ArmSubsystem.Junction.GROUND);
         setJunctionLow = new SetJunction(arm, ArmSubsystem.Junction.LOW);
         setJunctionMedium = new SetJunction(arm, ArmSubsystem.Junction.MEDIUM);
         setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
 
+        moveNone = (new GamepadButton(driverOp1, GamepadKeys.Button.X))
+                .whenPressed(setJunctionGround);
         moveGround = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_DOWN))
                 .whenPressed(setJunctionGround);
         moveLow = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_LEFT))
@@ -111,12 +120,20 @@ public class TestMechanismsOpMode extends BaseOpMode {
         moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))
                 .whenPressed(setJunctionHigh);
 
+        schedule(new RunCommand(() -> {
+            if(limitSwitch.isPressed()){
+                dr4bLeftMotor.resetEncoder();
+                dr4bRightMotor.resetEncoder();
+            }
+        }, arm));
+
 
 
 
         register(drive, arm);
         drive.setDefaultCommand(robotCentricDrive);
         arm.setDefaultCommand(moveLiftPID);
+
     }
 
 

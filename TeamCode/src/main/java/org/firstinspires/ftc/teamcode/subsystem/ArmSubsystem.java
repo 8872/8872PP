@@ -12,22 +12,26 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @Config
 public class ArmSubsystem extends SubsystemBase {
 
     private final ServoEx claw, slide;
     private final MotorEx dr4bLeftMotor, dr4bRightMotor;
+    private final TouchSensor limitSwitch;
 
-    public static int LOW = -350;
-    public static int MEDIUM = -850;
+    public static int NONE = 10;
+    public static int LOW = -336;
+    public static int MEDIUM = -839;
     public static int HIGH = -1750;
-    public static int GROUND = -50;
+    public static int GROUND = -25;
 
     // PID coefficients for left dr4b motor
     public static double dr4b_kP = 0.003;
-    public static double dr4b_kI = 0.07;
-    public static double dr4b_kD = 0;
+    public static double dr4b_kI = 0.05;
+    public static double dr4b_kD = 0.0003;
     public static double maxVelocity = 1000;
     public static double maxAcceleration = 1000;
     private final ProfiledPIDController dr4b_pidf_left = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
@@ -39,19 +43,21 @@ public class ArmSubsystem extends SubsystemBase {
     public static double tolerance = 10;
     // enum representing different junction levels
     public enum Junction {
+        NONE,
         GROUND,
         LOW,
         MEDIUM,
         HIGH
     }
 
-    public ArmSubsystem(ServoEx claw, ServoEx slide, MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor) {
+    public ArmSubsystem(ServoEx claw, ServoEx slide, MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor, TouchSensor limitSwitch) {
         this.claw = claw;
         this.slide = slide;
+        this.limitSwitch = limitSwitch;
         this.dr4bLeftMotor = dr4bLeftMotor;
         this.dr4bRightMotor = dr4bRightMotor;
         dr4b_pidf_left.setTolerance(tolerance);
-        dr4b_pidf_left.setGoal(0); // temporary
+        dr4b_pidf_left.setGoal(0);
         dr4b_pidf_right.setGoal(0);
     }
 
@@ -193,6 +199,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setJunction(Junction junction){
         switch(junction){
+            case NONE:
+                dr4b_pidf_left.setGoal(NONE);
+                dr4b_pidf_right.setGoal(NONE);
+                break;
             case GROUND:
                 dr4b_pidf_left.setGoal(GROUND);
                 dr4b_pidf_right.setGoal(GROUND);
