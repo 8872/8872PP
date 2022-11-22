@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
 import org.firstinspires.ftc.teamcode.command.claw.MoveClaw;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
@@ -80,8 +81,8 @@ public class TestMechanismsOpMode extends BaseOpMode {
 
         resetEncoders = (new GamepadButton(driverOp1, GamepadKeys.Button.A)).whenPressed(
                 new InstantCommand(() -> {
-                    dr4bLeftMotor.resetEncoder();
-                    dr4bRightMotor.resetEncoder();
+                    dr4bLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    dr4bRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }, arm));
 //        moveConeHigh = new MoveConeHigh(arm);
 //        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))

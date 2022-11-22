@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -11,28 +12,35 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 
 @Config
 public class ArmSubsystem extends SubsystemBase {
 
     private final ServoEx claw, slide;
-    private final MotorEx dr4bLeftMotor, dr4bRightMotor;
+    private final DcMotorEx dr4bLeftMotor, dr4bRightMotor;
 
-    public static double kV = 0.1;
+    public static double kV = 1.0/30;
     public static int LOW = -350;
     public static int MEDIUM = -850;
     public static int HIGH = -1750;
-    public static int GROUND = -100;
+    public static int GROUND = -50;
 
     // PID coefficients for left dr4b motor
     public static double dr4b_kP = 0.001;
     public static double dr4b_kI = 0;
     public static double dr4b_kD = 0.0001;
     public static double dr4b_kF = 0;
-    private PIDFController dr4b_pidf_left = new PIDFController(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
-    private PIDFController dr4b_pidf_right = new PIDFController(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
+    private PIDFCoefficients dr4b_coeffs = new PIDFCoefficients(dr4b_kP, dr4b_kI, dr4b_kD, dr4b_kF);
     private double output_left;
     private double output_right;
+    private double targetPos = 0;
+    private NanoClock clock = NanoClock.system();
+    private MotionProfile profile;
+    double profileStart;
     // enum representing different junction levels
     public enum Junction {
         GROUND,
@@ -41,13 +49,13 @@ public class ArmSubsystem extends SubsystemBase {
         HIGH
     }
 
-    public ArmSubsystem(ServoEx claw, ServoEx slide, MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor) {
+    public ArmSubsystem(ServoEx claw, ServoEx slide, DcMotorEx dr4bLeftMotor, DcMotorEx dr4bRightMotor) {
         this.claw = claw;
         this.slide = slide;
         this.dr4bLeftMotor = dr4bLeftMotor;
         this.dr4bRightMotor = dr4bRightMotor;
-        dr4b_pidf_left.setTolerance(30);
-        dr4b_pidf_left.setSetPoint(0); // temporary
+        this.dr4bLeftMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, dr4b_coeffs);
+        this.dr4bRightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, dr4b_coeffs);
     }
 
     // grab cone with a certain angle (for tuning)
@@ -82,52 +90,22 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void moveDr4b(double power){
-        dr4bRightMotor.set(power / 2);
-        dr4bLeftMotor.set(power / 2);
+        dr4bRightMotor.setPower(power);
+        dr4bLeftMotor.setPower(power);
     }
 
-    // moves dr4b to specified position
-    private void moveDr4b(Junction junction){
-        switch(junction){
-            case GROUND:
-                dr4b_pidf_left.setSetPoint(GROUND);
-                dr4b_pidf_right.setSetPoint(GROUND);
-                break;
-            case LOW:
-                dr4b_pidf_left.setSetPoint(LOW);
-                dr4b_pidf_right.setSetPoint(LOW);
-                break;
-            case MEDIUM:
-                dr4b_pidf_left.setSetPoint(MEDIUM);
-                dr4b_pidf_right.setSetPoint(MEDIUM);
-                break;
-            case HIGH:
-                dr4b_pidf_left.setSetPoint(HIGH); // tune later
-                dr4b_pidf_right.setSetPoint(HIGH);
-                Log.d("Test", "high");
-                break;
-        }
-        output_left = dr4b_pidf_left.calculate(dr4bLeftMotor.getCurrentPosition());
-        Log.d("atSetPoint", "" + dr4b_pidf_left.atSetPoint());
-        while(!dr4b_pidf_left.atSetPoint()){
+    private void moveDr4b(Junction junction){}
 
-            output_left = dr4b_pidf_left.calculate(dr4bLeftMotor.getCurrentPosition());
-            Log.d("output", "" + output_left);
-            Log.d("error", "" + dr4b_pidf_left.getPositionError());
-            Log.d("encoder", "" + dr4bLeftMotor.getCurrentPosition());
-            dr4bLeftMotor.set(output_left);
-            dr4bRightMotor.set(output_left);
-        }
-
-        dr4bLeftMotor.stopMotor();
-        dr4bRightMotor.stopMotor();
-
+    public boolean loopPID(){
+        double profileTime = clock.seconds() - profileStart;
+        if (profileTime > profile.duration()) return false;
+        MotionState motionState = profile.get(profileTime);
+        double targetPower = DriveConstants.kV * motionState.getV();
+        moveDr4b(targetPower);
+        return true;
     }
 
-    private void moveDr4b(Junction junction, boolean testMotionProfiling){
-        com.acmerobotics.roadrunner.control.PIDFController controller = new com.acmerobotics.roadrunner.control.PIDFController(new PIDCoefficients(dr4b_kP, dr4b_kI, dr4b_kD));
-
-        int targetPos = 0;
+    public void setJunction(Junction junction){
         switch(junction){
             case GROUND:
                 targetPos = GROUND;
@@ -140,71 +118,16 @@ public class ArmSubsystem extends SubsystemBase {
                 break;
             case HIGH:
                 targetPos = HIGH;
-                Log.d("Test", "high");
                 break;
         }
-
-        NanoClock clock = NanoClock.system();
-
-
-        MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
+        profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(0, 0, 0),
                 new MotionState(targetPos, 0, 0),
                 2000,
                 2000,
                 1000
         );
-
-        double profileStart = clock.seconds();
-
-        while(true){
-            double profileTime = clock.seconds() - profileStart;
-            if (profileTime > profile.duration()) {
-                break;
-            }
-
-            MotionState motionState = profile.get(profileTime);
-
-            controller.setTargetPosition(motionState.getX());
-            controller.setTargetVelocity(motionState.getV());
-            controller.setTargetAcceleration(motionState.getA());
-
-            controller.update(dr4bLeftMotor.getCurrentPosition());
-
-
-
-        }
-        dr4bLeftMotor.stopMotor();
-        dr4bRightMotor.stopMotor();
-
-    }
-
-    public void loopPID(){
-        output_left = dr4b_pidf_left.calculate(dr4bLeftMotor.getCurrentPosition());
-        output_right = dr4b_pidf_right.calculate(dr4bRightMotor.getCurrentPosition());
-        dr4bLeftMotor.set(output_left);
-        dr4bRightMotor.set(output_right);
-    }
-
-    public void setJunction(Junction junction){
-        switch(junction){
-            case GROUND:
-                dr4b_pidf_left.setSetPoint(GROUND);
-                dr4b_pidf_right.setSetPoint(GROUND);
-                break;
-            case LOW:
-                dr4b_pidf_left.setSetPoint(LOW);
-                dr4b_pidf_right.setSetPoint(LOW);
-                break;
-            case MEDIUM:
-                dr4b_pidf_left.setSetPoint(MEDIUM);
-                dr4b_pidf_right.setSetPoint(MEDIUM);
-                break;
-            case HIGH:
-                dr4b_pidf_left.setSetPoint(HIGH); // tune later
-                dr4b_pidf_right.setSetPoint(HIGH);
-                break;
-        }
+        profileStart = clock.seconds();
     }
 
     public double getOutput_left() {
@@ -212,7 +135,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double getError(){
-        return dr4b_pidf_left.getPositionError();
+        return 0.0;
+        //return dr4b_pidf_left.getPositionError();
     }
 
     // move dr4b to ground
