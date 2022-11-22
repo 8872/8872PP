@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -20,22 +19,20 @@ public class ArmSubsystem extends SubsystemBase {
     private final ServoEx claw, slide;
     private final MotorEx dr4bLeftMotor, dr4bRightMotor;
 
-    public static double kV = 0.1;
     public static int LOW = -350;
     public static int MEDIUM = -850;
     public static int HIGH = -1750;
     public static int GROUND = -50;
 
     // PID coefficients for left dr4b motor
-    public static double dr4b_kP = 0.001;
-    public static double dr4b_kI = 0;
-    public static double dr4b_kD = 0.0001;
-    public static double dr4b_kF = 0;
+    public static double dr4b_kP = 0.003;
+    public static double dr4b_kI = 0.07;
+    public static double dr4b_kD = 0;
     public static double maxVelocity = 1000;
     public static double maxAcceleration = 1000;
-    private ProfiledPIDController dr4b_pidf_left = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
+    private final ProfiledPIDController dr4b_pidf_left = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
-    private ProfiledPIDController dr4b_pidf_right = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
+    private final ProfiledPIDController dr4b_pidf_right = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
     private double output_left;
     private double output_right;
