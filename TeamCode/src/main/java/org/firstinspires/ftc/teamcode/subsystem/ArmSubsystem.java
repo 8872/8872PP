@@ -30,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static double dr4b_kF = 0;
     private double targetPos = 0;
     private final NanoClock clock = NanoClock.system();
-    private MotionProfile profile;
+    public MotionProfile profile;
     double profileStart;
     // enum representing different junction levels
     public enum Junction {
