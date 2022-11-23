@@ -73,7 +73,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // release cone
     public void release() {
-        claw.turnToAngle(0);
+        claw.turnToAngle(20);
     }
 
     // move slide to a specified position
@@ -89,7 +89,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // moves slide to the out most position
     public void slideOut(){
-        slide.setPosition(1);
+        slide.setPosition(0.9);
     }
 
     public void moveDr4b(double power){
