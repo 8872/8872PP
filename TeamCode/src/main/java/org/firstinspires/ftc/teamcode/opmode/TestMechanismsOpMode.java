@@ -13,6 +13,10 @@ import org.firstinspires.ftc.teamcode.command.claw.MoveClaw;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultFieldCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
+import org.firstinspires.ftc.teamcode.command.group.LiftHigh;
+import org.firstinspires.ftc.teamcode.command.group.LiftLow;
+import org.firstinspires.ftc.teamcode.command.group.LiftMedium;
+import org.firstinspires.ftc.teamcode.command.group.ResetGround;
 import org.firstinspires.ftc.teamcode.command.lift.*;
 import org.firstinspires.ftc.teamcode.command.slide.MoveSlide;
 import org.firstinspires.ftc.teamcode.command.slide.SlideIn;
@@ -48,6 +52,12 @@ public class TestMechanismsOpMode extends BaseOpMode {
 
     private Button changeCenter, clawStuff, slideStuff, resetEncoders;
     private Button moveHigh, moveMedium, moveLow, moveGround, moveNone;
+    private Button groupLow, groupMedium, groupHigh, groupReset;
+
+    private LiftLow liftLow;
+    private LiftMedium liftMedium;
+    private LiftHigh liftHigh;
+    private ResetGround resetGround;
 
 
     @Override
@@ -110,7 +120,7 @@ public class TestMechanismsOpMode extends BaseOpMode {
         setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
 
         moveNone = (new GamepadButton(driverOp1, GamepadKeys.Button.X))
-                .whenPressed(setJunctionGround);
+                .whenPressed(setJunctionNone);
         moveGround = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_DOWN))
                 .whenPressed(setJunctionGround);
         moveLow = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_LEFT))
@@ -127,6 +137,20 @@ public class TestMechanismsOpMode extends BaseOpMode {
 //            }
 //        }, arm));
 
+
+        liftLow = new LiftLow(arm);
+        liftMedium = new LiftMedium(arm);
+        liftHigh = new LiftHigh(arm);
+        resetGround = new ResetGround(arm);
+
+        groupLow = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_LEFT))
+                .whenPressed(liftLow);
+        groupMedium = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_RIGHT))
+                .whenPressed(liftMedium);
+        groupHigh = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_UP))
+                .whenPressed(liftHigh);
+        groupReset = (new GamepadButton(driverOp2, GamepadKeys.Button.X))
+                .whenPressed(resetGround);
 
 
         register(drive, arm);

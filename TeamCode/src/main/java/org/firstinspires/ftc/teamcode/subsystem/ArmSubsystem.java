@@ -41,6 +41,7 @@ public class ArmSubsystem extends SubsystemBase {
     private double output_left;
     private double output_right;
     public static double tolerance = 10;
+    public static Junction currentGoal = Junction.NONE;
     // enum representing different junction levels
     public enum Junction {
         NONE,
@@ -68,12 +69,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     // grab cone
     public void grab() {
-        claw.turnToAngle(100); // determine later
+        claw.turnToAngle(85); // determine later
     }
 
     // release cone
     public void release() {
-        claw.turnToAngle(0);
+        claw.turnToAngle(60);
     }
 
     // move slide to a specified position
@@ -84,12 +85,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     // moves slide to the in most position
     public void slideIn(){
-        slide.setPosition(0);
+        slide.setPosition(1);
     }
 
     // moves slide to the out most position
     public void slideOut(){
-        slide.setPosition(1);
+        slide.setPosition(0);
     }
 
     public void moveDr4b(double power){
@@ -198,6 +199,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setJunction(Junction junction){
+        currentGoal = junction;
         switch(junction){
             case NONE:
                 dr4b_pidf_left.setGoal(NONE);
@@ -255,6 +257,29 @@ public class ArmSubsystem extends SubsystemBase {
             dr4bLeftMotor.resetEncoder();
             dr4bRightMotor.resetEncoder();
         }
+    }
+    public int getLeftEncoderValue(){
+        return dr4bLeftMotor.getCurrentPosition();
+    }
+
+    public double getSlidePos(){
+        return slide.getPosition();
+    }
+
+    public boolean atTarget(){
+        switch(currentGoal){
+            case NONE:
+                return dr4bLeftMotor.getCurrentPosition()<20 && dr4bLeftMotor.getCurrentPosition()>-20;
+            case GROUND:
+                return dr4bLeftMotor.getCurrentPosition()<0 && dr4bLeftMotor.getCurrentPosition()>-100;
+            case LOW:
+                return dr4bLeftMotor.getCurrentPosition()<-300 && dr4bLeftMotor.getCurrentPosition()>-400;
+            case MEDIUM:
+                return dr4bLeftMotor.getCurrentPosition()<-800 && dr4bLeftMotor.getCurrentPosition()>-900;
+            case HIGH:
+                return dr4bLeftMotor.getCurrentPosition()<-1700 && dr4bLeftMotor.getCurrentPosition()>-1800;
+        }
+        return false;
     }
 
 }
