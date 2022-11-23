@@ -120,13 +120,12 @@ public class TestMechanismsOpMode extends BaseOpMode {
         moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))
                 .whenPressed(setJunctionHigh);
 
-        schedule(new RunCommand(() -> {
-            if(limitSwitch.isPressed()){
-                dr4bLeftMotor.resetEncoder();
-                dr4bRightMotor.resetEncoder();
-            }
-        }, arm));
-
+//        schedule(new RunCommand(() -> {
+//            if(limitSwitch.isPressed()){
+//                dr4bLeftMotor.resetEncoder();
+//                dr4bRightMotor.resetEncoder();
+//            }
+//        }, arm));
 
 
 

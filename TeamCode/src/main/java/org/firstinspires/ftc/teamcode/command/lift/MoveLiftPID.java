@@ -14,5 +14,6 @@ public class MoveLiftPID extends CommandBase {
     @Override
     public void execute() {
         arm.loopPID();
+        arm.resetEncoders();
     }
 }

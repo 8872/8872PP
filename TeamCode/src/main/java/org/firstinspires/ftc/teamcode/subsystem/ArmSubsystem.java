@@ -250,4 +250,11 @@ public class ArmSubsystem extends SubsystemBase {
         moveDr4b(Junction.HIGH);
     }
 
+    public void resetEncoders(){
+        if(limitSwitch.isPressed()){
+            dr4bLeftMotor.resetEncoder();
+            dr4bRightMotor.resetEncoder();
+        }
+    }
+
 }
