@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.command.group;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
+import org.firstinspires.ftc.teamcode.command.lift.MoveToLocation;
 import org.firstinspires.ftc.teamcode.command.lift.SetJunction;
+import org.firstinspires.ftc.teamcode.command.slide.DelayedSlideIn;
 import org.firstinspires.ftc.teamcode.command.slide.SlideIn;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
 import org.firstinspires.ftc.teamcode.command.lift.MoveConeGround;
@@ -16,28 +18,28 @@ public class ResetGround extends SequentialCommandGroup {
                 new ReleaseCone(arm),
                 new GrabCone(arm)
         );
-        if(arm.getSlidePos() < 0.5)
+        if(arm.getSlidePos() > 0.5)
             addCommands(
                     new SetJunction(arm, ArmSubsystem.Junction.NONE)
             );
-        else if(arm.getLeftEncoderValue() < 250)
+        else if(arm.getLeftEncoderValue() > -250)
             addCommands(
                     new SetJunction(arm, ArmSubsystem.Junction.LOW),
-                    new SlideIn(arm),
-                    new SetJunction(arm, ArmSubsystem.Junction.NONE)
-            );
-        else if(arm.getLeftEncoderValue() < 800)
-            addCommands(
+                    new MoveToLocation(arm),
+                    new DelayedSlideIn(arm),
                     new SetJunction(arm, ArmSubsystem.Junction.NONE),
-                    new SlideIn(arm)
+                    new MoveToLocation(arm)
+            );
+        else if(arm.getLeftEncoderValue() > -800)
+            addCommands(
+                    new DelayedSlideIn(arm),
+                    new SetJunction(arm, ArmSubsystem.Junction.NONE),
+                    new MoveToLocation(arm)
             );
         else
             addCommands(
-                    //new ParallelCommandGroup(
-                            new SetJunction(arm, ArmSubsystem.Junction.NONE),
-                            new SlideIn(arm)
-
-        //)
+                    new SetJunction(arm, ArmSubsystem.Junction.NONE),
+                    new SlideIn(arm)
             );
         addCommands(
                 new ReleaseCone(arm)
@@ -45,5 +47,3 @@ public class ResetGround extends SequentialCommandGroup {
 
     }
 }
-//problem: how to make the low junction sequential
-//TODO: make sure left encoder reset works

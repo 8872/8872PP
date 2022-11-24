@@ -42,6 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
     private double output_right;
     public static double tolerance = 10;
     public static Junction currentGoal = Junction.NONE;
+    public static double slideGoal = 1.0;
     // enum representing different junction levels
     public enum Junction {
         NONE,
@@ -85,11 +86,13 @@ public class ArmSubsystem extends SubsystemBase {
 
     // moves slide to the in most position
     public void slideIn(){
+        slideGoal = 1.0;
         slide.setPosition(1);
     }
 
     // moves slide to the out most position
     public void slideOut(){
+        slideGoal = 0.0;
         slide.setPosition(0);
     }
 
@@ -282,4 +285,7 @@ public class ArmSubsystem extends SubsystemBase {
         return false;
     }
 
+    public boolean slidePosReached(){
+        return Math.abs(slide.getPosition()-slideGoal)<0.2;
+    }
 }
