@@ -43,6 +43,10 @@ public class ArmSubsystem extends SubsystemBase {
     public static double tolerance = 10;
     public static Junction currentGoal = Junction.NONE;
     public static double slideGoal = 1.0;
+    public static double slideInPos = 1.0;
+    public static double slideOutPos = 0.0;
+    public static double clawGrabPos = 25;
+    public static double clawReleasePos = 85;
     // enum representing different junction levels
     public enum Junction {
         NONE,
@@ -70,12 +74,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     // grab cone
     public void grab() {
-        claw.turnToAngle(85); // determine later
+        claw.turnToAngle(clawGrabPos); // determine later
     }
 
     // release cone
     public void release() {
-        claw.turnToAngle(60);
+        claw.turnToAngle(clawReleasePos);
     }
 
     // move slide to a specified position
@@ -87,13 +91,13 @@ public class ArmSubsystem extends SubsystemBase {
     // moves slide to the in most position
     public void slideIn(){
         slideGoal = 1.0;
-        slide.setPosition(1);
+        slide.setPosition(slideInPos);
     }
 
     // moves slide to the out most position
     public void slideOut(){
         slideGoal = 0.0;
-        slide.setPosition(0);
+        slide.setPosition(slideOutPos);
     }
 
     public void moveDr4b(double power){

@@ -4,12 +4,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
+@Autonomous
 public class CycleTest extends LinearOpMode {
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
@@ -24,8 +27,8 @@ public class CycleTest extends LinearOpMode {
     private double waitTime1;
     private ElapsedTime waitTimer1;
 
-    int pickupPosition = -200;
-    int coneCounter = 3;
+    int pickupPosition = -120;
+    int coneCounter = 4;
 
     private enum DRIVE_PHASE {
         DEPOSIT,
@@ -35,9 +38,14 @@ public class CycleTest extends LinearOpMode {
         IDLE
     }
     boolean waitingForExtend = false;
+    boolean waitingForRetract = false;
+    private double waitTime2;
+    private ElapsedTime waitTimer2;
+
+    boolean waitingForReopen = false;
 
     DRIVE_PHASE currentState = DRIVE_PHASE.IDLE;
-    Pose2d startPose = new Pose2d(-36, -64, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,15 +66,17 @@ public class CycleTest extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         preload = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-31, -4, Math.toRadians(30)))
+                .lineToLinearHeading(new Pose2d(54, -1.6, Math.toRadians(143.5)))
                 .build();
 
         retrieve = drive.trajectoryBuilder(preload.end())
-                .lineToLinearHeading(new Pose2d(-68, -12, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(50, 27.1, Math.toRadians(94.4)), SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         deposit = drive.trajectoryBuilder(retrieve.end())
-                .lineToLinearHeading(new Pose2d(-31, -4, Math.toRadians(30)))
+                .lineToLinearHeading(new Pose2d(54, -1.6, Math.toRadians(143.5)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         //TODO: make it park based on the sleeve
@@ -77,6 +87,9 @@ public class CycleTest extends LinearOpMode {
         waitTime1 = 1.0;
         waitTimer1 = new ElapsedTime();
 
+        waitTime2 = 0.5;
+        waitTimer2 = new ElapsedTime();
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -85,6 +98,7 @@ public class CycleTest extends LinearOpMode {
         waitingForExtend = true;
         waitTimer1.reset();
         currentState = DRIVE_PHASE.DEPOSIT;
+        arm.grab();
         drive.followTrajectoryAsync(preload);
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -99,10 +113,11 @@ public class CycleTest extends LinearOpMode {
                 case WAIT:
                     if (waitTimer1.seconds() >= waitTime1) {
                         arm.release();
-                        arm.slideIn();
+                        waitingForRetract = true;
+                        waitTimer2.reset();
                         arm.setJunction(pickupPosition);
                         coneCounter--;
-                        pickupPosition -= 50;
+                        pickupPosition -= 30;
                         if(coneCounter<0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectoryAsync(park);
@@ -131,10 +146,22 @@ public class CycleTest extends LinearOpMode {
                 case IDLE:
                     break;
             }
-            if(waitingForExtend && arm.getLeftEncoderValue()<-250){
+            if(waitingForExtend && arm.getLeftEncoderValue()<-350){
                 waitingForExtend = false;
                 arm.slideOut();
             }
+            if(waitingForRetract && waitTimer2.seconds() >= waitTime2){
+                arm.slideIn();
+                arm.grab();
+                waitingForRetract = false;
+                waitingForReopen = true;
+                waitTimer1.reset();
+            }
+            if(waitingForReopen && waitTimer1.seconds() >= waitTime1){
+                arm.release();
+                waitingForReopen = false;
+            }
+
 
             drive.update();
             arm.loopPID();
