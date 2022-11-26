@@ -201,6 +201,11 @@ public class ArmSubsystem extends SubsystemBase {
         dr4bRightMotor.set(output_right);
     }
 
+    public void setJunction(int goal){
+        dr4b_pidf_left.setGoal(goal);
+        dr4b_pidf_right.setGoal(goal);
+    }
+
     public void setJunction(Junction junction){
         currentGoal = junction;
         switch(junction){
