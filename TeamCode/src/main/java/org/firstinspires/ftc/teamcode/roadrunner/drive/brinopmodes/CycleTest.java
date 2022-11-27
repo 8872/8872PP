@@ -64,18 +64,17 @@ public class CycleTest extends LinearOpMode {
         arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
 
         drive.setPoseEstimate(startPose);
-
         preload = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(54, -1.6, Math.toRadians(143.5)))
+                .lineToLinearHeading(new Pose2d(56, -0.7, 2.18))
                 .build();
 
         retrieve = drive.trajectoryBuilder(preload.end())
-                .lineToSplineHeading(new Pose2d(50, 27.1, Math.toRadians(94.4)), SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToSplineHeading(new Pose2d(50.1, 25.8, 1.66), SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         deposit = drive.trajectoryBuilder(retrieve.end())
-                .lineToLinearHeading(new Pose2d(54, -1.6, Math.toRadians(143.5)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(56, -0.7, 2.18), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
