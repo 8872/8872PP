@@ -25,15 +25,15 @@ public class ArmSubsystem extends SubsystemBase {
     public static int NONE = 10;
     public static int LOW = -336;
     public static int MEDIUM = -839;
-    public static int HIGH = -1750;
+    public static int HIGH = -1800;
     public static int GROUND = -25;
 
     // PID coefficients for left dr4b motor
     public static double dr4b_kP = 0.003;
     public static double dr4b_kI = 0.05;
     public static double dr4b_kD = 0.0003;
-    public static double maxVelocity = 1000;
-    public static double maxAcceleration = 1000;
+    public static double maxVelocity = 2000;
+    public static double maxAcceleration = 2000;
     private final ProfiledPIDController dr4b_pidf_left = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
     private final ProfiledPIDController dr4b_pidf_right = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
@@ -45,8 +45,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static double slideGoal = 1.0;
     public static double slideInPos = 1.0;
     public static double slideOutPos = 0.0;
-    public static double clawGrabPos = 25;
-    public static double clawReleasePos = 85;
+    public static double clawGrabPos = 30;
+    public static double clawReleasePos = 60;
     // enum representing different junction levels
     public enum Junction {
         NONE,
@@ -92,6 +92,7 @@ public class ArmSubsystem extends SubsystemBase {
     public void slideIn(){
         slideGoal = 1.0;
         slide.setPosition(slideInPos);
+        slide.getPosition();
     }
 
     // moves slide to the out most position
@@ -296,5 +297,13 @@ public class ArmSubsystem extends SubsystemBase {
 
     public boolean slidePosReached(){
         return Math.abs(slide.getPosition()-slideGoal)<0.2;
+    }
+
+    public int getCaseNumber(){
+        if(dr4bLeftMotor.getCurrentPosition() > -500){
+            return 0;
+        }else if(dr4bLeftMotor.getCurrentPosition() > -800){
+            return 1;
+        }else return 2;
     }
 }

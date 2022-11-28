@@ -13,6 +13,7 @@ public class LiftHigh extends SequentialCommandGroup {
     public LiftHigh(ArmSubsystem arm){
         addCommands(
                 new SetJunction(arm, ArmSubsystem.Junction.HIGH),
+                new MoveToLocation(arm),
                 new SlideOut(arm)
         );
     }

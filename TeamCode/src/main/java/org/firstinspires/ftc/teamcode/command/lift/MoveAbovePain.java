@@ -4,24 +4,27 @@ import android.util.Log;
 import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
-public class SetJunction extends CommandBase {
+public class MoveAbovePain extends CommandBase {
     private final ArmSubsystem arm;
-    private ArmSubsystem.Junction junction;
 
-    public SetJunction(ArmSubsystem arm, ArmSubsystem.Junction junction) {
+    public MoveAbovePain(ArmSubsystem arm) {
         this.arm = arm;
-        this.junction = junction;
         addRequirements(arm);
     }
 
     @Override
-    public void initialize() {
-        arm.setJunction(junction);
+    public void initialize(){
+        if(arm.getLeftEncoderValue() > -550){
+            arm.setJunction(-600);
+        }
     }
-
+    @Override
+    public void execute() {
+        arm.loopPID();
+        arm.resetEncoders();
+    }
     @Override
     public boolean isFinished() {
-        Log.d("SetJunction status", "finished");
-        return true;
+        return arm.getLeftEncoderValue()<-550;
     }
 }

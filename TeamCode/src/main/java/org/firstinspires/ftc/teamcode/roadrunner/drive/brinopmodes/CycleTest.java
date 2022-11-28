@@ -27,10 +27,11 @@ public class CycleTest extends LinearOpMode {
     private double waitTime1;
     private ElapsedTime waitTimer1;
 
-    int pickupPosition = -120;
+    int pickupPosition = -140;
     int coneCounter = 4;
 
     private enum DRIVE_PHASE {
+        WAIT_FOR_PRELOAD,
         DEPOSIT,
         WAIT,
         RETRIEVE,
@@ -65,7 +66,7 @@ public class CycleTest extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         preload = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(56, -0.7, 2.18))
+                .lineToLinearHeading(new Pose2d(56, 0.4, 2.18))
                 .build();
 
         retrieve = drive.trajectoryBuilder(preload.end())
@@ -74,7 +75,7 @@ public class CycleTest extends LinearOpMode {
                 .build();
 
         deposit = drive.trajectoryBuilder(retrieve.end())
-                .lineToLinearHeading(new Pose2d(56, -0.7, 2.18), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(56, 0.4, 2.18), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -86,26 +87,39 @@ public class CycleTest extends LinearOpMode {
         waitTime1 = 1.0;
         waitTimer1 = new ElapsedTime();
 
-        waitTime2 = 0.5;
+        waitTime2 = 1;
         waitTimer2 = new ElapsedTime();
+
+        double waitTimeInitial = 1;
+        ElapsedTime waitTimerInitial = new ElapsedTime();
 
         waitForStart();
 
         if (isStopRequested()) return;
 
+        arm.grab();
+
         arm.setJunction(ArmSubsystem.Junction.HIGH);
         waitingForExtend = true;
         waitTimer1.reset();
-        currentState = DRIVE_PHASE.DEPOSIT;
+        currentState = DRIVE_PHASE.WAIT_FOR_PRELOAD;
         arm.grab();
-        drive.followTrajectoryAsync(preload);
+        waitTimerInitial.reset();
+        //drive.followTrajectoryAsync(preload);
 
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
+                case WAIT_FOR_PRELOAD:
+                    arm.grab();
+                    if(waitTimerInitial.seconds() <= waitTimeInitial){
+                        drive.followTrajectoryAsync(preload);
+                        currentState = DRIVE_PHASE.DEPOSIT;
+                    }
                 case DEPOSIT:
                     if (!drive.isBusy()) {
                         currentState = DRIVE_PHASE.WAIT;
                         waitTimer1.reset();
+
                     }
                     break;
 
@@ -116,7 +130,7 @@ public class CycleTest extends LinearOpMode {
                         waitTimer2.reset();
                         arm.setJunction(pickupPosition);
                         coneCounter--;
-                        pickupPosition -= 30;
+                        pickupPosition += 30;
                         if(coneCounter<0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectoryAsync(park);
@@ -131,6 +145,7 @@ public class CycleTest extends LinearOpMode {
                     if (!drive.isBusy()) {
                         arm.grab();
                         arm.setJunction(ArmSubsystem.Junction.HIGH);
+                        sleep(500);
                         waitingForExtend = true;
                         currentState = DRIVE_PHASE.DEPOSIT;
                         drive.followTrajectoryAsync(deposit);

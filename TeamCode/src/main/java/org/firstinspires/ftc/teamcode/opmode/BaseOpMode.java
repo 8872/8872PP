@@ -48,6 +48,7 @@ public class BaseOpMode extends CommandOpMode {
         // what the proper min and max?
         claw = new SimpleServo(hardwareMap, "claw", 0, 120);
         slide = new SimpleServo(hardwareMap, "slide", 0, 120);
+        slide.setPosition(1.0);
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
 //        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
         dr4bLeftMotor.resetEncoder();
@@ -64,7 +65,7 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("dr4bLeftMotor Power", round(dr4bLeftMotor.motor.getPower()));
         telemetry.addData("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
         telemetry.addData("dr4bRightMotor encoder", dr4bRightMotor.getCurrentPosition());
-        telemetry.addData("dr4bLeftMotor encoder", dr4bLeftMotor.getCurrentPosition());
+        telemetry.addData("dr4bLeftMotor encoder", arm.getLeftEncoderValue());
 
         telemetry.addData("pid output", arm.getOutput_left());
         telemetry.addData("position error", arm.getError());

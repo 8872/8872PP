@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.command.lift;
 
+import android.util.Log;
 import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
@@ -18,6 +19,7 @@ public class MoveToLocation extends CommandBase{
     }
     @Override
     public boolean isFinished() {
+        Log.d("MoveToLocation status", "finished");
         return arm.atTarget();
     }
 }
