@@ -92,7 +92,7 @@ public class TestMechanismsOpMode extends BaseOpMode {
 
         moveLift = new MoveLift(arm, () -> driverOp1.getRightY());
 
-        resetEncoders = (new GamepadButton(driverOp1, GamepadKeys.Button.A)).whenPressed(
+        resetEncoders = (new GamepadButton(driverOp2, GamepadKeys.Button.LEFT_STICK_BUTTON)).whenPressed(
                 new InstantCommand(() -> {
                     dr4bLeftMotor.resetEncoder();
                     dr4bRightMotor.resetEncoder();
