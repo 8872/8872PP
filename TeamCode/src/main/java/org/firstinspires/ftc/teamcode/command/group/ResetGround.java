@@ -15,8 +15,7 @@ public class ResetGround extends SequentialCommandGroup {
 
         addCommands(
                 new GrabCone(arm),
-                new MoveAbovePain(arm),
-                new SlideIn(arm),
+                new DelayedSlideIn(arm, 1.5),
                 new SetJunction(arm, ArmSubsystem.Junction.NONE),
                 new MoveToLocation(arm),
                 new ReleaseCone(arm)

@@ -20,8 +20,7 @@ import org.firstinspires.ftc.teamcode.command.slide.SlideIn;
 import org.firstinspires.ftc.teamcode.command.slide.SlideOut;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
-@Disabled // remove later
-@TeleOp(name = "Test Mechanism")
+@TeleOp(name = "final opmode ig")
 public class TeleOpMode extends BaseOpMode {
     private GamepadEx driverOp1;
     private GamepadEx driverOp2;
@@ -30,14 +29,7 @@ public class TeleOpMode extends BaseOpMode {
     private DefaultRobotCentricDrive robotCentricDrive;
     private MoveSlide moveSlide;
     private MoveClaw moveClaw;
-    private MoveLift moveLift;
-
-    private MoveConeHigh moveConeHigh;
-    private MoveConeMedium moveConeMedium;
-    private MoveConeLow moveConeLow;
-    private MoveConeGround moveConeGround;
-
-
+    private ManualLift manualLift;
     private GrabCone grabCone;
     private ReleaseCone releaseCone;
 
@@ -54,8 +46,6 @@ public class TeleOpMode extends BaseOpMode {
     @Override
     public void initialize() {
         super.initialize();
-
-
 
         driverOp1 = new GamepadEx(gamepad1);
         driverOp2 = new GamepadEx(gamepad2);
@@ -81,7 +71,6 @@ public class TeleOpMode extends BaseOpMode {
 //        moveSlide = new MoveSlide(arm, () -> driverOp2.getLeftY());
 //        moveClaw = new MoveClaw(arm, () -> driverOp2.getRightX());
 
-        moveLift = new MoveLift(arm, () -> driverOp2.getRightY());
 
         resetEncoders = (new GamepadButton(driverOp2, GamepadKeys.Button.A)).whenPressed(
                 new InstantCommand(() -> {

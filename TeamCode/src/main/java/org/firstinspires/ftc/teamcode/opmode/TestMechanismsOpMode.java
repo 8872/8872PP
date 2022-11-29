@@ -35,10 +35,6 @@ public class TestMechanismsOpMode extends BaseOpMode {
     private MoveClaw moveClaw;
     private MoveLift moveLift;
 
-    private MoveConeHigh moveConeHigh;
-    private MoveConeMedium moveConeMedium;
-    private MoveConeLow moveConeLow;
-    private MoveConeGround moveConeGround;
 
 
     private GrabCone grabCone;
@@ -79,7 +75,7 @@ public class TestMechanismsOpMode extends BaseOpMode {
 
         grabCone = new GrabCone(arm);
         releaseCone = new ReleaseCone(arm);
-        clawStuff = (new GamepadButton(driverOp1, GamepadKeys.Button.B))
+        clawStuff = (new GamepadButton(driverOp2, GamepadKeys.Button.LEFT_BUMPER))
                 .toggleWhenPressed(grabCone, releaseCone);
 
         slideIn = new SlideIn(arm);
@@ -113,22 +109,23 @@ public class TestMechanismsOpMode extends BaseOpMode {
 
         moveLiftPID = new MoveLiftPID(arm);
 
-        setJunctionNone = new SetJunction(arm, ArmSubsystem.Junction.NONE);
-        setJunctionGround = new SetJunction(arm, ArmSubsystem.Junction.GROUND);
-        setJunctionLow = new SetJunction(arm, ArmSubsystem.Junction.LOW);
-        setJunctionMedium = new SetJunction(arm, ArmSubsystem.Junction.MEDIUM);
-        setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
 
-        moveNone = (new GamepadButton(driverOp1, GamepadKeys.Button.X))
-                .whenPressed(setJunctionNone);
-        moveGround = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_DOWN))
+        //setJunctionNone = new SetJunction(arm, ArmSubsystem.Junction.NONE);
+        setJunctionGround = new SetJunction(arm, ArmSubsystem.Junction.GROUND);
+//        setJunctionLow = new SetJunction(arm, ArmSubsystem.Junction.LOW);
+//        setJunctionMedium = new SetJunction(arm, ArmSubsystem.Junction.MEDIUM);
+//        setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
+
+//        moveNone = (new GamepadButton(driverOp1, GamepadKeys.Button.X))
+//                .whenPressed(setJunctionNone);
+        moveGround = (new GamepadButton(driverOp2, GamepadKeys.Button.X))
                 .whenPressed(setJunctionGround);
-        moveLow = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_LEFT))
-                .whenPressed(setJunctionLow);
-        moveMedium = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_RIGHT))
-                .whenPressed(setJunctionMedium);
-        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))
-                .whenPressed(setJunctionHigh);
+//        moveLow = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_LEFT))
+//                .whenPressed(setJunctionLow);
+//        moveMedium = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_RIGHT))
+//                .whenPressed(setJunctionMedium);
+//        moveHigh = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP))
+//                .whenPressed(setJunctionHigh);
 
 //        schedule(new RunCommand(() -> {
 //            if(limitSwitch.isPressed()){
@@ -143,13 +140,13 @@ public class TestMechanismsOpMode extends BaseOpMode {
         liftHigh = new LiftHigh(arm);
         resetGround = new ResetGround(arm);
 
-        groupLow = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_LEFT))
+        groupLow = (new GamepadButton(driverOp2, GamepadKeys.Button.A))
                 .whenPressed(liftLow);
-        groupMedium = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_RIGHT))
+        groupMedium = (new GamepadButton(driverOp2, GamepadKeys.Button.B))
                 .whenPressed(liftMedium);
-        groupHigh = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_UP))
+        groupHigh = (new GamepadButton(driverOp2, GamepadKeys.Button.Y))
                 .whenPressed(liftHigh);
-        groupReset = (new GamepadButton(driverOp2, GamepadKeys.Button.X))
+        groupReset = (new GamepadButton(driverOp2, GamepadKeys.Button.RIGHT_BUMPER))
                 .whenPressed(resetGround);
 
 

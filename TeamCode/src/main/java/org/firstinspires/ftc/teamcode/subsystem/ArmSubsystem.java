@@ -47,6 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static double slideOutPos = 0.0;
     public static double clawGrabPos = 30;
     public static double clawReleasePos = 60;
+    public static int manualLiftSpeed = 1;
     // enum representing different junction levels
     public enum Junction {
         NONE,
@@ -144,60 +145,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     }
 
-    private void moveDr4b(Junction junction, boolean testMotionProfiling){
-        com.acmerobotics.roadrunner.control.PIDFController controller = new com.acmerobotics.roadrunner.control.PIDFController(new PIDCoefficients(dr4b_kP, dr4b_kI, dr4b_kD));
 
-        int targetPos = 0;
-        switch(junction){
-            case GROUND:
-                targetPos = GROUND;
-                break;
-            case LOW:
-                targetPos = LOW;
-                break;
-            case MEDIUM:
-                targetPos = MEDIUM;
-                break;
-            case HIGH:
-                targetPos = HIGH;
-                Log.d("Test", "high");
-                break;
-        }
-
-        NanoClock clock = NanoClock.system();
-
-
-        MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                new MotionState(0, 0, 0),
-                new MotionState(targetPos, 0, 0),
-                2000,
-                2000,
-                1000
-        );
-
-        double profileStart = clock.seconds();
-
-        while(true){
-            double profileTime = clock.seconds() - profileStart;
-            if (profileTime > profile.duration()) {
-                break;
-            }
-
-            MotionState motionState = profile.get(profileTime);
-
-            controller.setTargetPosition(motionState.getX());
-            controller.setTargetVelocity(motionState.getV());
-            controller.setTargetAcceleration(motionState.getA());
-
-            controller.update(dr4bLeftMotor.getCurrentPosition());
-
-
-
-        }
-        dr4bLeftMotor.stopMotor();
-        dr4bRightMotor.stopMotor();
-
-    }
 
     public void loopPID(){
         output_left = dr4b_pidf_left.calculate(dr4bLeftMotor.getCurrentPosition());
@@ -245,26 +193,6 @@ public class ArmSubsystem extends SubsystemBase {
         return dr4b_pidf_left.getPositionError();
     }
 
-    // move dr4b to ground
-    public void dr4bGround(){
-         moveDr4b(Junction.GROUND);
-    }
-
-    // move dr4b to low junction
-    public void dr4bLow(){
-        moveDr4b(Junction.LOW);
-    }
-
-    // move dr4b to medium junction
-    public void dr4bMedium(){
-        moveDr4b(Junction.MEDIUM);
-    }
-
-    // move dr4b to high junction
-    public void dr4bHigh(){
-        moveDr4b(Junction.HIGH);
-    }
-
     public void resetEncoders(){
         if(limitSwitch.isPressed()){
             dr4bLeftMotor.resetEncoder();
@@ -306,4 +234,10 @@ public class ArmSubsystem extends SubsystemBase {
             return 1;
         }else return 2;
     }
+
+    public void changeSetpoint(double joystickInput){
+        dr4b_pidf_left.setGoal((int) (dr4bLeftMotor.getCurrentPosition()+joystickInput*manualLiftSpeed));
+        dr4b_pidf_right.setGoal((int) (dr4bRightMotor.getCurrentPosition()+joystickInput*manualLiftSpeed));
+    }
+
 }
