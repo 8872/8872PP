@@ -10,6 +10,7 @@ public class SlideIn extends SimpleArmCommand {
 
     @Override
     public void initialize() {
+        arm.release();
         arm.slideIn();
     }
 }

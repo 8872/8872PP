@@ -16,6 +16,6 @@ public class ManualLift extends CommandBase {
 
     @Override
     public void execute() {
-        arm.changeSetpoint(change.getAsDouble());
+        arm.changeSetPoint(change.getAsDouble());
     }
 }

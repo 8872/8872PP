@@ -86,7 +86,7 @@ public class TestMechanismsOpMode extends BaseOpMode {
 //        moveSlide = new MoveSlide(arm, () -> driverOp2.getLeftY());
 //        moveClaw = new MoveClaw(arm, () -> driverOp2.getRightX());
 
-        moveLift = new MoveLift(arm, () -> driverOp1.getRightY());
+//        moveLift = new MoveLift(arm, () -> driverOp1.getRightY());
 
         resetEncoders = (new GamepadButton(driverOp2, GamepadKeys.Button.LEFT_STICK_BUTTON)).whenPressed(
                 new InstantCommand(() -> {
@@ -107,7 +107,7 @@ public class TestMechanismsOpMode extends BaseOpMode {
 //        moveLow = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_LEFT))
 //                .whenPressed(moveConeLow);
 
-        moveLiftPID = new MoveLiftPID(arm);
+        moveLiftPID = new MoveLiftPID(arm, () -> driverOp1.getRightY());
 
 
         //setJunctionNone = new SetJunction(arm, ArmSubsystem.Junction.NONE);

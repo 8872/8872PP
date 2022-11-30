@@ -2,17 +2,11 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.profile.MotionProfile;
-import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
-import com.acmerobotics.roadrunner.profile.MotionState;
-import com.acmerobotics.roadrunner.util.NanoClock;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @Config
@@ -23,7 +17,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final TouchSensor limitSwitch;
 
     public static int NONE = 10;
-    public static int LOW = -336;
+    public static int LOW = -450;
     public static int MEDIUM = -839;
     public static int HIGH = -1800;
     public static int GROUND = -25;
@@ -45,9 +39,9 @@ public class ArmSubsystem extends SubsystemBase {
     public static double slideGoal = 1.0;
     public static double slideInPos = 1.0;
     public static double slideOutPos = 0.0;
-    public static double clawGrabPos = 30;
+    public static double clawGrabPos = 85;
     public static double clawReleasePos = 60;
-    public static int manualLiftSpeed = 1;
+    public static int manualLiftSpeed = 5;
     // enum representing different junction levels
     public enum Junction {
         NONE,
@@ -235,7 +229,7 @@ public class ArmSubsystem extends SubsystemBase {
         }else return 2;
     }
 
-    public void changeSetpoint(double joystickInput){
+    public void changeSetPoint(double joystickInput){
         dr4b_pidf_left.setGoal((int) (dr4bLeftMotor.getCurrentPosition()+joystickInput*manualLiftSpeed));
         dr4b_pidf_right.setGoal((int) (dr4bRightMotor.getCurrentPosition()+joystickInput*manualLiftSpeed));
     }
