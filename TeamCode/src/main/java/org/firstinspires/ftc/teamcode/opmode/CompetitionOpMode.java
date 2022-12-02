@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
 import org.firstinspires.ftc.teamcode.command.claw.MoveClaw;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
@@ -22,7 +18,7 @@ import org.firstinspires.ftc.teamcode.command.slide.SlideOut;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
 @TeleOp(name = "final opmode ig pls work ;-;")
-public class TeleOpMode extends BaseOpMode {
+public class CompetitionOpMode extends BaseOpMode {
     private GamepadEx driverOp1;
     private GamepadEx driverOp2;
 

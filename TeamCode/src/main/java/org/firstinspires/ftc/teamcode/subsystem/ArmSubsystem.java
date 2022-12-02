@@ -41,7 +41,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static double slideOutPos = 0.0;
     public static double clawGrabPos = 85;
     public static double clawReleasePos = 60;
-    public static int manualLiftSpeed = 5;
+    public static int manualLiftSpeed = 30;
     // enum representing different junction levels
     public enum Junction {
         NONE,
@@ -232,6 +232,8 @@ public class ArmSubsystem extends SubsystemBase {
     public void changeSetPoint(double joystickInput){
         dr4b_pidf_left.setGoal((int) (dr4bLeftMotor.getCurrentPosition()+joystickInput*manualLiftSpeed));
         dr4b_pidf_right.setGoal((int) (dr4bRightMotor.getCurrentPosition()+joystickInput*manualLiftSpeed));
+        Log.d("setpoint left", "" + dr4b_pidf_left.getSetpoint().position);
+        Log.d("setpoint right", "" + dr4b_pidf_right.getSetpoint().position);
     }
 
 }
