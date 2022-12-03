@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.brinopmodes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,10 +11,22 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
+@Config
 @Autonomous
 public class CycleTest extends LinearOpMode {
+
+    public static double initial_x_pos = 55;
+    public static double initial_y_pos = -4.5;
+    public static double spline_x_pos = 52;
+    public static double spline_y_pos = 5;
+    public static double retrieve_x_pos = 52;
+    public static double retrieve_y_pos = 25.5;
+    public static double deposit_x_pos = 55;
+    public static double deposit_y_pos = -4.5;
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
     private SimpleServo claw, slide;
@@ -22,26 +35,35 @@ public class CycleTest extends LinearOpMode {
     private SampleMecanumDrive drive;
     private ArmSubsystem arm;
 
-    private Trajectory preload, retrieve, deposit, park;
+    private TrajectorySequence preload;
+    private TrajectorySequenceBuilder preload_turn;
+    private TrajectorySequence retrieve;
+    private TrajectorySequence deposit;//, park, skuffedFix;
 
     private double waitTime1;
     private ElapsedTime waitTimer1;
 
-    int pickupPosition = -140;
-    int coneCounter = 4;
+    int pickupPosition = -130;
+    int coneCounter = 5;
 
     private enum DRIVE_PHASE {
+        INITIAL_GRAB,
         WAIT_FOR_PRELOAD,
         DEPOSIT,
-        WAIT,
+        WAIT_FOR_DEPOSIT,
+        MOVE_TO_RETRIEVE,
         RETRIEVE,
+        WAIT_FOR_GRAB,
         PARK,
         IDLE
     }
     boolean waitingForExtend = false;
     boolean waitingForRetract = false;
+    boolean waitingForLower = false;
     private double waitTime2;
     private ElapsedTime waitTimer2;
+    private ElapsedTime waitTimerInitial;
+    double waitTimeInitial;
 
     boolean waitingForReopen = false;
 
@@ -65,79 +87,112 @@ public class CycleTest extends LinearOpMode {
         arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
 
         drive.setPoseEstimate(startPose);
-        preload = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(56, 0.4, 2.18))
+
+
+        /*
+        preload = drive.trajectorySequenceBuilder(startPose)
+                .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
+                .turn(2.315)
                 .build();
 
-        retrieve = drive.trajectoryBuilder(preload.end())
-                .lineToSplineHeading(new Pose2d(50.1, 25.8, 1.66), SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+        retrieve = drive.trajectorySequenceBuilder(preload.end())
+                .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
-        deposit = drive.trajectoryBuilder(retrieve.end())
-                .lineToLinearHeading(new Pose2d(56, 0.4, 2.18), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+        deposit = drive.trajectorySequenceBuilder(retrieve.end())
+                .back(Math.abs(spline_y_pos-deposit_y_pos),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64),SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
-
+         */
         //TODO: make it park based on the sleeve
-        park = drive.trajectoryBuilder(preload.end())
-                .lineToSplineHeading(new Pose2d(0, 0, Math.toRadians(0)))
-                .build();
+//        park = drive.trajectoryBuilder(drive.getPoseEstimate())
+//                .lineToSplineHeading(new Pose2d(0, 0, Math.toRadians(0)))
+//                .build();
 
-        waitTime1 = 1.0;
+        waitTime1 = 0.5;
         waitTimer1 = new ElapsedTime();
 
         waitTime2 = 1;
         waitTimer2 = new ElapsedTime();
 
-        double waitTimeInitial = 1;
-        ElapsedTime waitTimerInitial = new ElapsedTime();
+        waitTimeInitial = 1.0;
+        waitTimerInitial = new ElapsedTime();
 
+        ElapsedTime waitTimer3 = new ElapsedTime();
+        double waitTime3 = 0.5;
+
+        ElapsedTime waitTimerRetrieve = new ElapsedTime();
+        double waitTimeRetrieve = 0.5;
+
+
+        telemetry.addData("initialized", true);
+        telemetry.update();
         waitForStart();
 
         if (isStopRequested()) return;
 
-        arm.grab();
 
-        arm.setJunction(ArmSubsystem.Junction.HIGH);
-        waitingForExtend = true;
-        waitTimer1.reset();
+
         currentState = DRIVE_PHASE.WAIT_FOR_PRELOAD;
-        arm.grab();
-        waitTimerInitial.reset();
-        //drive.followTrajectoryAsync(preload);
 
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
-                    arm.grab();
-                    if(waitTimerInitial.seconds() <= waitTimeInitial){
-                        drive.followTrajectoryAsync(preload);
+                    if(waitTimerInitial.seconds() <= waitTimeInitial && !drive.isBusy()){
+                        arm.grab();
+                        sleep(1000);
+                        arm.setJunction(ArmSubsystem.Junction.HIGH);
+                        waitingForExtend = true;
+                        drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
+                                .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
+                                .turn(2.315)
+                                .build());
                         currentState = DRIVE_PHASE.DEPOSIT;
                     }
+                    break;
                 case DEPOSIT:
                     if (!drive.isBusy()) {
-                        currentState = DRIVE_PHASE.WAIT;
+                        currentState = DRIVE_PHASE.WAIT_FOR_DEPOSIT;
                         waitTimer1.reset();
-
                     }
                     break;
 
-                case WAIT:
+                case WAIT_FOR_DEPOSIT:
                     if (waitTimer1.seconds() >= waitTime1) {
                         arm.release();
-                        waitingForRetract = true;
+                        waitTimerRetrieve.reset();
+                        currentState = DRIVE_PHASE.MOVE_TO_RETRIEVE;
+                    }
+                    break;
+                case MOVE_TO_RETRIEVE:
+                    if(waitTimerRetrieve.seconds() >= waitTimeRetrieve){
+                        arm.grab();
+                        arm.slideIn();
+                        waitingForReopen = true;
                         waitTimer2.reset();
-                        arm.setJunction(pickupPosition);
-                        coneCounter--;
-                        pickupPosition += 30;
-                        if(coneCounter<0){
+                        waitingForLower = true;
+                        waitTimer3.reset();
+                        if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
-                            drive.followTrajectoryAsync(park);
+                            drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                                    .turn(Math.toRadians(-312.64))
+                                    .build());
                         }else{
                             currentState = DRIVE_PHASE.RETRIEVE;
-                            drive.followTrajectoryAsync(retrieve);
+                            drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                    .build());
                         }
+                        coneCounter--;
+
                     }
                     break;
 
@@ -145,18 +200,27 @@ public class CycleTest extends LinearOpMode {
                     if (!drive.isBusy()) {
                         arm.grab();
                         arm.setJunction(ArmSubsystem.Junction.HIGH);
-                        sleep(500);
-                        waitingForExtend = true;
-                        currentState = DRIVE_PHASE.DEPOSIT;
-                        drive.followTrajectoryAsync(deposit);
+                        waitTimer2.reset();
+                        currentState = DRIVE_PHASE.WAIT_FOR_GRAB;
                     }
                     break;
-
+                case WAIT_FOR_GRAB:
+                    if(waitTimer2.seconds()>=waitTime2){
+                        waitingForExtend = true;
+                        currentState = DRIVE_PHASE.DEPOSIT;
+                        drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                                .back(Math.abs(spline_y_pos-deposit_y_pos),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64),SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                .build());
+                    }
+                    break;
                 case PARK:
                     if(!drive.isBusy()){
                         currentState = DRIVE_PHASE.IDLE;
                     }
-
+                    break;
                 case IDLE:
                     break;
             }
@@ -171,9 +235,14 @@ public class CycleTest extends LinearOpMode {
                 waitingForReopen = true;
                 waitTimer1.reset();
             }
-            if(waitingForReopen && waitTimer1.seconds() >= waitTime1){
+            if(waitingForReopen && waitTimer2.seconds() >= waitTime2){
                 arm.release();
                 waitingForReopen = false;
+            }
+            if(waitingForLower && waitTimer3.seconds() >= waitTime3){
+                arm.setJunction(pickupPosition);
+                pickupPosition += 28;
+                waitingForLower = false;
             }
 
 
@@ -184,6 +253,7 @@ public class CycleTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("drive phase", currentState);
             telemetry.update();
         }
     }
