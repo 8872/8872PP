@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 
 @Config
 @Autonomous
-public class CycleTest extends LinearOpMode {
+public class LeftAuto extends LinearOpMode {
 
     public static double initial_x_pos = 55.56;
     public static double initial_y_pos = -2;
@@ -148,17 +148,15 @@ public class CycleTest extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
-                    if(waitTimerInitial.seconds() <= waitTimeInitial && !drive.isBusy()){
-                        arm.grab();
-                        sleep(1000);
-                        arm.setJunction(ArmSubsystem.Junction.HIGH);
-                        waitingForExtend = true;
-                        drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
-                                .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
-                                .turn(Math.toRadians(-69))
-                                .build());
-                        currentState = DRIVE_PHASE.DEPOSIT;
-                    }
+                    arm.grab();
+                    sleep(1000);
+                    arm.setJunction(ArmSubsystem.Junction.HIGH);
+                    waitingForExtend = true;
+                    drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
+                            .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
+                            .turn(Math.toRadians(-69))
+                            .build());
+                    currentState = DRIVE_PHASE.DEPOSIT;
                     break;
                 case DEPOSIT:
                     if (!drive.isBusy()) {
