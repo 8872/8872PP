@@ -24,7 +24,7 @@ public class LeftAuto extends LinearOpMode {
     public static double spline_x_pos = 51;
     public static double spline_y_pos = 5.5;
     public static double retrieve_x_pos = 52;
-    public static double retrieve_y_pos = 27.33;
+    public static double retrieve_y_pos = 26.75;
     public static double deposit_x_pos = 54.75;
     public static double deposit_y_pos = -3.33;
     public static double x_change = 0.3;

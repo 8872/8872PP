@@ -19,15 +19,15 @@ import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 @Autonomous
 public class RightAuto extends LinearOpMode {
 
-    public static double initial_x_pos = 55.56;
+    public static double initial_x_pos = 55.3;
     public static double initial_y_pos = 2;
-    public static double spline_x_pos = 51;
+    public static double spline_x_pos = 50;
     public static double spline_y_pos = -5.5;
     public static double retrieve_x_pos = 52;
-    public static double retrieve_y_pos = -27.33;
-    public static double deposit_x_pos = 54.75;
-    public static double deposit_y_pos = 3.33;
-    public static double x_change = 0.3;
+    public static double retrieve_y_pos = -26.9;
+    public static double deposit_x_pos = 54.5;
+    public static double deposit_y_pos = 1.7;
+    public static double x_change = -0.4;
     public static double y_change = 0.3;
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
@@ -148,14 +148,14 @@ public class RightAuto extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
-                    if(waitTimerInitial.seconds() <= waitTimeInitial && !drive.isBusy()){
+                    if(true){
                         arm.grab();
                         sleep(1000);
                         arm.setJunction(ArmSubsystem.Junction.HIGH);
                         waitingForExtend = true;
                         drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
                                 .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
-                                .turn(Math.toRadians(69))
+                                .turn(Math.toRadians(56))
                                 .build());
                         currentState = DRIVE_PHASE.DEPOSIT;
                     }
@@ -183,7 +183,8 @@ public class RightAuto extends LinearOpMode {
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .turn(Math.toRadians(45))
+                                    .splineTo(new Vector2d(spline_x_pos, 0), Math.toRadians(270), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .build());
                         }else{
                             waitingForReopen = true;
