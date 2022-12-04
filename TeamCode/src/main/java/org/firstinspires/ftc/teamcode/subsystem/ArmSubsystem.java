@@ -42,6 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static double clawGrabPos = 60;
     public static double clawReleasePos = 85;
     public static int manualLiftSpeed = 30;
+    boolean clawClosed = true;
     // enum representing different junction levels
     public enum Junction {
         NONE,
@@ -70,11 +71,13 @@ public class ArmSubsystem extends SubsystemBase {
     // grab cone
     public void grab() {
         claw.turnToAngle(clawGrabPos); // determine later
+        clawClosed = true;
     }
 
     // release cone
     public void release() {
         claw.turnToAngle(clawReleasePos);
+        clawClosed = false;
     }
 
     // move slide to a specified position
@@ -236,4 +239,8 @@ public class ArmSubsystem extends SubsystemBase {
         Log.d("setpoint right", "" + dr4b_pidf_right.getSetpoint().position);
     }
 
+    public String clawState(){
+        if(clawClosed) return "Closed";
+        return "Open";
+    }
 }

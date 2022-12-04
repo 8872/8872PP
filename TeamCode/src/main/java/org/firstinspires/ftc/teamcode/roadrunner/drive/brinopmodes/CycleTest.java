@@ -19,14 +19,16 @@ import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
 @Autonomous
 public class CycleTest extends LinearOpMode {
 
-    public static double initial_x_pos = 55;
-    public static double initial_y_pos = -4.5;
-    public static double spline_x_pos = 52;
-    public static double spline_y_pos = 5;
+    public static double initial_x_pos = 55.56;
+    public static double initial_y_pos = -2;
+    public static double spline_x_pos = 51;
+    public static double spline_y_pos = 5.5;
     public static double retrieve_x_pos = 52;
-    public static double retrieve_y_pos = 25.5;
-    public static double deposit_x_pos = 55;
-    public static double deposit_y_pos = -4.5;
+    public static double retrieve_y_pos = 27.33;
+    public static double deposit_x_pos = 54.75;
+    public static double deposit_y_pos = -3.33;
+    public static double x_change = 0.3;
+    public static double y_change = 0.3;
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
     private SimpleServo claw, slide;
@@ -43,8 +45,8 @@ public class CycleTest extends LinearOpMode {
     private double waitTime1;
     private ElapsedTime waitTimer1;
 
-    int pickupPosition = -130;
-    int coneCounter = 5;
+    int pickupPosition = -120;
+    int coneCounter = 3;
 
     private enum DRIVE_PHASE {
         INITIAL_GRAB,
@@ -68,10 +70,13 @@ public class CycleTest extends LinearOpMode {
     boolean waitingForReopen = false;
 
     DRIVE_PHASE currentState = DRIVE_PHASE.IDLE;
-    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(180));
 
     @Override
     public void runOpMode() throws InterruptedException {
+        double storedSplineX = spline_x_pos;
+        double storedDepositX = deposit_x_pos;
+        double storedDepositY = deposit_y_pos;
 
         dr4bLeftMotor = new MotorEx(hardwareMap, "dr4bLeft");
         dr4bRightMotor = new MotorEx(hardwareMap, "dr4bRight");
@@ -117,7 +122,7 @@ public class CycleTest extends LinearOpMode {
         waitTime1 = 0.5;
         waitTimer1 = new ElapsedTime();
 
-        waitTime2 = 1;
+        waitTime2 = 1.5;
         waitTimer2 = new ElapsedTime();
 
         waitTimeInitial = 1.0;
@@ -150,7 +155,7 @@ public class CycleTest extends LinearOpMode {
                         waitingForExtend = true;
                         drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
                                 .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
-                                .turn(2.315)
+                                .turn(Math.toRadians(-69))
                                 .build());
                         currentState = DRIVE_PHASE.DEPOSIT;
                     }
@@ -173,23 +178,24 @@ public class CycleTest extends LinearOpMode {
                     if(waitTimerRetrieve.seconds() >= waitTimeRetrieve){
                         arm.grab();
                         arm.slideIn();
-                        waitingForReopen = true;
-                        waitTimer2.reset();
                         waitingForLower = true;
                         waitTimer3.reset();
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .turn(Math.toRadians(-312.64))
+                                    .turn(Math.toRadians(-45))
                                     .build());
                         }else{
+                            waitingForReopen = true;
+                            waitTimer2.reset();
                             currentState = DRIVE_PHASE.RETRIEVE;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .build());
+                            spline_x_pos += x_change;
                         }
                         coneCounter--;
 
@@ -211,10 +217,13 @@ public class CycleTest extends LinearOpMode {
                         drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                 .back(Math.abs(spline_y_pos-deposit_y_pos),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64),SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                 .build());
+                        deposit_x_pos += x_change;
+                        deposit_y_pos += y_change;
                     }
+
                     break;
                 case PARK:
                     if(!drive.isBusy()){
@@ -222,6 +231,9 @@ public class CycleTest extends LinearOpMode {
                     }
                     break;
                 case IDLE:
+                    deposit_y_pos = storedDepositY;
+                    deposit_x_pos = storedDepositX;
+                    spline_x_pos = storedSplineX;
                     break;
             }
             if(waitingForExtend && arm.getLeftEncoderValue()<-350){

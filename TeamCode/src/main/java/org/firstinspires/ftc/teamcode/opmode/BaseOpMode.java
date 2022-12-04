@@ -71,6 +71,7 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("position error", arm.getError());
 
         telemetry.addData("claw Position", claw.getPosition());
+        telemetry.addData("clawPos", arm.clawState());
         telemetry.addData("slide1 Position", slide.getPosition());
 
         telemetry.addData("IMU Heading", imu.getHeading());

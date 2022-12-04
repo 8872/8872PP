@@ -19,7 +19,7 @@ public class MoveLiftPID extends CommandBase {
     public void execute() {
         arm.resetEncoders();
         if(supplier.getAsDouble() != 0) {
-            arm.changeSetPoint(supplier.getAsDouble());
+            arm.changeSetPoint(supplier.getAsDouble()*2.5);
             arm.loopPID();
         } else {
             arm.loopPID();
