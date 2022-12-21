@@ -39,8 +39,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static double slideGoal = 1.0;
     public static double slideInPos = 1.0;
     public static double slideOutPos = 0.0;
-    public static double clawGrabPos = 60;
-    public static double clawReleasePos = 85;
+    public static double clawGrabPos = 40;
+    public static double clawReleasePos = 65;
     public static int manualLiftSpeed = 30;
     boolean clawClosed = true;
     // enum representing different junction levels

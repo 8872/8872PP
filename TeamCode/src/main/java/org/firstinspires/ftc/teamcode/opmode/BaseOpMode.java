@@ -38,7 +38,7 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.update();
     }
 
-    protected void initHardware() {
+    protected void  initHardware() {
         fL = new MotorEx(hardwareMap, "leftFront");
         fR = new MotorEx(hardwareMap, "rightFront");
         bL = new MotorEx(hardwareMap, "leftBack");
