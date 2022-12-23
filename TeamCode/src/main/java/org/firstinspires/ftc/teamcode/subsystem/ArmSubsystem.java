@@ -22,6 +22,11 @@ public class ArmSubsystem extends SubsystemBase {
     public static int HIGH = -1800;
     public static int GROUND = -25;
 
+    public static int FIRST_CONE = -125;
+    public static int SECOND_CONE = -95;
+    public static int THIRD_CONE = -69;
+    public static int FOURTH_CONE = -53;
+
     // PID coefficients for left dr4b motor
     public static double dr4b_kP = 0.003;
     public static double dr4b_kI = 0.05;
@@ -50,6 +55,12 @@ public class ArmSubsystem extends SubsystemBase {
         LOW,
         MEDIUM,
         HIGH
+    }
+    public enum ConeStack {
+        FIRST,
+        SECOND,
+        THIRD,
+        FOURTH
     }
 
     public ArmSubsystem(ServoEx claw, ServoEx slide, MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor, TouchSensor limitSwitch) {
@@ -178,6 +189,27 @@ public class ArmSubsystem extends SubsystemBase {
             case HIGH:
                 dr4b_pidf_left.setGoal(HIGH); // tune later
                 dr4b_pidf_right.setGoal(HIGH);
+                break;
+        }
+    }
+
+    public void setConeStack(ConeStack cone) {
+        switch(cone) {
+            case FIRST:
+                dr4b_pidf_left.setGoal(FIRST_CONE);
+                dr4b_pidf_right.setGoal(FIRST_CONE);
+                break;
+            case SECOND:
+                dr4b_pidf_left.setGoal(SECOND_CONE);
+                dr4b_pidf_right.setGoal(SECOND_CONE);
+                break;
+            case THIRD:
+                dr4b_pidf_left.setGoal(THIRD_CONE);
+                dr4b_pidf_right.setGoal(THIRD_CONE);
+                break;
+            case FOURTH:
+                dr4b_pidf_left.setGoal(FOURTH_CONE);
+                dr4b_pidf_right.setGoal(FOURTH_CONE);
                 break;
         }
     }

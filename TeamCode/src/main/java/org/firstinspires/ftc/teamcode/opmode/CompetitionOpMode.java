@@ -37,9 +37,10 @@ public class CompetitionOpMode extends BaseOpMode {
 
     private MoveLiftPID moveLiftPID;
     private SetJunction setJunctionLow, setJunctionMedium, setJunctionHigh, setJunctionGround, setJunctionNone;
+    private SetConeStack setFirst, setSecond, setThird, setFourth;
 
     private Button changeCenter, clawStuff, slideStuff, resetEncoders;
-    private Button moveHigh, moveMedium, moveLow, moveGround, moveNone;
+    private Button moveHigh, moveMedium, moveLow, moveGround, moveNone, moveFirst, moveSecond, moveThird, moveFourth;
 
 
     @Override
@@ -89,9 +90,11 @@ public class CompetitionOpMode extends BaseOpMode {
         setJunctionLow = new SetJunction(arm, ArmSubsystem.Junction.LOW);
         setJunctionMedium = new SetJunction(arm, ArmSubsystem.Junction.MEDIUM);
         setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
+        setFirst = new SetConeStack(arm, ArmSubsystem.ConeStack.FIRST);
+        setSecond = new SetConeStack(arm, ArmSubsystem.ConeStack.SECOND);
+        setThird = new SetConeStack(arm, ArmSubsystem.ConeStack.THIRD);
+        setFourth = new SetConeStack(arm, ArmSubsystem.ConeStack.FOURTH);
 
-        moveNone = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_DOWN))
-                .whenPressed(setJunctionNone);
         moveGround = (new GamepadButton(driverOp2, GamepadKeys.Button.X))
                 .whenPressed(setJunctionGround);
         moveLow = (new GamepadButton(driverOp2, GamepadKeys.Button.A))
@@ -100,6 +103,15 @@ public class CompetitionOpMode extends BaseOpMode {
                 .whenPressed(setJunctionMedium);
         moveHigh = (new GamepadButton(driverOp2, GamepadKeys.Button.Y))
                 .whenPressed(setJunctionHigh);
+
+        moveFirst = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_UP))
+                .whenPressed(setFirst);
+        moveSecond = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_LEFT))
+                .whenPressed(setSecond);
+        moveThird = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_RIGHT))
+                .whenPressed(setThird);
+        moveFourth = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_DOWN))
+                .whenPressed(setFourth);
 
         register(drive, arm);
         drive.setDefaultCommand(robotCentricDrive);
