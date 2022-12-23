@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.command.lift;
 
-import android.util.Log;
 import com.arcrobotics.ftclib.command.CommandBase;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 
 public class MoveAbovePain extends CommandBase {
-    private final ArmSubsystem arm;
+    private final LiftSubsystem arm;
 
-    public MoveAbovePain(ArmSubsystem arm) {
+    public MoveAbovePain(LiftSubsystem arm) {
         this.arm = arm;
         addRequirements(arm);
     }

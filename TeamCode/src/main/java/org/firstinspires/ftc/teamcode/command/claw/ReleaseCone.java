@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.command.claw;
 
-import org.firstinspires.ftc.teamcode.command.SimpleArmCommand;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import com.arcrobotics.ftclib.command.CommandBase;
+import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
 
-public class ReleaseCone extends SimpleArmCommand {
-    public ReleaseCone(ArmSubsystem arm) {
-        super(arm);
+public class ReleaseCone extends CommandBase {
+    private final ClawSubsystem claw;
+    public ReleaseCone(ClawSubsystem claw) {
+        this.claw = claw;
+        addRequirements(claw);
     }
 
     @Override
     public void initialize() {
-        arm.release();
+        claw.release();
     }
 }

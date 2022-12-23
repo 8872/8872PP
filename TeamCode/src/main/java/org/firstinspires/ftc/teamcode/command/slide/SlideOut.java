@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.command.slide;
 
-import org.firstinspires.ftc.teamcode.command.SimpleArmCommand;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import com.arcrobotics.ftclib.command.CommandBase;
+import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
 
-public class SlideOut extends SimpleArmCommand {
-    public SlideOut(ArmSubsystem arm) {
-        super(arm);
+public class SlideOut extends CommandBase {
+    private final SlideSubsystem slide;
+    public SlideOut(SlideSubsystem slide) {
+        this.slide = slide;
+        addRequirements(slide);
     }
 
     @Override
     public void initialize() {
-        arm.slideOut();
+        slide.out();
     }
 }

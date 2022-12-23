@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.command.claw;
 
-import org.firstinspires.ftc.teamcode.command.SimpleArmCommand;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import com.arcrobotics.ftclib.command.CommandBase;
+import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
 
-public class GrabCone extends SimpleArmCommand {
-    public GrabCone(ArmSubsystem arm) {
-        super(arm);
+public class GrabCone extends CommandBase {
+    private final ClawSubsystem claw;
+    public GrabCone(ClawSubsystem claw) {
+        this.claw = claw;
+        addRequirements(claw);
     }
 
     @Override
     public void initialize() {
-        arm.grab();
+        claw.grab();
     }
 }
