@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.command.lift;
 
 import android.util.Log;
 import com.arcrobotics.ftclib.command.CommandBase;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 
 public class MoveToLocation extends CommandBase{
-    private final ArmSubsystem arm;
+    private final LiftSubsystem arm;
 
-    public MoveToLocation(ArmSubsystem arm) {
+    public MoveToLocation(LiftSubsystem arm) {
         this.arm = arm;
         addRequirements(arm);
     }

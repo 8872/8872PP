@@ -7,20 +7,22 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class BaseOpMode extends CommandOpMode {
     protected MotorEx fL, fR, bL, bR, dr4bLeftMotor, dr4bRightMotor;
-    protected SimpleServo claw, slide;
+    protected SimpleServo clawServo, slideServo;
     protected DriveSubsystem drive;
-    protected ArmSubsystem arm;
+    protected LiftSubsystem lift;
+    protected ClawSubsystem claw;
+    protected SlideSubsystem slide;
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
@@ -29,7 +31,10 @@ public class BaseOpMode extends CommandOpMode {
         initHardware();
         setUpHardwareDevices();
         drive = new DriveSubsystem(fL, fR, bL, bR);
-        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        claw = new ClawSubsystem(clawServo);
+        slide = new SlideSubsystem(slideServo);
+
         imu = new RevIMU(hardwareMap);
         imu.init();
 
@@ -46,9 +51,9 @@ public class BaseOpMode extends CommandOpMode {
         dr4bLeftMotor = new MotorEx(hardwareMap, "dr4bLeft");
         dr4bRightMotor = new MotorEx(hardwareMap, "dr4bRight");
         // what the proper min and max?
-        claw = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slide = new SimpleServo(hardwareMap, "slide", 0, 120);
-        slide.setPosition(1.0);
+        clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
+        slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
+        slideServo.setPosition(1.0);
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
 //        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
         dr4bLeftMotor.resetEncoder();
@@ -64,25 +69,21 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("rightBack Power", round(bR.motor.getPower()));
         telemetry.addData("dr4bLeftMotor Power", round(dr4bLeftMotor.motor.getPower()));
         telemetry.addData("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
-        telemetry.addData("dr4bRightMotor encoder", dr4bRightMotor.getCurrentPosition());
-        telemetry.addData("dr4bLeftMotor encoder", arm.getLeftEncoderValue());
+        telemetry.addData("dr4bRightMotor Encoder", dr4bRightMotor.getCurrentPosition());
+        telemetry.addData("dr4bLeftMotor Encoder", dr4bLeftMotor.getCurrentPosition());
 
-        telemetry.addData("pid output", arm.getOutput_left());
-        telemetry.addData("position error", arm.getError());
+        telemetry.addData("Position Error", lift.getError());
 
-        telemetry.addData("claw Position", claw.getPosition());
-        telemetry.addData("slide1 Position", slide.getPosition());
+        telemetry.addData("claw Position", clawServo.getPosition());
+        telemetry.addData("slide Position", slideServo.getPosition());
 
         telemetry.addData("IMU Heading", imu.getHeading());
 
-        telemetry.addData("limit pressed", limitSwitch.isPressed());
+        telemetry.addData("Limit Pressed", limitSwitch.isPressed());
         telemetry.update();
     }
 
     protected void setUpHardwareDevices() {
-        // reverse motors
-        //fR.setInverted(true);
-        //bR.setInverted(true);
         fL.setInverted(true);
         bL.setInverted(true);
         fL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -92,7 +93,6 @@ public class BaseOpMode extends CommandOpMode {
 
         dr4bLeftMotor.setRunMode(Motor.RunMode.RawPower);
         dr4bRightMotor.setRunMode(Motor.RunMode.RawPower);
-        // brake ;-; ????
         dr4bLeftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         dr4bRightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }

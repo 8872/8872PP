@@ -10,17 +10,23 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.util.Junction;
 
 @Autonomous
 public class CycleTest extends LinearOpMode {
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
-    private SimpleServo claw, slide;
+    private SimpleServo clawServo, slideServo;
     private TouchSensor limitSwitch;
 
     private SampleMecanumDrive drive;
-    private ArmSubsystem arm;
+    private LiftSubsystem lift;
+    private ClawSubsystem claw;
+    private SlideSubsystem slide;
+
 
     private Trajectory preload, retrieve, deposit, park;
 
@@ -56,13 +62,16 @@ public class CycleTest extends LinearOpMode {
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();
 
-        claw = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slide = new SimpleServo(hardwareMap, "slide", 0, 120);
+        clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
+        slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
 
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
 
         drive = new SampleMecanumDrive(hardwareMap);
-        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        claw = new ClawSubsystem(clawServo);
+        slide = new SlideSubsystem(slideServo);
+
 
         drive.setPoseEstimate(startPose);
         preload = drive.trajectoryBuilder(startPose)
@@ -97,20 +106,20 @@ public class CycleTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        arm.grab();
+        claw.grab();
 
-        arm.setJunction(ArmSubsystem.Junction.HIGH);
+        lift.setJunction(Junction.HIGH);
         waitingForExtend = true;
         waitTimer1.reset();
         currentState = DRIVE_PHASE.WAIT_FOR_PRELOAD;
-        arm.grab();
+        claw.grab();
         waitTimerInitial.reset();
         //drive.followTrajectoryAsync(preload);
 
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
-                    arm.grab();
+                    claw.grab();
                     if(waitTimerInitial.seconds() <= waitTimeInitial){
                         drive.followTrajectoryAsync(preload);
                         currentState = DRIVE_PHASE.DEPOSIT;
@@ -125,10 +134,10 @@ public class CycleTest extends LinearOpMode {
 
                 case WAIT:
                     if (waitTimer1.seconds() >= waitTime1) {
-                        arm.release();
+                        claw.release();
                         waitingForRetract = true;
                         waitTimer2.reset();
-                        arm.setJunction(pickupPosition);
+                        lift.setJunction(pickupPosition);
                         coneCounter--;
                         pickupPosition += 30;
                         if(coneCounter<0){
@@ -143,8 +152,8 @@ public class CycleTest extends LinearOpMode {
 
                 case RETRIEVE:
                     if (!drive.isBusy()) {
-                        arm.grab();
-                        arm.setJunction(ArmSubsystem.Junction.HIGH);
+                        claw.grab();
+                        lift.setJunction(Junction.HIGH);
                         sleep(500);
                         waitingForExtend = true;
                         currentState = DRIVE_PHASE.DEPOSIT;
@@ -160,25 +169,25 @@ public class CycleTest extends LinearOpMode {
                 case IDLE:
                     break;
             }
-            if(waitingForExtend && arm.getLeftEncoderValue()<-350){
+            if(waitingForExtend && lift.getLeftEncoderValue()<-350){
                 waitingForExtend = false;
-                arm.slideOut();
+                slide.out();
             }
             if(waitingForRetract && waitTimer2.seconds() >= waitTime2){
-                arm.slideIn();
-                arm.grab();
+                slide.in();
+                claw.grab();
                 waitingForRetract = false;
                 waitingForReopen = true;
                 waitTimer1.reset();
             }
             if(waitingForReopen && waitTimer1.seconds() >= waitTime1){
-                arm.release();
+                claw.release();
                 waitingForReopen = false;
             }
 
 
             drive.update();
-            arm.loopPID();
+            lift.loopPID();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());

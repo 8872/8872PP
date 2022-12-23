@@ -8,21 +8,24 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.brinopmodes.CycleTest;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.util.Junction;
 
 @Autonomous
 public class autoCycle extends LinearOpMode {
 
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
-    private SimpleServo claw, slide;
+    private SimpleServo clawServo, slideServo;
     private TouchSensor limitSwitch;
 
     private SampleMecanumDrive drive;
-    private ArmSubsystem arm;
+    private LiftSubsystem lift;
+    private ClawSubsystem claw;
+    private SlideSubsystem slide;
 
     private Trajectory preload, retrieve, deposit, park;
 
@@ -56,13 +59,15 @@ public class autoCycle extends LinearOpMode {
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();
 
-        claw = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slide = new SimpleServo(hardwareMap, "slide", 0, 120);
+        clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
+        slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
 
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
 
         drive = new SampleMecanumDrive(hardwareMap);
-        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        claw = new ClawSubsystem(clawServo);
+        slide = new SlideSubsystem(slideServo);
 
         drive.setPoseEstimate(startPose);
 
@@ -74,12 +79,8 @@ public class autoCycle extends LinearOpMode {
 
 
         drive.followTrajectory(initalCone);
-        arm.setJunction(ArmSubsystem.Junction.HIGH);
-        arm.release();
-
-
-
-
+        lift.setJunction(Junction.HIGH);
+        claw.release();
 
     }
 

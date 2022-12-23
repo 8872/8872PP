@@ -6,29 +6,25 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
-import org.firstinspires.ftc.teamcode.command.claw.MoveClaw;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultFieldCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.SlowMode;
 import org.firstinspires.ftc.teamcode.command.lift.*;
-import org.firstinspires.ftc.teamcode.command.slide.MoveSlide;
 import org.firstinspires.ftc.teamcode.command.slide.SlideIn;
 import org.firstinspires.ftc.teamcode.command.slide.SlideOut;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.util.Junction;
 
-@TeleOp(name = "final opmode ig pls work ;-;")
-public class CompetitionOpMode extends BaseOpMode {
-    private GamepadEx driverOp1;
-    private GamepadEx driverOp2;
+@TeleOp(name = "Competition TeleOp")
+public final class CompetitionOpMode extends BaseOpMode {
+    private GamepadEx gamepadEx1;
+    private GamepadEx gamepadEx2;
+
 
     private DefaultFieldCentricDrive fieldCentricDrive;
     private DefaultRobotCentricDrive robotCentricDrive;
     private SlowMode slowMode;
 
-    private MoveSlide moveSlide;
-    private MoveClaw moveClaw;
-    private ManualLift manualLift;
     private GrabCone grabCone;
     private ReleaseCone releaseCone;
 
@@ -46,64 +42,47 @@ public class CompetitionOpMode extends BaseOpMode {
     public void initialize() {
         super.initialize();
 
-        driverOp1 = new GamepadEx(gamepad1);
-        driverOp2 = new GamepadEx(gamepad2);
+        gamepadEx1 = new GamepadEx(gamepad1);
+        gamepadEx2 = new GamepadEx(gamepad2);
 
-        fieldCentricDrive = new DefaultFieldCentricDrive(drive, () -> driverOp1.getLeftX(),
-                () -> driverOp1.getLeftY(), () -> driverOp1.getRightX(), () -> imu.getHeading());
-        robotCentricDrive = new DefaultRobotCentricDrive(drive, () -> driverOp1.getLeftX(),
-                () -> driverOp1.getRightX(), () -> driverOp1.getLeftY());
-        slowMode = new SlowMode(drive, () -> driverOp1.getLeftX(),
-                () -> driverOp1.getRightX(), () -> driverOp1.getLeftY());
+        fieldCentricDrive = new DefaultFieldCentricDrive(drive, gamepadEx1::getLeftX, gamepadEx1::getLeftY,
+                gamepadEx1::getRightX, imu::getHeading);
+        robotCentricDrive = new DefaultRobotCentricDrive(drive, gamepadEx1::getLeftX,
+                gamepadEx1::getRightX, gamepadEx1::getLeftY);
+        slowMode = new SlowMode(drive, gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY);
 
         // no field centric for u :)
-        changeCenter = (new GamepadButton(driverOp1, GamepadKeys.Button.LEFT_BUMPER)).
-                toggleWhenPressed(slowMode, robotCentricDrive);
+        changeCenter = new GamepadButton(gamepadEx1, GamepadKeys.Button.LEFT_BUMPER)
+                .toggleWhenPressed(slowMode, robotCentricDrive);
 
+        clawStuff = new GamepadButton(gamepadEx2, GamepadKeys.Button.LEFT_BUMPER)
+                .toggleWhenPressed(new GrabCone(claw), new ReleaseCone(claw));
 
-        grabCone = new GrabCone(arm);
-        releaseCone = new ReleaseCone(arm);
-        clawStuff = (new GamepadButton(driverOp2, GamepadKeys.Button.LEFT_BUMPER))
-                .toggleWhenPressed(grabCone, releaseCone);
+        slideStuff = (new GamepadButton(gamepadEx2, GamepadKeys.Button.RIGHT_BUMPER))
+                .toggleWhenPressed(new SlideOut(slide), new SlideIn(slide));
 
-        slideIn = new SlideIn(arm);
-        slideOut = new SlideOut(arm);
-        slideStuff = (new GamepadButton(driverOp2, GamepadKeys.Button.RIGHT_BUMPER))
-                .toggleWhenPressed(slideOut, slideIn);
+        moveLiftPID = new MoveLiftPID(lift, gamepadEx2::getRightY);
 
-//        moveSlide = new MoveSlide(arm, () -> driverOp2.getLeftY());
-//        moveClaw = new MoveClaw(arm, () -> driverOp2.getRightX());
+        setJunctionNone = new SetJunction(lift, Junction.NONE);
+        setJunctionGround = new SetJunction(lift, Junction.GROUND);
+        setJunctionLow = new SetJunction(lift, Junction.LOW);
+        setJunctionMedium = new SetJunction(lift, Junction.MEDIUM);
+        setJunctionHigh = new SetJunction(lift, Junction.HIGH);
 
-
-//        resetEncoders = (new GamepadButton(driverOp2, GamepadKeys.Button.A)).whenPressed(
-//                new InstantCommand(() -> {
-//                    dr4bLeftMotor.resetEncoder();
-//                    dr4bRightMotor.resetEncoder();
-//                }, arm));
-//
-
-        moveLiftPID = new MoveLiftPID(arm, () -> driverOp2.getRightY());
-
-        setJunctionNone = new SetJunction(arm, ArmSubsystem.Junction.NONE);
-        setJunctionGround = new SetJunction(arm, ArmSubsystem.Junction.GROUND);
-        setJunctionLow = new SetJunction(arm, ArmSubsystem.Junction.LOW);
-        setJunctionMedium = new SetJunction(arm, ArmSubsystem.Junction.MEDIUM);
-        setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
-
-        moveNone = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_DOWN))
+        moveNone = new GamepadButton(gamepadEx2, GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(setJunctionNone);
-        moveGround = (new GamepadButton(driverOp2, GamepadKeys.Button.X))
+        moveGround = new GamepadButton(gamepadEx2, GamepadKeys.Button.X)
                 .whenPressed(setJunctionGround);
-        moveLow = (new GamepadButton(driverOp2, GamepadKeys.Button.A))
+        moveLow = new GamepadButton(gamepadEx2, GamepadKeys.Button.A)
                 .whenPressed(setJunctionLow);
-        moveMedium = (new GamepadButton(driverOp2, GamepadKeys.Button.B))
+        moveMedium = new GamepadButton(gamepadEx2, GamepadKeys.Button.B)
                 .whenPressed(setJunctionMedium);
-        moveHigh = (new GamepadButton(driverOp2, GamepadKeys.Button.Y))
+        moveHigh = new GamepadButton(gamepadEx2, GamepadKeys.Button.Y)
                 .whenPressed(setJunctionHigh);
 
-        register(drive, arm);
+        register(drive, lift, claw, slide);
         drive.setDefaultCommand(robotCentricDrive);
-        arm.setDefaultCommand(moveLiftPID);
+        lift.setDefaultCommand(moveLiftPID);
 
     }
 

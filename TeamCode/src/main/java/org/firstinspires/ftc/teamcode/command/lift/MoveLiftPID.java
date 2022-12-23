@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.command.lift;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 
 import java.util.function.DoubleSupplier;
 
 public class MoveLiftPID extends CommandBase {
-    private final ArmSubsystem arm;
-    private DoubleSupplier supplier;
+    private final LiftSubsystem arm;
+    private final DoubleSupplier supplier;
 
-    public MoveLiftPID(ArmSubsystem arm, DoubleSupplier supplier) {
+    public MoveLiftPID(LiftSubsystem arm, DoubleSupplier supplier) {
         this.arm = arm;
         this.supplier = supplier;
         addRequirements(arm);
