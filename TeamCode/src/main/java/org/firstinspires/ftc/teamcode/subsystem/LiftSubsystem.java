@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
-import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -22,14 +21,14 @@ public class LiftSubsystem extends SubsystemBase {
     public static int ground = -25;
 
     // PID coefficients for left dr4b motor
-    public static double dr4b_kP = 0.003;
-    public static double dr4b_kI = 0.05;
-    public static double dr4b_kD = 0.0003;
+    public static double kP = 0.003;
+    public static double kI = 0.05;
+    public static double kD = 0.0003;
     public static double maxVelocity = 2000;
     public static double maxAcceleration = 2000;
-    private final ProfiledPIDController dr4b_pidf_left = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
+    private final ProfiledPIDController dr4b_pidf_left = new ProfiledPIDController(kP, kI, kD,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
-    private final ProfiledPIDController dr4b_pidf_right = new ProfiledPIDController(dr4b_kP, dr4b_kI, dr4b_kD,
+    private final ProfiledPIDController dr4b_pidf_right = new ProfiledPIDController(kP, kI, kD,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
     private double output_left;
     private double output_right;
@@ -51,7 +50,7 @@ public class LiftSubsystem extends SubsystemBase {
         dr4bLeftMotor.set(power / 2);
     }
 
-    public void loopPID(){
+    public void updatePID() {
         output_left = dr4b_pidf_left.calculate(dr4bLeftMotor.getCurrentPosition());
         output_right = dr4b_pidf_right.calculate(dr4bRightMotor.getCurrentPosition());
         dr4bLeftMotor.set(output_left);
@@ -83,18 +82,14 @@ public class LiftSubsystem extends SubsystemBase {
                 dr4b_pidf_right.setGoal(medium);
                 break;
             case HIGH:
-                dr4b_pidf_left.setGoal(high); // tune later
+                dr4b_pidf_left.setGoal(high);
                 dr4b_pidf_right.setGoal(high);
                 break;
         }
     }
 
-    public double getError(){
-        return dr4b_pidf_left.getPositionError();
-    }
-
-    public void resetEncoders() {
-        if(limitSwitch.isPressed()){
+    public void checkLimitSwitch() {
+        if (limitSwitch.isPressed()) {
             dr4bLeftMotor.resetEncoder();
             dr4bRightMotor.resetEncoder();
         }

@@ -187,7 +187,7 @@ public class CycleTest extends LinearOpMode {
 
 
             drive.update();
-            lift.loopPID();
+            lift.updatePID();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());

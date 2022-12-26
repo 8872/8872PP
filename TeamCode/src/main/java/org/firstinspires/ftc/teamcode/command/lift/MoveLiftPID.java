@@ -17,12 +17,12 @@ public class MoveLiftPID extends CommandBase {
 
     @Override
     public void execute() {
-        arm.resetEncoders();
+        arm.checkLimitSwitch();
         if(supplier.getAsDouble() != 0) {
             arm.changeSetPoint(supplier.getAsDouble());
-            arm.loopPID();
+            arm.updatePID();
         } else {
-            arm.loopPID();
+            arm.updatePID();
         }
     }
 }

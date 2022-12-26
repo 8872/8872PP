@@ -30,7 +30,7 @@ public class BaseOpMode extends CommandOpMode {
     public void initialize() {
         initHardware();
         setUpHardwareDevices();
-        drive = new DriveSubsystem(fL, fR, bL, bR);
+        drive = new DriveSubsystem(fL, fR, bL, bR, imu);
         lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
         claw = new ClawSubsystem(clawServo);
         slide = new SlideSubsystem(slideServo);
@@ -71,8 +71,6 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
         telemetry.addData("dr4bRightMotor Encoder", dr4bRightMotor.getCurrentPosition());
         telemetry.addData("dr4bLeftMotor Encoder", dr4bLeftMotor.getCurrentPosition());
-
-        telemetry.addData("Position Error", lift.getError());
 
         telemetry.addData("claw Position", clawServo.getPosition());
         telemetry.addData("slide Position", slideServo.getPosition());
