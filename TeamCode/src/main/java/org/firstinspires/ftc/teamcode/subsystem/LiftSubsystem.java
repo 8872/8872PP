@@ -21,6 +21,9 @@ public class LiftSubsystem extends SubsystemBase {
     public static int high = -1800;
     public static int ground = -25;
 
+    private final double TICKS_IN_DEGREES = 8192.0 / 360;
+
+
     // PID coefficients for left dr4b motor
     public static double kP = 0.003;
     public static double kI = 0.05;
@@ -29,9 +32,9 @@ public class LiftSubsystem extends SubsystemBase {
     public static double maxVelocity = 2000;
     public static double maxAcceleration = 2000;
     private final ProfiledPIDFController dr4b_pidf_left = new ProfiledPIDFController(kP, kI, kD, kF,
-            new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+            new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), TICKS_IN_DEGREES);
     private final ProfiledPIDFController dr4b_pidf_right = new ProfiledPIDFController(kP, kI, kD, kF,
-            new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+            new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), TICKS_IN_DEGREES);
     private double output_left;
     private double output_right;
     public static double tolerance = 10;

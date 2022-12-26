@@ -33,8 +33,8 @@ public class ProfiledPIDFController {
      */
     @SuppressWarnings("ParameterName")
     public ProfiledPIDFController(double Kp, double Ki, double Kd, double Kf,
-                                 TrapezoidProfile.Constraints constraints) {
-        m_controller = new PIDFControllerEx(Kp, Ki, Kd, Kf);
+                                 TrapezoidProfile.Constraints constraints, double ticksInDegrees) {
+        m_controller = new PIDFControllerEx(Kp, Ki, Kd, Kf, ticksInDegrees);
         m_constraints = constraints;
     }
 
