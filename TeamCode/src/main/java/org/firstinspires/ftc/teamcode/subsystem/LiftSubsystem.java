@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.util.Junction;
+import org.firstinspires.ftc.teamcode.util.ProfiledPIDFController;
 
 @Config
 public class LiftSubsystem extends SubsystemBase {
@@ -24,11 +25,12 @@ public class LiftSubsystem extends SubsystemBase {
     public static double kP = 0.003;
     public static double kI = 0.05;
     public static double kD = 0.0003;
+    public static double kF = 0;
     public static double maxVelocity = 2000;
     public static double maxAcceleration = 2000;
-    private final ProfiledPIDController dr4b_pidf_left = new ProfiledPIDController(kP, kI, kD,
+    private final ProfiledPIDFController dr4b_pidf_left = new ProfiledPIDFController(kP, kI, kD, kF,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
-    private final ProfiledPIDController dr4b_pidf_right = new ProfiledPIDController(kP, kI, kD,
+    private final ProfiledPIDFController dr4b_pidf_right = new ProfiledPIDFController(kP, kI, kD, kF,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
     private double output_left;
     private double output_right;
