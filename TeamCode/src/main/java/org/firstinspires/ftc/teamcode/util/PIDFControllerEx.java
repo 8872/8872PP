@@ -32,13 +32,14 @@ public class PIDFControllerEx {
     private double period;
 
     // for REV through bore encoder
-    private final double TICKS_IN_DEGREES = 8192.0 / 360;
+    private double ticksInDegrees;
 
     /**
      * The base constructor for the PIDF controller
      */
-    public PIDFControllerEx(double kp, double ki, double kd, double kf) {
+    public PIDFControllerEx(double kp, double ki, double kd, double kf, double ticksInDegrees) {
         this(kp, ki, kd, kf, 0, 0);
+        this.ticksInDegrees = ticksInDegrees;
     }
 
     /**
@@ -213,7 +214,7 @@ public class PIDFControllerEx {
         totalError = totalError < minIntegral ? minIntegral : Math.min(maxIntegral, totalError);
 
         // returns u(t)
-        return kP * errorVal_p + kI * totalError + kD * errorVal_v + kF * Math.cos(Math.toRadians(setPoint / TICKS_IN_DEGREES));
+        return kP * errorVal_p + kI * totalError + kD * errorVal_v + kF * Math.cos(Math.toRadians(setPoint / ticksInDegrees));
     }
 
     public void setPIDF(double kp, double ki, double kd, double kf) {
