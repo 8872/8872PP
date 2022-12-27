@@ -7,8 +7,8 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 @Config
 public class SlideSubsystem extends SubsystemBase {
     private final ServoEx slide;
-    public static int inPosition = 1;
-    public static int outPosition = 0;
+    public static double inPosition = 1;
+    public static double outPosition = 0;
 
     public SlideSubsystem(ServoEx slide){
         this.slide = slide;
@@ -16,11 +16,15 @@ public class SlideSubsystem extends SubsystemBase {
 
     // moves slide to the in most position
     public void in(){
+        slide.setPosition(inPosition * (1.0/3));
+        slide.setPosition(inPosition * (2.0/3));
         slide.setPosition(inPosition);
     }
 
     // moves slide to the out most position
     public void out(){
+        slide.setPosition(outPosition + inPosition * (2.0/3));
+        slide.setPosition(outPosition + inPosition * (1.0/3));
         slide.setPosition(outPosition);
     }
 }

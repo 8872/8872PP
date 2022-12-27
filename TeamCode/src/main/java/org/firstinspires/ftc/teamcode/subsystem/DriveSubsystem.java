@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
@@ -16,6 +17,9 @@ public class DriveSubsystem extends SubsystemBase {
     public static double kD = 0;
     private final AngleController controller = new AngleController(kP, kI, kD, 0);
     private double output;
+    public static boolean cubed = true;
+
+    public static int joystickTransformFactor = 30;
 
     public static double slowFactor = 3.5;
 
@@ -25,7 +29,19 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed){
-        drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+        double transformedStrafeSpeed;
+        double transformedForwardSpeed;
+        double transformedTurnSpeed;
+        if (!cubed) {
+            transformedStrafeSpeed = joystickTransform(strafeSpeed);
+            transformedForwardSpeed = joystickTransform(forwardSpeed);
+            transformedTurnSpeed = joystickTransform(turnSpeed);
+        } else {
+            transformedStrafeSpeed = joystickCubed(strafeSpeed);
+            transformedForwardSpeed = joystickCubed(forwardSpeed);
+            transformedTurnSpeed = joystickCubed(turnSpeed);
+        }
+        drive.driveRobotCentric(transformedStrafeSpeed, transformedForwardSpeed, transformedTurnSpeed);
     }
 
     public void driveFieldCentric(double strafeSpeed, double forwardSpeed,
@@ -45,6 +61,17 @@ public class DriveSubsystem extends SubsystemBase {
     public void updatePID(){
         output = controller.calculate(imu.getHeading());
         drive.driveWithMotorPowers(output, -output, output, -output);
+    }
+
+    // desmos: https://www.desmos.com/calculator/j2e6yaorld
+    public double joystickTransform(double input){
+        return (1.0 / (joystickTransformFactor - 1))
+                * Math.signum(input)
+                * (Math.pow(joystickTransformFactor, Math.abs(input))-1);
+    }
+
+    public double joystickCubed(double input){
+        return Math.pow(input, 3);
     }
 
 }
