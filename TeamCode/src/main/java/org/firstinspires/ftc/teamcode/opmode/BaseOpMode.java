@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import android.transition.Slide;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -10,17 +11,21 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class BaseOpMode extends CommandOpMode {
     protected MotorEx fL, fR, bL, bR, dr4bLeftMotor, dr4bRightMotor;
-    protected SimpleServo claw, slide;
+    protected SimpleServo clawServo, slideServo;
     protected DriveSubsystem drive;
-    protected ArmSubsystem arm;
+    protected ClawSubsystem claw;
+    protected LiftSubsystem lift;
+    protected SlideSubsystem slide;
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
@@ -29,7 +34,9 @@ public class BaseOpMode extends CommandOpMode {
         initHardware();
         setUpHardwareDevices();
         drive = new DriveSubsystem(fL, fR, bL, bR);
-        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        claw = new ClawSubsystem(clawServo);
+        lift = new LiftSubsystem(dr4bLeftMotor,dr4bRightMotor,limitSwitch);
+        slide = new SlideSubsystem(slideServo);
         imu = new RevIMU(hardwareMap);
         imu.init();
 
@@ -46,9 +53,9 @@ public class BaseOpMode extends CommandOpMode {
         dr4bLeftMotor = new MotorEx(hardwareMap, "dr4bLeft");
         dr4bRightMotor = new MotorEx(hardwareMap, "dr4bRight");
         // what the proper min and max?
-        claw = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slide = new SimpleServo(hardwareMap, "slide", 0, 120);
-        slide.setPosition(1.0);
+        clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
+        slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
+        slideServo.setPosition(1.0);
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
 //        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
         dr4bLeftMotor.resetEncoder();
@@ -65,14 +72,12 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("dr4bLeftMotor Power", round(dr4bLeftMotor.motor.getPower()));
         telemetry.addData("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
         telemetry.addData("dr4bRightMotor encoder", dr4bRightMotor.getCurrentPosition());
-        telemetry.addData("dr4bLeftMotor encoder", arm.getLeftEncoderValue());
+        telemetry.addData("dr4bLeftMotor encoder", dr4bLeftMotor.getCurrentPosition());
 
-        telemetry.addData("pid output", arm.getOutput_left());
-        telemetry.addData("position error", arm.getError());
+        telemetry.addData("position error", lift.getError());
 
-        telemetry.addData("claw Position", claw.getPosition());
-        telemetry.addData("clawPos", arm.clawState());
-        telemetry.addData("slide1 Position", slide.getPosition());
+        telemetry.addData("claw Position", clawServo.getPosition());
+        telemetry.addData("slide1 Position", slideServo.getPosition());
 
         telemetry.addData("IMU Heading", imu.getHeading());
 

@@ -2,20 +2,21 @@ package org.firstinspires.ftc.teamcode.command.lift;
 
 import android.util.Log;
 import com.arcrobotics.ftclib.command.CommandBase;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.util.ConeStack;
 
 public class SetConeStack extends CommandBase {
-    private final ArmSubsystem arm;
-    private ArmSubsystem.ConeStack cone;
-    public SetConeStack(ArmSubsystem arm, ArmSubsystem.ConeStack cone) {
-        this.arm = arm;
+    private final LiftSubsystem lift;
+    private final ConeStack cone;
+    public SetConeStack(LiftSubsystem lift, ConeStack cone) {
+        this.lift = lift;
         this.cone = cone;
-        addRequirements(arm);
+        addRequirements(lift);
     }
 
     @Override
     public void initialize() {
-        arm.setConeStack(cone);
+        lift.setConeStack(cone);
     }
 
     @Override

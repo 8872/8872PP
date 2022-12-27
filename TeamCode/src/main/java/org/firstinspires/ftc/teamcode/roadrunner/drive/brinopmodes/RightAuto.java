@@ -13,7 +13,10 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.util.Junction;
 
 @Config
 @Autonomous
@@ -31,11 +34,13 @@ public class RightAuto extends LinearOpMode {
     public static double y_change = 0.3;
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
-    private SimpleServo claw, slide;
+    private SimpleServo clawServo, slideServo;
     private TouchSensor limitSwitch;
 
     private SampleMecanumDrive drive;
-    private ArmSubsystem arm;
+    private LiftSubsystem lift;
+    private SlideSubsystem slide;
+    private ClawSubsystem claw;
 
     private TrajectorySequence preload;
     private TrajectorySequenceBuilder preload_turn;
@@ -83,13 +88,13 @@ public class RightAuto extends LinearOpMode {
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();
 
-        claw = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slide = new SimpleServo(hardwareMap, "slide", 0, 120);
+        clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
+        slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
 
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
 
         drive = new SampleMecanumDrive(hardwareMap);
-        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
 
         drive.setPoseEstimate(startPose);
 
@@ -149,9 +154,9 @@ public class RightAuto extends LinearOpMode {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
                     if(true){
-                        arm.grab();
+                        claw.grab();
                         sleep(1000);
-                        arm.setJunction(ArmSubsystem.Junction.HIGH);
+                        lift.setJunction(Junction.HIGH);
                         waitingForExtend = true;
                         drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
                                 .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
@@ -169,15 +174,15 @@ public class RightAuto extends LinearOpMode {
 
                 case WAIT_FOR_DEPOSIT:
                     if (waitTimer1.seconds() >= waitTime1) {
-                        arm.release();
+                        claw.release();
                         waitTimerRetrieve.reset();
                         currentState = DRIVE_PHASE.MOVE_TO_RETRIEVE;
                     }
                     break;
                 case MOVE_TO_RETRIEVE:
                     if(waitTimerRetrieve.seconds() >= waitTimeRetrieve){
-                        arm.grab();
-                        arm.slideIn();
+                        claw.grab();
+                        slide.in();
                         waitingForLower = true;
                         waitTimer3.reset();
                         if(coneCounter <= 0){
@@ -205,8 +210,8 @@ public class RightAuto extends LinearOpMode {
 
                 case RETRIEVE:
                     if (!drive.isBusy()) {
-                        arm.grab();
-                        arm.setJunction(ArmSubsystem.Junction.HIGH);
+                        claw.grab();
+                        lift.setJunction(Junction.HIGH);
                         waitTimer2.reset();
                         currentState = DRIVE_PHASE.WAIT_FOR_GRAB;
                     }
@@ -237,30 +242,30 @@ public class RightAuto extends LinearOpMode {
                     spline_x_pos = storedSplineX;
                     break;
             }
-            if(waitingForExtend && arm.getLeftEncoderValue()<-350){
+            if(waitingForExtend && lift.getLeftEncoderValue()<-350){
                 waitingForExtend = false;
-                arm.slideOut();
+                slide.out();
             }
             if(waitingForRetract && waitTimer2.seconds() >= waitTime2){
-                arm.slideIn();
-                arm.grab();
+                slide.in();
+                claw.grab();
                 waitingForRetract = false;
                 waitingForReopen = true;
                 waitTimer1.reset();
             }
             if(waitingForReopen && waitTimer2.seconds() >= waitTime2){
-                arm.release();
+                claw.release();
                 waitingForReopen = false;
             }
             if(waitingForLower && waitTimer3.seconds() >= waitTime3){
-                arm.setJunction(pickupPosition);
+                lift.setJunction(pickupPosition);
                 pickupPosition += 28;
                 waitingForLower = false;
             }
 
 
             drive.update();
-            arm.loopPID();
+            lift.loopPID();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());

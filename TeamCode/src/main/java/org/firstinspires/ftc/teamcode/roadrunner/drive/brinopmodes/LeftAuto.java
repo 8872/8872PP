@@ -9,11 +9,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.util.Junction;
 
 @Config
 @Autonomous
@@ -31,11 +35,13 @@ public class LeftAuto extends LinearOpMode {
     public static double y_change = 0.3;
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
-    private SimpleServo claw, slide;
+    private SimpleServo clawServo, slideServo;
     private TouchSensor limitSwitch;
 
     private SampleMecanumDrive drive;
-    private ArmSubsystem arm;
+    private SlideSubsystem slide;
+    private LiftSubsystem lift;
+    private ClawSubsystem claw;
 
     private TrajectorySequence preload;
     private TrajectorySequenceBuilder preload_turn;
@@ -45,8 +51,9 @@ public class LeftAuto extends LinearOpMode {
     private double waitTime1;
     private ElapsedTime waitTimer1;
 
-    int pickupPosition = -120;
-    int coneCounter = 3;
+    int pickupPosition = -125;
+    int coneCounter = 0;
+    final int coneTarget = 3;
 
     private enum DRIVE_PHASE {
         INITIAL_GRAB,
@@ -83,13 +90,15 @@ public class LeftAuto extends LinearOpMode {
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();
 
-        claw = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slide = new SimpleServo(hardwareMap, "slide", 0, 120);
+        clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
+        slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
 
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
 
         drive = new SampleMecanumDrive(hardwareMap);
-        arm = new ArmSubsystem(claw, slide, dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        slide = new SlideSubsystem(slideServo);
+        claw = new ClawSubsystem(clawServo);
 
         drive.setPoseEstimate(startPose);
 
@@ -148,9 +157,9 @@ public class LeftAuto extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
-                    arm.grab();
+                    claw.grab();
                     sleep(1000);
-                    arm.setJunction(ArmSubsystem.Junction.HIGH);
+                    lift.setJunction(Junction.HIGH);
                     waitingForExtend = true;
                     drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
                             .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
@@ -167,43 +176,43 @@ public class LeftAuto extends LinearOpMode {
 
                 case WAIT_FOR_DEPOSIT:
                     if (waitTimer1.seconds() >= waitTime1) {
-                        arm.release();
+                        claw.release();
                         waitTimerRetrieve.reset();
                         currentState = DRIVE_PHASE.MOVE_TO_RETRIEVE;
                     }
                     break;
                 case MOVE_TO_RETRIEVE:
                     if(waitTimerRetrieve.seconds() >= waitTimeRetrieve){
-                        arm.grab();
-                        arm.slideIn();
+                        claw.grab();
+                        slide.in();
                         waitingForLower = true;
                         waitTimer3.reset();
-                        if(coneCounter <= 0){
+                        if(coneCounter >= coneTarget){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                     .turn(Math.toRadians(-45))
                                     .build());
-                        }else{
+                        }else {
                             waitingForReopen = true;
                             waitTimer2.reset();
                             currentState = DRIVE_PHASE.RETRIEVE;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                     .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                    .forward(Math.abs(retrieve_y_pos - spline_y_pos), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .build());
                             spline_x_pos += x_change;
                         }
-                        coneCounter--;
+                        coneCounter++;
 
                     }
                     break;
 
                 case RETRIEVE:
                     if (!drive.isBusy()) {
-                        arm.grab();
-                        arm.setJunction(ArmSubsystem.Junction.HIGH);
+                        claw.grab();
+                        lift.setJunction(Junction.HIGH);
                         waitTimer2.reset();
                         currentState = DRIVE_PHASE.WAIT_FOR_GRAB;
                     }
@@ -234,30 +243,30 @@ public class LeftAuto extends LinearOpMode {
                     spline_x_pos = storedSplineX;
                     break;
             }
-            if(waitingForExtend && arm.getLeftEncoderValue()<-350){
+            if(waitingForExtend && lift.getLeftEncoderValue()<-350){
                 waitingForExtend = false;
-                arm.slideOut();
+                slide.out();
             }
             if(waitingForRetract && waitTimer2.seconds() >= waitTime2){
-                arm.slideIn();
-                arm.grab();
+                slide.in();
+                claw.grab();
                 waitingForRetract = false;
                 waitingForReopen = true;
                 waitTimer1.reset();
             }
             if(waitingForReopen && waitTimer2.seconds() >= waitTime2){
-                arm.release();
+                claw.release();
                 waitingForReopen = false;
             }
             if(waitingForLower && waitTimer3.seconds() >= waitTime3){
-                arm.setJunction(pickupPosition);
-                pickupPosition += 28;
+                lift.setJunction(pickupPosition);
+                pickupPosition += (5 - (coneCounter - 1)) * 6;
                 waitingForLower = false;
             }
 
 
             drive.update();
-            arm.loopPID();
+            lift.loopPID();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());

@@ -6,16 +6,15 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
-import org.firstinspires.ftc.teamcode.command.claw.MoveClaw;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultFieldCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.DefaultRobotCentricDrive;
 import org.firstinspires.ftc.teamcode.command.drive.SlowMode;
 import org.firstinspires.ftc.teamcode.command.lift.*;
-import org.firstinspires.ftc.teamcode.command.slide.MoveSlide;
 import org.firstinspires.ftc.teamcode.command.slide.SlideIn;
 import org.firstinspires.ftc.teamcode.command.slide.SlideOut;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.util.ConeStack;
+import org.firstinspires.ftc.teamcode.util.Junction;
 
 @TeleOp(name = "final opmode ig pls work ;-;")
 public class CompetitionOpMode extends BaseOpMode {
@@ -26,8 +25,6 @@ public class CompetitionOpMode extends BaseOpMode {
     private DefaultRobotCentricDrive robotCentricDrive;
     private SlowMode slowMode;
 
-    private MoveSlide moveSlide;
-    private MoveClaw moveClaw;
     private ManualLift manualLift;
     private GrabCone grabCone;
     private ReleaseCone releaseCone;
@@ -62,13 +59,13 @@ public class CompetitionOpMode extends BaseOpMode {
                 toggleWhenPressed(slowMode, robotCentricDrive);
 
 
-        grabCone = new GrabCone(arm);
-        releaseCone = new ReleaseCone(arm);
+        grabCone = new GrabCone(claw);
+        releaseCone = new ReleaseCone(claw);
         clawStuff = (new GamepadButton(driverOp2, GamepadKeys.Button.LEFT_BUMPER))
                 .toggleWhenPressed(grabCone, releaseCone);
 
-        slideIn = new SlideIn(arm);
-        slideOut = new SlideOut(arm);
+        slideIn = new SlideIn(slide);
+        slideOut = new SlideOut(slide);
         slideStuff = (new GamepadButton(driverOp2, GamepadKeys.Button.RIGHT_BUMPER))
                 .toggleWhenPressed(slideOut, slideIn);
 
@@ -83,17 +80,17 @@ public class CompetitionOpMode extends BaseOpMode {
 //                }, arm));
 //
 
-        moveLiftPID = new MoveLiftPID(arm, () -> driverOp2.getRightY());
+        moveLiftPID = new MoveLiftPID(lift, () -> driverOp2.getRightY());
 
-        setJunctionNone = new SetJunction(arm, ArmSubsystem.Junction.NONE);
-        setJunctionGround = new SetJunction(arm, ArmSubsystem.Junction.GROUND);
-        setJunctionLow = new SetJunction(arm, ArmSubsystem.Junction.LOW);
-        setJunctionMedium = new SetJunction(arm, ArmSubsystem.Junction.MEDIUM);
-        setJunctionHigh = new SetJunction(arm, ArmSubsystem.Junction.HIGH);
-        setFirst = new SetConeStack(arm, ArmSubsystem.ConeStack.FIRST);
-        setSecond = new SetConeStack(arm, ArmSubsystem.ConeStack.SECOND);
-        setThird = new SetConeStack(arm, ArmSubsystem.ConeStack.THIRD);
-        setFourth = new SetConeStack(arm, ArmSubsystem.ConeStack.FOURTH);
+        setJunctionNone = new SetJunction(lift, Junction.NONE);
+        setJunctionGround = new SetJunction(lift, Junction.GROUND);
+        setJunctionLow = new SetJunction(lift, Junction.LOW);
+        setJunctionMedium = new SetJunction(lift, Junction.MEDIUM);
+        setJunctionHigh = new SetJunction(lift, Junction.HIGH);
+        setFirst = new SetConeStack(lift, ConeStack.FIRST);
+        setSecond = new SetConeStack(lift, ConeStack.SECOND);
+        setThird = new SetConeStack(lift, ConeStack.THIRD);
+        setFourth = new SetConeStack(lift, ConeStack.FOURTH);
 
         moveGround = (new GamepadButton(driverOp2, GamepadKeys.Button.X))
                 .whenPressed(setJunctionGround);
@@ -113,9 +110,9 @@ public class CompetitionOpMode extends BaseOpMode {
         moveFourth = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_DOWN))
                 .whenPressed(setFourth);
 
-        register(drive, arm);
+        register(drive, lift, claw, slide);
         drive.setDefaultCommand(robotCentricDrive);
-        arm.setDefaultCommand(moveLiftPID);
+        lift.setDefaultCommand(moveLiftPID);
 
     }
 
