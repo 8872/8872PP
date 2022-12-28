@@ -13,8 +13,8 @@ public class SlideSubsystem extends SubsystemBase {
     public static double inPosition = 1;
     public static double outPosition = 0;
 
-    public static double maxVelocity = 1;
-    public static double maxAcceleration = 1;
+    public static double maxVelocity = 0.25;
+    public static double maxAcceleration = 0.25;
     private final TrapezoidProfile inProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
             new TrapezoidProfile.State(1, 0),
