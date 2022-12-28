@@ -69,8 +69,8 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("rightBack Power", round(bR.motor.getPower()));
         telemetry.addData("dr4bLeftMotor Power", round(dr4bLeftMotor.motor.getPower()));
         telemetry.addData("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
-        telemetry.addData("dr4bRightMotor Encoder", dr4bRightMotor.getCurrentPosition());
-        telemetry.addData("dr4bLeftMotor Encoder", dr4bLeftMotor.getCurrentPosition());
+        telemetry.addData("dr4bLeftMotor Position", dr4bLeftMotor.getCurrentPosition());
+        telemetry.addData("dr4bRightMotor Position", dr4bRightMotor.getCurrentPosition());
 
         telemetry.addData("claw Position", clawServo.getPosition());
         telemetry.addData("slide Position", slideServo.getPosition());

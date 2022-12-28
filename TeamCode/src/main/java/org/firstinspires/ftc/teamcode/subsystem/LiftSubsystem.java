@@ -23,12 +23,11 @@ public class LiftSubsystem extends SubsystemBase {
 
     private final double TICKS_IN_DEGREES = 8192.0 / 360;
 
-
     // PID coefficients for left dr4b motor
     public static double kP = 0.003;
     public static double kI = 0.05;
     public static double kD = 0.0003;
-    public static double kF = 0;
+    public static double kF = 0.07;
     public static double maxVelocity = 2000;
     public static double maxAcceleration = 2000;
     private final ProfiledPIDFController dr4b_pidf_left = new ProfiledPIDFController(kP, kI, kD, kF,
@@ -124,6 +123,10 @@ public class LiftSubsystem extends SubsystemBase {
     public void changeSetPoint(double joystickInput) {
         dr4b_pidf_left.setGoal((int) (dr4bLeftMotor.getCurrentPosition()+joystickInput*manualLiftSpeed));
         dr4b_pidf_right.setGoal((int) (dr4bRightMotor.getCurrentPosition()+joystickInput*manualLiftSpeed));
+    }
+
+    public int getTargetPosition(){
+        return (int) dr4b_pidf_left.getGoal().position;
     }
 
 }

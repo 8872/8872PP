@@ -12,6 +12,10 @@ package org.firstinspires.ftc.teamcode.util;
  * measured value. If we consider e(t) the positional error, then
  * int(0,t)[e(t')dt'] is the total error and e'(t) is the velocity error.
  */
+
+// almost all this code is taken from PIDFController, the feedforward was just slightly modified
+
+
 public class PIDFControllerEx {
 
     private double kP, kI, kD, kF;

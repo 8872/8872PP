@@ -25,7 +25,7 @@ public class TuningOpMode extends OpMode {
     public static double kP = 0.003;
     public static double kI = 0.05;
     public static double kD = 0.0003;
-    public static double kF = 0;
+    public static double kF = 0.05;
     private PIDFControllerEx left_controller;
     private PIDFControllerEx right_controller;
     private double output_left;
@@ -40,6 +40,8 @@ public class TuningOpMode extends OpMode {
         dr4bRightMotor = new MotorEx(hardwareMap, "dr4bRight");
         dr4bLeftMotor.setRunMode(Motor.RunMode.RawPower);
         dr4bRightMotor.setRunMode(Motor.RunMode.RawPower);
+        dr4bLeftMotor.resetEncoder();
+        dr4bRightMotor.resetEncoder();
 
         left_controller = new PIDFControllerEx(kP, kI, kD, kF, TICKS_IN_DEGREES);
         right_controller = new PIDFControllerEx(kP, kI, kD, kF, TICKS_IN_DEGREES);

@@ -69,6 +69,9 @@ public final class CompetitionOpModeRemake extends BaseOpMode {
 
     }
 
-
-
+    @Override
+    public void run() {
+        super.run();
+        telemetry.addData("Target", lift.getTargetPosition());
+    }
 }
