@@ -37,7 +37,7 @@ public final class CompetitionOpModeOld extends BaseOpMode {
     private SetJunction setJunctionLow, setJunctionMedium, setJunctionHigh, setJunctionGround, setJunctionNone;
 
     private Button changeCenter, clawStuff, slideStuff, resetEncoders;
-    private Button moveHigh, moveMedium, moveLow, moveGround, moveNone;
+    private Button moveHigh, moveMedium, moveLow, moveGround, moveNone, moveFirst, moveSecond, moveThird, moveFourth;
 
 
     @Override
@@ -81,6 +81,7 @@ public final class CompetitionOpModeOld extends BaseOpMode {
                 .whenPressed(setJunctionMedium);
         moveHigh = new GamepadButton(gamepadEx2, GamepadKeys.Button.Y)
                 .whenPressed(setJunctionHigh);
+
 
         register(drive, lift, claw, slide);
         drive.setDefaultCommand(robotCentricDrive);
