@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
-import android.transition.Slide;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
 
 import java.math.BigDecimal;
@@ -23,20 +23,27 @@ public class BaseOpMode extends CommandOpMode {
     protected MotorEx fL, fR, bL, bR, dr4bLeftMotor, dr4bRightMotor;
     protected SimpleServo clawServo, slideServo;
     protected DriveSubsystem drive;
-    protected ClawSubsystem claw;
     protected LiftSubsystem lift;
+    protected ClawSubsystem claw;
     protected SlideSubsystem slide;
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
+    protected GamepadEx gamepadEx1;
+    protected GamepadEx gamepadEx2;
+
     @Override
     public void initialize() {
+        gamepadEx1 = new GamepadEx(gamepad1);
+        gamepadEx2 = new GamepadEx(gamepad2);
+
         initHardware();
         setUpHardwareDevices();
-        drive = new DriveSubsystem(fL, fR, bL, bR);
+        drive = new DriveSubsystem(fL, fR, bL, bR, imu);
+        lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
         claw = new ClawSubsystem(clawServo);
-        lift = new LiftSubsystem(dr4bLeftMotor,dr4bRightMotor,limitSwitch);
         slide = new SlideSubsystem(slideServo);
+
         imu = new RevIMU(hardwareMap);
         imu.init();
 
@@ -45,7 +52,7 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.update();
     }
 
-    protected void  initHardware() {
+    protected void initHardware() {
         fL = new MotorEx(hardwareMap, "leftFront");
         fR = new MotorEx(hardwareMap, "rightFront");
         bL = new MotorEx(hardwareMap, "leftBack");
@@ -57,7 +64,6 @@ public class BaseOpMode extends CommandOpMode {
         slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
         slideServo.setPosition(1.0);
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
-//        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();
     }
@@ -71,24 +77,19 @@ public class BaseOpMode extends CommandOpMode {
         telemetry.addData("rightBack Power", round(bR.motor.getPower()));
         telemetry.addData("dr4bLeftMotor Power", round(dr4bLeftMotor.motor.getPower()));
         telemetry.addData("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
-        telemetry.addData("dr4bRightMotor encoder", dr4bRightMotor.getCurrentPosition());
-        telemetry.addData("dr4bLeftMotor encoder", dr4bLeftMotor.getCurrentPosition());
-
-        telemetry.addData("position error", lift.getError());
+        telemetry.addData("dr4bLeftMotor Position", dr4bLeftMotor.getCurrentPosition());
+        telemetry.addData("dr4bRightMotor Position", dr4bRightMotor.getCurrentPosition());
 
         telemetry.addData("claw Position", clawServo.getPosition());
-        telemetry.addData("slide1 Position", slideServo.getPosition());
+        telemetry.addData("slide Position", slideServo.getPosition());
 
         telemetry.addData("IMU Heading", imu.getHeading());
 
-        telemetry.addData("limit pressed", limitSwitch.isPressed());
+        telemetry.addData("Limit Pressed", limitSwitch.isPressed());
         telemetry.update();
     }
 
     protected void setUpHardwareDevices() {
-        // reverse motors
-        //fR.setInverted(true);
-        //bR.setInverted(true);
         fL.setInverted(true);
         bL.setInverted(true);
         fL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -98,7 +99,6 @@ public class BaseOpMode extends CommandOpMode {
 
         dr4bLeftMotor.setRunMode(Motor.RunMode.RawPower);
         dr4bRightMotor.setRunMode(Motor.RunMode.RawPower);
-        // brake ;-; ????
         dr4bLeftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         dr4bRightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
@@ -114,5 +114,12 @@ public class BaseOpMode extends CommandOpMode {
         return round(value, 4);
     }
 
+    protected GamepadButton gamepadButton1(GamepadKeys.Button button){
+        return gamepadEx1.getGamepadButton(button);
+    }
+
+    protected GamepadButton gamepadButton2(GamepadKeys.Button button){
+        return gamepadEx1.getGamepadButton(button);
+    }
 
 }

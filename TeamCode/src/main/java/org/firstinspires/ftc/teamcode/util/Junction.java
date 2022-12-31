@@ -6,5 +6,4 @@ public enum Junction {
      LOW,
      MEDIUM,
      HIGH
-
 }

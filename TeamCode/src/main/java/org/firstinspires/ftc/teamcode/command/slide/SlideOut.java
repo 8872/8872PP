@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.command.slide;
 
+import android.util.Log;
 import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
 
@@ -13,5 +14,10 @@ public class SlideOut extends CommandBase {
     @Override
     public void initialize() {
         slide.out();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return true;
     }
 }
