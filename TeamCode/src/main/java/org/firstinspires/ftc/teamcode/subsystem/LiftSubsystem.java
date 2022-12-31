@@ -23,10 +23,10 @@ public class LiftSubsystem extends SubsystemBase {
     public static int high = -1800;
     public static int ground = -25;
 
-    public static int firstCone = -125;
-    public static int secondCone = -95;
-    public static int thirdCone = -69;
-    public static int fourthCone = -53;
+    public static int firstCone = -142;
+    public static int secondCone = -121;
+    public static int thirdCone = -87;
+    public static int fourthCone = -60;
 
     private final double TICKS_IN_DEGREES = 8192.0 / 360;
 

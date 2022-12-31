@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.command.group.LiftUp;
 import org.firstinspires.ftc.teamcode.command.lift.*;
 import org.firstinspires.ftc.teamcode.command.slide.SlideIn;
 import org.firstinspires.ftc.teamcode.command.slide.SlideOut;
+import org.firstinspires.ftc.teamcode.util.ConeStack;
 import org.firstinspires.ftc.teamcode.util.Junction;
 
 @TeleOp(name = "Main TeleOp")
@@ -67,6 +68,15 @@ public final class MainOpMode extends BaseOpMode {
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new LiftDown(lift, slide, claw));
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
+                .whenPressed(new SetConeStack(lift,ConeStack.FIRST));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.X)
+                .whenPressed(new SetConeStack(lift,ConeStack.SECOND));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
+                .whenPressed(new SetConeStack(lift,ConeStack.THIRD));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(new SetConeStack(lift,ConeStack.FOURTH));
 
         register(drive, lift, claw, slide);
         drive.setDefaultCommand(robotCentricDrive);
