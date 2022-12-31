@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.command.lift.SetJunction;
 import org.firstinspires.ftc.teamcode.command.slide.SlideOut;
 import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.util.DelayedCommand;
 import org.firstinspires.ftc.teamcode.util.Junction;
 
 @Config
@@ -20,10 +21,7 @@ public class LiftUp extends SequentialCommandGroup {
                 new SetJunction(lift, junction),
                 new ParallelCommandGroup(
                         new MoveToJunction(lift),
-                        new SequentialCommandGroup(
-                                new WaitCommand(delay),
-                                new SlideOut(slide)
-                            )
+                        new DelayedCommand(new SlideOut(slide), 500)
                 )
         );
 
