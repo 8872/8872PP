@@ -13,15 +13,18 @@ public class SlideSubsystem extends SubsystemBase {
     public static double inPosition = 1;
     public static double outPosition = 0;
 
-    public static double maxVelocity = 0.25;
-    public static double maxAcceleration = 0.25;
+    // TODO slide accels to slowly at the beginning. make asymmetric
+    public static double maxVelocity = 1; //0.25
+    public static double maxAcceleration = 1; //0.25
+
     private final TrapezoidProfile inProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
-            new TrapezoidProfile.State(1, 0),
+            new TrapezoidProfile.State(inPosition, 0),
             new TrapezoidProfile.State(0, 0));
+
     private final TrapezoidProfile outProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
-            new TrapezoidProfile.State(0, 0),
+            new TrapezoidProfile.State(outPosition, 0),
             new TrapezoidProfile.State(1, 0));
 
     private final ElapsedTime time = new ElapsedTime();
@@ -35,21 +38,31 @@ public class SlideSubsystem extends SubsystemBase {
 
     // moves slide to the in most position
     public void in(){
-        double initial = time.time();
-        double current;
-        TrapezoidProfile.State inState;
-        while (slide.getPosition() != 1) {
-            current = time.time();
-            inState = inProfile.calculate(current - initial);
-            Log.d("slide position", ""+inState.position);
-            Log.d("elapsed time", ""+(current - initial));
-            slide.setPosition(inState.position);
-        }
+//        double initial = time.time();
+//        double current;
+//        TrapezoidProfile.State inState;
+//        while (slide.getPosition() != inPosition) {
+//            current = time.time();
+//            inState = inProfile.calculate(current - initial);
+//            slide.setPosition(inState.position);
+//        }
+        slide.setPosition(inPosition);
     }
 
     // moves slide to the out most position
     public void out(){
-
+//        double initial = time.time();
+//        double current;
+//        TrapezoidProfile.State outState;
+//        while (slide.getPosition() != outPosition) {
+//            current = time.time();
+//            outState = outProfile.calculate(current - initial);
+//            slide.setPosition(outState.position);
+//        }
         slide.setPosition(outPosition);
+    }
+
+    public double getPosition(){
+        return slide.getPosition();
     }
 }

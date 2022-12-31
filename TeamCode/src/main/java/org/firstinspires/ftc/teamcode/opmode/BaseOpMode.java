@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -26,8 +29,14 @@ public class BaseOpMode extends CommandOpMode {
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
+    protected GamepadEx gamepadEx1;
+    protected GamepadEx gamepadEx2;
+
     @Override
     public void initialize() {
+        gamepadEx1 = new GamepadEx(gamepad1);
+        gamepadEx2 = new GamepadEx(gamepad2);
+
         initHardware();
         setUpHardwareDevices();
         drive = new DriveSubsystem(fL, fR, bL, bR, imu);
@@ -55,7 +64,6 @@ public class BaseOpMode extends CommandOpMode {
         slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
         slideServo.setPosition(1.0);
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
-//        slide2 = new SimpleServo(hardwareMap, "slide2", 0, 120);
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();
     }
@@ -106,5 +114,12 @@ public class BaseOpMode extends CommandOpMode {
         return round(value, 4);
     }
 
+    protected GamepadButton gamepadButton1(GamepadKeys.Button button){
+        return gamepadEx1.getGamepadButton(button);
+    }
+
+    protected GamepadButton gamepadButton2(GamepadKeys.Button button){
+        return gamepadEx1.getGamepadButton(button);
+    }
 
 }

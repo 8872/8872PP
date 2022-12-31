@@ -14,6 +14,8 @@ package org.firstinspires.ftc.teamcode.util;
  */
 
 // credit to ftclib, i stole the controller and made slight changes to work with angles
+
+    // TODO rewrite extending PIDFController and overriding setSetPoint
 public class AngleController {
 
     private double kP, kI, kD, kF;

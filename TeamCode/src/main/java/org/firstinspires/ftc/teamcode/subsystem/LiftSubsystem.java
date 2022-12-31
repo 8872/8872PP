@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
@@ -129,4 +130,11 @@ public class LiftSubsystem extends SubsystemBase {
         return (int) dr4b_pidf_left.getGoal().position;
     }
 
+    public Junction getCurrentGoal() {
+        return currentGoal;
+    }
+
+    public boolean isSlideIncompatible(){
+        return currentGoal == Junction.LOW || currentGoal == Junction.GROUND;
+    }
 }

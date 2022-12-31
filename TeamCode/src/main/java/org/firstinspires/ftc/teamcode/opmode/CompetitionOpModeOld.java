@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
@@ -15,8 +16,9 @@ import org.firstinspires.ftc.teamcode.command.slide.SlideIn;
 import org.firstinspires.ftc.teamcode.command.slide.SlideOut;
 import org.firstinspires.ftc.teamcode.util.Junction;
 
+@Disabled
 @TeleOp(name = "Competition TeleOp")
-public final class CompetitionOpMode extends BaseOpMode {
+public final class CompetitionOpModeOld extends BaseOpMode {
     private GamepadEx gamepadEx1;
     private GamepadEx gamepadEx2;
 

@@ -14,4 +14,9 @@ public class SlideIn extends CommandBase {
     public void initialize() {
         slide.in();
     }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

@@ -14,4 +14,9 @@ public class GrabCone extends CommandBase {
     public void initialize() {
         claw.grab();
     }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

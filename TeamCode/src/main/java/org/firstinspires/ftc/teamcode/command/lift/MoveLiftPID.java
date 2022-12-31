@@ -6,23 +6,24 @@ import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 import java.util.function.DoubleSupplier;
 
 public class MoveLiftPID extends CommandBase {
-    private final LiftSubsystem arm;
+    private final LiftSubsystem lift;
     private final DoubleSupplier supplier;
 
-    public MoveLiftPID(LiftSubsystem arm, DoubleSupplier supplier) {
-        this.arm = arm;
+    public MoveLiftPID(LiftSubsystem lift, DoubleSupplier supplier) {
+        this.lift = lift;
         this.supplier = supplier;
-        addRequirements(arm);
+        addRequirements(lift);
     }
 
     @Override
     public void execute() {
-        arm.checkLimitSwitch();
+        lift.checkLimitSwitch();
         if(supplier.getAsDouble() != 0) {
-            arm.changeSetPoint(supplier.getAsDouble());
-            arm.updatePID();
+            lift.changeSetPoint(supplier.getAsDouble());
+            lift.updatePID();
         } else {
-            arm.updatePID();
+            lift.updatePID();
         }
+//        Log.d("asd", "loop");
     }
 }
