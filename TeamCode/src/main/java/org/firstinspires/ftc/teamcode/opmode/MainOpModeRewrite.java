@@ -32,8 +32,6 @@ so ur two arrays would be { dpad_down, x, a } and { none, ground, low }
 
 @TeleOp(name = "test opmode")
 public final class MainOpModeRewrite extends BaseOpMode {
-    private GamepadEx gamepadEx1;
-    private GamepadEx gamepadEx2;
 
     private DefaultRobotCentricDrive robotCentricDrive;
     private SlowMode slowMode;
@@ -48,9 +46,6 @@ public final class MainOpModeRewrite extends BaseOpMode {
     @Override
     public void initialize() {
         super.initialize();
-
-        gamepadEx1 = new GamepadEx(gamepad1);
-        gamepadEx2 = new GamepadEx(gamepad2);
 
         robotCentricDrive = new DefaultRobotCentricDrive(drive, gamepadEx1::getLeftX,
                 gamepadEx1::getRightX, gamepadEx1::getLeftY);
@@ -68,36 +63,26 @@ public final class MainOpModeRewrite extends BaseOpMode {
 
         moveLiftPID = new MoveLiftPID(lift, gamepadEx2::getRightY);
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new SetJunction(lift, Junction.NONE));
-
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(new SetJunction(lift, Junction.GROUND));
-
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new SetJunction(lift, Junction.LOW));
-
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new SetJunction(lift, Junction.MEDIUM));
-
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new SetJunction(lift, Junction.HIGH));
-
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new LiftUp(lift, slide, Junction.HIGH));
 
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(new LiftUp(lift, slide, Junction.MEDIUM));
+
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new LiftUp(lift, slide, Junction.LOW));
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new LiftDown(lift, slide, claw));
 
         register(drive, lift, claw, slide);
         drive.setDefaultCommand(robotCentricDrive);
         lift.setDefaultCommand(moveLiftPID);
-
     }
 
     @Override
     public void run() {
         super.run();
-        telemetry.addData("Target", lift.getTargetPosition());
+        tad("Target", lift.getTargetPosition());
     }
 }

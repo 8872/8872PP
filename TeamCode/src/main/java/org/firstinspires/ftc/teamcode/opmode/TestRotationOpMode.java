@@ -7,14 +7,11 @@ import org.firstinspires.ftc.teamcode.command.drive.*;
 
 @TeleOp(name = "Test Rotation OpMode")
 public final class TestRotationOpMode extends BaseOpMode {
-    private GamepadEx gamepadEx1;
     private HeadingPID headingPID;
 
     @Override
     public void initialize() {
         super.initialize();
-
-        gamepadEx1 = new GamepadEx(gamepad1);
 
         headingPID = new HeadingPID(drive);
         gamepadEx1.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)

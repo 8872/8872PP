@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import org.firstinspires.ftc.teamcode.util.ConeStack;
 import org.firstinspires.ftc.teamcode.util.Junction;
 import org.firstinspires.ftc.teamcode.util.ProfiledPIDFController;
 
@@ -21,6 +22,11 @@ public class LiftSubsystem extends SubsystemBase {
     public static int medium = -839;
     public static int high = -1800;
     public static int ground = -25;
+
+    public static int firstCone = -142;
+    public static int secondCone = -121;
+    public static int thirdCone = -87;
+    public static int fourthCone = -60;
 
     private final double TICKS_IN_DEGREES = 8192.0 / 360;
 
@@ -89,6 +95,27 @@ public class LiftSubsystem extends SubsystemBase {
             case HIGH:
                 dr4b_pidf_left.setGoal(high);
                 dr4b_pidf_right.setGoal(high);
+                break;
+        }
+    }
+
+    public void setConeStack(ConeStack cone) {
+        switch(cone) {
+            case FIRST:
+                dr4b_pidf_left.setGoal(firstCone);
+                dr4b_pidf_right.setGoal(firstCone);
+                break;
+            case SECOND:
+                dr4b_pidf_left.setGoal(secondCone);
+                dr4b_pidf_right.setGoal(secondCone);
+                break;
+            case THIRD:
+                dr4b_pidf_left.setGoal(thirdCone);
+                dr4b_pidf_right.setGoal(thirdCone);
+                break;
+            case FOURTH:
+                dr4b_pidf_left.setGoal(fourthCone);
+                dr4b_pidf_right.setGoal(fourthCone);
                 break;
         }
     }

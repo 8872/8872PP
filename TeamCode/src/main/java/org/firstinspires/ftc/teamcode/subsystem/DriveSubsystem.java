@@ -55,13 +55,20 @@ public class DriveSubsystem extends SubsystemBase {
 
 
     public void setHeading(double degrees){
+        Log.d("asd", ""+degrees);
         controller.setSetPoint(degrees);
     }
 
     public void updatePID(){
+        Log.d("asd", "heading: "+imu.getHeading());
         output = controller.calculate(imu.getHeading());
         drive.driveWithMotorPowers(output, -output, output, -output);
     }
+
+    public double getOutput(){
+        return output;
+    }
+
 
     // desmos: https://www.desmos.com/calculator/j2e6yaorld
     public double joystickTransform(double input){

@@ -39,13 +39,15 @@ public class BaseOpMode extends CommandOpMode {
 
         initHardware();
         setUpHardwareDevices();
+
+        imu = new RevIMU(hardwareMap);
+        imu.init();
+
         drive = new DriveSubsystem(fL, fR, bL, bR, imu);
         lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
         claw = new ClawSubsystem(clawServo);
         slide = new SlideSubsystem(slideServo);
 
-        imu = new RevIMU(hardwareMap);
-        imu.init();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Mode", "Done initializing");
@@ -71,21 +73,23 @@ public class BaseOpMode extends CommandOpMode {
     @Override
     public void run() {
         super.run();
-        telemetry.addData("leftFront Power", round(fL.motor.getPower()));
-        telemetry.addData("leftBack Power", round(bL.motor.getPower()));
-        telemetry.addData("rightFront Power", round(fR.motor.getPower()));
-        telemetry.addData("rightBack Power", round(bR.motor.getPower()));
-        telemetry.addData("dr4bLeftMotor Power", round(dr4bLeftMotor.motor.getPower()));
-        telemetry.addData("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
-        telemetry.addData("dr4bLeftMotor Position", dr4bLeftMotor.getCurrentPosition());
-        telemetry.addData("dr4bRightMotor Position", dr4bRightMotor.getCurrentPosition());
+        tad("leftFront Power", round(fL.motor.getPower()));
+        tad("leftBack Power", round(bL.motor.getPower()));
+        tad("rightFront Power", round(fR.motor.getPower()));
+        tad("rightBack Power", round(bR.motor.getPower()));
+        tad("dr4bLeftMotor Power", round(dr4bLeftMotor.motor.getPower()));
+        tad("dr4bRightMotor Power", round(dr4bRightMotor.motor.getPower()));
+        tad("dr4bLeftMotor Position", dr4bLeftMotor.getCurrentPosition());
+        tad("dr4bRightMotor Position", dr4bRightMotor.getCurrentPosition());
 
-        telemetry.addData("claw Position", clawServo.getPosition());
-        telemetry.addData("slide Position", slideServo.getPosition());
+        tad("Drive Heading PID Output", drive.getOutput());
 
-        telemetry.addData("IMU Heading", imu.getHeading());
+        tad("claw Position", clawServo.getPosition());
+        tad("slide Position", slideServo.getPosition());
 
-        telemetry.addData("Limit Pressed", limitSwitch.isPressed());
+        tad("IMU Heading", imu.getHeading());
+
+        tad("Limit Pressed", limitSwitch.isPressed());
         telemetry.update();
     }
 
@@ -114,12 +118,18 @@ public class BaseOpMode extends CommandOpMode {
         return round(value, 4);
     }
 
-    protected GamepadButton gamepadButton1(GamepadKeys.Button button){
+    // gamepad button 1 = gb1
+    protected GamepadButton gb1(GamepadKeys.Button button){
         return gamepadEx1.getGamepadButton(button);
     }
 
-    protected GamepadButton gamepadButton2(GamepadKeys.Button button){
-        return gamepadEx1.getGamepadButton(button);
+    // gamepad button 2 = gb2
+    protected GamepadButton gb2(GamepadKeys.Button button){
+        return gamepadEx2.getGamepadButton(button);
     }
 
+    // telemetry add data = tad
+    protected void tad(String caption, Object value){
+        telemetry.addData(caption, value);
+    }
 }

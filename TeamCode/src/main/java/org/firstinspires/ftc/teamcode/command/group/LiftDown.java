@@ -28,7 +28,8 @@ public class LiftDown extends SequentialCommandGroup {
                         new SlideIn(slide)
                 ),
                 new SetJunction(lift, Junction.NONE),
-                new MoveToJunction(lift)
+                new MoveToJunction(lift),
+                new GrabCone(claw)
         );
 
         addRequirements(lift, slide, claw);
