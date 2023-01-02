@@ -10,17 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-public class TargetJunctionPipeline extends OpenCvPipeline {
-
-
+public class JunctionDetection extends OpenCvPipeline {
 
     Point center;
-
     double finalWidth = -1;
     double finalHeight = -1;
-
     public static boolean threshThing = false;
-
     @Override
     public Mat processFrame(Mat input) {
 
@@ -28,7 +23,6 @@ public class TargetJunctionPipeline extends OpenCvPipeline {
         Scalar GREEN = new Scalar(0,255,0);
         Scalar BLUE = new Scalar(0,0,255);
         Scalar BLACK = new Scalar(0,0,0);
-
 
         Imgproc.line(input, new Point(0,0), new Point(1280, 0),BLACK,4);
         Imgproc.line(input, new Point(0,720), new Point(1280, 720),BLACK,4);

@@ -18,7 +18,19 @@ public class DistanceDetectionPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-
+        detectObject(input);
+        return input;
+    }
+    public Point getCenter(){
+        return center;
+    }
+    public double getWidth(){
+        return finalWidth;
+    }
+    public double getHeight(){
+        return finalHeight;
+    }
+    private RotatedRect detectObject(Mat input){
         Scalar RED = new Scalar(255,0,0);
         Scalar GREEN = new Scalar(0,255,0);
         Scalar BLUE = new Scalar(0,0,255);
@@ -70,25 +82,24 @@ public class DistanceDetectionPipeline extends OpenCvPipeline {
             double height = Math.sqrt(Math.pow(rectanglePoints[0].x-rectanglePoints[1].x, 2)+
                     Math.pow(rectanglePoints[0].y-rectanglePoints[1].y, 2));
 
-            regularRect = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+            //regularRect = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
 
 
-            if(regularRect.height/regularRect.width>= 2){
-                if(height<width){
+                /*if(height<width){
                     double temp = width;
                     width = height;
                     height = temp;
                 }
-                if(width > largestWidth){
-                    largestWidth = width;
-                    largestHeight = height;
-                    largestRect = boundRect.clone();
-                    largestIndex = i;
-                }
+                 */
+            if(width > largestWidth){
+                largestWidth = width;
+                largestHeight = height;
+                largestRect = boundRect.clone();
+                largestIndex = i;
             }
-            finalWidth = largestWidth;
-            finalHeight = largestHeight;
         }
+        finalWidth = largestWidth;
+        finalHeight = largestHeight;
 
         if(largestIndex >= 0){
             Imgproc.minEnclosingCircle(contoursPoly[largestIndex], center, radius);
@@ -104,21 +115,8 @@ public class DistanceDetectionPipeline extends OpenCvPipeline {
         mat.release();
         edges.release();
         hierarchy.release();
+        thresh.release();
 
-        if(threshThing){
-            return thresh;
-        }else{
-            thresh.release();
-            return input;
-        }
-    }
-    public Point getCenter(){
-        return center;
-    }
-    public double getWidth(){
-        return finalWidth;
-    }
-    public double getHeight(){
-        return finalHeight;
+        return largestRect;
     }
 }

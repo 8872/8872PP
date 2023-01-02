@@ -3,15 +3,13 @@ package org.firstinspires.ftc.teamcode.eocv_test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@TeleOp
-public class CVTestOpMode extends OpMode {
+public class GetFocalLength extends OpMode{
     private OpenCvCamera camera;
     JunctionDetection pipeline;
     @Override
@@ -37,16 +35,9 @@ public class CVTestOpMode extends OpMode {
 
     @Override
     public void loop() {
-        Point center = pipeline.getCenter();
-
-        if(center!=null) {
-            double x = center.x;
-            double y = center.y;
-            telemetry.addData("center", x + ", " + y);
-            telemetry.addData("error", (x-640) + ", " + (y-360));
-        }
-        telemetry.addData("width", pipeline.getWidth());
-        telemetry.addData("height", pipeline.getHeight());
-        telemetry.update();
+        double width = pipeline.getWidth();
+        double focalLength = (width * CameraConstants.calibrationDistance) / CameraConstants.calibrationWidth;
+        telemetry.addData("focal length", focalLength);
+        telemetry.addData("width", width);
     }
 }

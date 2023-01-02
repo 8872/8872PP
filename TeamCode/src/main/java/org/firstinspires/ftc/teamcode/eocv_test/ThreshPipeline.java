@@ -12,7 +12,7 @@ import java.util.List;
 @Config
 public class ThreshPipeline extends OpenCvPipeline {
     Point[] centers;
-    public static boolean showThresh = true;
+    public static boolean showThresh = false;
     public static boolean red = true;
     public static boolean blue = false;
     public static double low_Y = 0;
