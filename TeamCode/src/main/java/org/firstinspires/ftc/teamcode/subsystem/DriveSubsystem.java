@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import org.firstinspires.ftc.teamcode.util.AngleController;
+import org.firstinspires.ftc.teamcode.util.SlewRateLimiter;
 
 @Config
 public class DriveSubsystem extends SubsystemBase {
@@ -17,11 +18,19 @@ public class DriveSubsystem extends SubsystemBase {
     public static double kD = 0;
     private final AngleController controller = new AngleController(kP, kI, kD, 0);
     private double output;
-    public static boolean cubed = true;
+    public static boolean transformed = true;
 
     public static int joystickTransformFactor = 30;
 
     public static double slowFactor = 3.5;
+
+    public static double strafeRateLimit = 2;
+    public static double forwardRateLimit = 2.5;
+    public static double turnRateLimit = 2;
+
+    private final SlewRateLimiter strafeRateLimiter = new SlewRateLimiter(strafeRateLimit);
+    private final SlewRateLimiter forwardRateLimiter = new SlewRateLimiter(forwardRateLimit);
+    private final SlewRateLimiter turnRateLimiter = new SlewRateLimiter(turnRateLimit);
 
     public DriveSubsystem(MotorEx fL, MotorEx fR, MotorEx bL, MotorEx bR, RevIMU imu){
         this.imu = imu;
@@ -29,19 +38,12 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed){
-        double transformedStrafeSpeed;
-        double transformedForwardSpeed;
-        double transformedTurnSpeed;
-        if (!cubed) {
-            transformedStrafeSpeed = joystickTransform(strafeSpeed);
-            transformedForwardSpeed = joystickTransform(forwardSpeed);
-            transformedTurnSpeed = joystickTransform(turnSpeed);
-        } else {
-            transformedStrafeSpeed = joystickCubed(strafeSpeed);
-            transformedForwardSpeed = joystickCubed(forwardSpeed);
-            transformedTurnSpeed = joystickCubed(turnSpeed);
+        if(transformed){
+            strafeSpeed = strafeRateLimiter.calculate(strafeSpeed);
+            forwardSpeed = forwardRateLimiter.calculate(forwardSpeed);
+            turnSpeed = turnRateLimiter.calculate(turnSpeed);
         }
-        drive.driveRobotCentric(transformedStrafeSpeed, transformedForwardSpeed, transformedTurnSpeed);
+        drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
     }
 
     public void driveFieldCentric(double strafeSpeed, double forwardSpeed,
@@ -77,8 +79,6 @@ public class DriveSubsystem extends SubsystemBase {
                 * (Math.pow(joystickTransformFactor, Math.abs(input))-1);
     }
 
-    public double joystickCubed(double input){
-        return Math.pow(input, 3);
-    }
+
 
 }
