@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.util.SlewRateLimiter;
 public class DriveSubsystem extends SubsystemBase {
     private final MecanumDrive drive;
     private final RevIMU imu;
-    public static double kP = 1;
+    public static double kP = 0.06;
     public static double kI = 0;
-    public static double kD = 0;
+    public static double kD = 0.0035;
     private final AngleController controller = new AngleController(kP, kI, kD, 0);
     private double output;
     public static boolean transformed = true;
@@ -31,6 +31,8 @@ public class DriveSubsystem extends SubsystemBase {
     private final SlewRateLimiter strafeRateLimiter = new SlewRateLimiter(strafeRateLimit);
     private final SlewRateLimiter forwardRateLimiter = new SlewRateLimiter(forwardRateLimit);
     private final SlewRateLimiter turnRateLimiter = new SlewRateLimiter(turnRateLimit);
+
+    private double target;
 
     public DriveSubsystem(MotorEx fL, MotorEx fR, MotorEx bL, MotorEx bR, RevIMU imu){
         this.imu = imu;
@@ -59,18 +61,23 @@ public class DriveSubsystem extends SubsystemBase {
     public void setHeading(double degrees){
         Log.d("asd", ""+degrees);
         controller.setSetPoint(degrees);
+        target = degrees;
     }
 
     public void updatePID(){
         Log.d("asd", "heading: "+imu.getHeading());
+        Log.d("asd", "output: "+output);
         output = controller.calculate(imu.getHeading());
-        drive.driveWithMotorPowers(output, -output, output, -output);
+        drive.driveWithMotorPowers(-output, -output, -output, -output);
     }
 
     public double getOutput(){
         return output;
     }
 
+    public double getTarget() {
+        return target;
+    }
 
     // desmos: https://www.desmos.com/calculator/j2e6yaorld
     public double joystickTransform(double input){
