@@ -12,7 +12,9 @@ import java.util.List;
 @Config
 public class JunctionDetection extends OpenCvPipeline {
 
+    boolean newResultFlag = false;
     Point center;
+    Point finalCenter = new Point();
     double finalWidth = -1;
     double finalHeight = -1;
     public static boolean threshThing = false;
@@ -28,6 +30,7 @@ public class JunctionDetection extends OpenCvPipeline {
         Imgproc.line(input, new Point(0,720), new Point(1280, 720),BLACK,4);
 
         Mat mat = new Mat();
+        Imgproc.GaussianBlur(input, input, new Size(5, 5), 0);
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
         Scalar lowThresh = new Scalar(ThreshPipeline.low_Y, ThreshPipeline.low_Cr, ThreshPipeline.low_Cb);
@@ -35,7 +38,10 @@ public class JunctionDetection extends OpenCvPipeline {
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowThresh, highThresh, thresh);
-        Imgproc.GaussianBlur(thresh, thresh, new Size(5.0, 5.0), 0);
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(10, 10));
+        Imgproc.erode(thresh, thresh, kernel);
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, new Mat());
 
 
         Mat edges = new Mat();
@@ -97,6 +103,8 @@ public class JunctionDetection extends OpenCvPipeline {
             }
             Imgproc.circle(input, center, (int) radius[0], RED, 2);
         }
+        finalCenter = center.clone();
+        newResultFlag = true;
 
         Imgproc.circle(input, new Point(640, 360), 8, BLUE, 8);
 
@@ -111,8 +119,12 @@ public class JunctionDetection extends OpenCvPipeline {
             return input;
         }
     }
-    public Point getCenter(){
-        return center;
+    public Point getCenter() {
+        return finalCenter;
+    }
+    public Point uniqueCenter(){
+        if(newResultFlag) return finalCenter;
+        return null;
     }
     public double getWidth(){
         return finalWidth;

@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp
-public class CVTestOpMode extends OpMode {
+public class Test extends OpMode {
 
     private OpenCvCamera camera;
     JunctionDetection pipeline;
@@ -42,6 +42,7 @@ public class CVTestOpMode extends OpMode {
 
     @Override
     public void loop() {
+
         Point center = pipeline.getCenter();
 
         if(center!=null) {

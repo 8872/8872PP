@@ -12,8 +12,8 @@ import java.util.List;
 @Config
 public class ThreshPipeline extends OpenCvPipeline {
     Point[] centers;
-    public static boolean showThresh = false;
-    public static boolean red = true;
+    public static boolean showThresh = true;
+    public static boolean red = false;
     public static boolean blue = false;
     public static double low_Y = 0;
     public static double low_Cr = 50; //141
@@ -21,6 +21,12 @@ public class ThreshPipeline extends OpenCvPipeline {
     public static double high_Y = 255;
     public static double high_Cr = 180; //230
     public static double high_Cb = 95;
+
+    public static int kernelWidth = 10;
+    public static int kernelHeight = 10;
+
+    public static int blurWidth = 5;
+    public static int blurHeight = 5;
 
 
     @Override
@@ -31,21 +37,22 @@ public class ThreshPipeline extends OpenCvPipeline {
         Scalar BLUE = new Scalar(0,0,255);
 
         Mat mat = new Mat();
+        Imgproc.GaussianBlur(input, input, new Size(blurWidth, blurHeight), 0);
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
-        if(red){
-            high_Y = 120;
-            low_Cr = 170;
-            low_Cb = 0;
-            high_Cr = 255;
-            high_Cb = 255;
-        }else if(blue){
-            high_Y = 100;
-            low_Cr = 0;
-            low_Cb = 160;
-            high_Cr = 255;
-            high_Cb = 255;
-        }
+//        if(red){
+//            high_Y = 120;
+//            low_Cr = 170;
+//            low_Cb = 0;
+//            high_Cr = 255;
+//            high_Cb = 255;
+//        }else if(blue){
+//            high_Y = 100;
+//            low_Cr = 0;
+//            low_Cb = 160;
+//            high_Cr = 255;
+//            high_Cb = 255;
+//        }
 
         Scalar lowThresh = new Scalar(low_Y, low_Cr, low_Cb);
         Scalar highThresh = new Scalar(high_Y, high_Cr, high_Cb);
@@ -53,9 +60,10 @@ public class ThreshPipeline extends OpenCvPipeline {
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowThresh, highThresh, thresh);
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(kernelWidth, kernelHeight));
+        Imgproc.erode(thresh, thresh, kernel);
         Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
-        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
-        Imgproc.GaussianBlur(thresh, thresh, new Size(5.0, 5.0), 0);
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, new Mat());
 
 
         Mat edges = new Mat();
