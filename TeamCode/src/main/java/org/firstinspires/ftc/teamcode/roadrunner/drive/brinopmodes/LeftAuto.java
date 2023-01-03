@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.checkerframework.checker.units.qual.C;
+import org.firstinspires.ftc.teamcode.command.group.MoveToConeStackAuto;
+import org.firstinspires.ftc.teamcode.command.group.MoveToHighAuto;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -17,6 +19,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.util.ConeStack;
 import org.firstinspires.ftc.teamcode.util.Junction;
 
 @Config
@@ -52,6 +55,8 @@ public class LeftAuto extends LinearOpMode {
     private ElapsedTime waitTimer1;
 
     int pickupPosition = -125;
+
+    ConeStack cones[] = ConeStack.values();
     int coneCounter = 0;
     final int coneTarget = 3;
 
@@ -211,8 +216,9 @@ public class LeftAuto extends LinearOpMode {
 
                 case RETRIEVE:
                     if (!drive.isBusy()) {
-                        claw.grab();
-                        lift.setJunction(Junction.HIGH);
+                        //claw.grab();
+                        //lift.setJunction(Junction.HIGH);
+                        new MoveToHighAuto(lift, claw);
                         waitTimer2.reset();
                         currentState = DRIVE_PHASE.WAIT_FOR_GRAB;
                     }
@@ -259,8 +265,9 @@ public class LeftAuto extends LinearOpMode {
                 waitingForReopen = false;
             }
             if(waitingForLower && waitTimer3.seconds() >= waitTime3){
-                lift.setJunction(pickupPosition);
-                pickupPosition += (5 - (coneCounter - 1)) * 6;
+                //lift.setJunction(pickupPosition);
+                new MoveToConeStackAuto(lift, slide, claw, cones[coneCounter - 1]);
+                //pickupPosition += (5 - (coneCounter - 1)) * 6;
                 waitingForLower = false;
             }
 
