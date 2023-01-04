@@ -14,7 +14,7 @@ public final class TestRotationOpMode extends BaseOpMode {
     public void initialize() {
         super.initialize();
 
-        headingPID = new HeadingPID(drive);
+//        headingPID = new HeadingPID(drive);
         gamepadEx1.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new SetHeading(drive, 0));
         gamepadEx1.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
