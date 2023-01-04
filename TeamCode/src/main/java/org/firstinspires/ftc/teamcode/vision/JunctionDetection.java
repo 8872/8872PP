@@ -78,6 +78,7 @@ public class JunctionDetection extends OpenCvPipeline {
             regularRect = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
 
 
+            if(regularRect.height < 540) continue;
             if(regularRect.height/regularRect.width>= 2){
                 if(height<width){
                     double temp = width;
