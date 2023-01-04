@@ -18,8 +18,6 @@ public final class CameraRotate extends BaseOpMode {
     private DriveWithJunctionRotation driveWithJunctionRotation;
     private OpenCvCamera camera;
     JunctionDetection pipeline;
-    private RevIMU imu;
-
     public final double PIX_TO_DEGREE = 22.0133;
         private DefaultRobotCentricDrive robotCentricDrive;
 
@@ -30,8 +28,6 @@ public final class CameraRotate extends BaseOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        imu = new RevIMU(hardwareMap);
-        imu.init();
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         pipeline = new JunctionDetection();
         camera.setPipeline(pipeline);
