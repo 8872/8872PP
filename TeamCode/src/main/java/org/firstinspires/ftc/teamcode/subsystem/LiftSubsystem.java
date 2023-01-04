@@ -18,8 +18,8 @@ public class LiftSubsystem extends SubsystemBase {
     private final TouchSensor limitSwitch;
 
     public static int none = 10;
-    public static int low = -450;
-    public static int medium = -839;
+    public static int low = -400; //-450
+    public static int medium = -855; //-839
     public static int high = -1800;
     public static int ground = -25;
 
@@ -139,13 +139,17 @@ public class LiftSubsystem extends SubsystemBase {
             case GROUND:
                 return dr4bLeftMotor.getCurrentPosition()<0 && dr4bLeftMotor.getCurrentPosition()>-100;
             case LOW:
-                return dr4bLeftMotor.getCurrentPosition()<-300 && dr4bLeftMotor.getCurrentPosition()>-400;
+                return dr4bLeftMotor.getCurrentPosition()<-300 && dr4bLeftMotor.getCurrentPosition()>-501;
             case MEDIUM:
                 return dr4bLeftMotor.getCurrentPosition()<-800 && dr4bLeftMotor.getCurrentPosition()>-900;
             case HIGH:
                 return dr4bLeftMotor.getCurrentPosition()<-1700 && dr4bLeftMotor.getCurrentPosition()>-1800;
         }
         return false;
+    }
+
+    public void setCurrentGoal(Junction junction){
+        currentGoal = junction;
     }
 
     public void changeSetPoint(double joystickInput) {
@@ -163,5 +167,9 @@ public class LiftSubsystem extends SubsystemBase {
 
     public boolean isSlideIncompatible(){
         return currentGoal == Junction.LOW || currentGoal == Junction.GROUND;
+    }
+
+    public boolean isGrabAndLiftIncompatible(){
+        return currentGoal != Junction.NONE;
     }
 }

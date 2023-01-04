@@ -20,7 +20,7 @@ public class LiftDown extends SequentialCommandGroup {
 
     public LiftDown(LiftSubsystem lift, SlideSubsystem slide, ClawSubsystem claw){
         addCommands(
-                new ReleaseCone(claw),
+                new GrabCone(claw),
                 new ConditionalCommand(new SetJunction(lift, Junction.MEDIUM),
                         new SetJunction(lift, Junction.NONE), lift::isSlideIncompatible),
                 new ParallelCommandGroup(
@@ -29,7 +29,7 @@ public class LiftDown extends SequentialCommandGroup {
                 ),
                 new SetJunction(lift, Junction.NONE),
                 new MoveToJunction(lift),
-                new GrabCone(claw)
+                new ReleaseCone(claw)
         );
 
         addRequirements(lift, slide, claw);

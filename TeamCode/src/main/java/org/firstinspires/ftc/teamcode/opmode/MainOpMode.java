@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.FunctionalCommand;
 import com.arcrobotics.ftclib.command.SelectCommand;
+import com.arcrobotics.ftclib.command.StartEndCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import org.firstinspires.ftc.robotcore.external.Function;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
 import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
@@ -84,7 +87,7 @@ public final class MainOpMode extends BaseOpMode {
                 .whileHeld(driveWithJunctionRotation);
 
         gb2(GamepadKeys.Button.LEFT_BUMPER)
-                .toggleWhenPressed(new GrabAndLift(lift, claw, goal), new GrabCone(claw));
+                .toggleWhenPressed(new GrabAndLift(lift, claw, goal), new ReleaseCone(claw));
 
         moveLiftPID = new MoveLiftPID(lift, gamepadEx2::getRightY);
 
@@ -128,6 +131,7 @@ public final class MainOpMode extends BaseOpMode {
         gb2(GamepadKeys.Button.RIGHT_BUMPER)
                 .and(gb2(GamepadKeys.Button.Y)
                         .whileHeld(new SetJunction(lift, Junction.HIGH)));
+
 
         register(drive, lift, claw, slide);
         drive.setDefaultCommand(robotCentricDrive);

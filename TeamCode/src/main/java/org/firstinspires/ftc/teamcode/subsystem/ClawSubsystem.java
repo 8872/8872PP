@@ -7,8 +7,8 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 @Config
 public class ClawSubsystem extends SubsystemBase {
     private final ServoEx claw;
-    public static double grabPosition = 45;
-    public static double releasePosition = 35;
+    public static double grabPosition = 35;
+    public static double releasePosition = 45;
 
     public ClawSubsystem(ServoEx claw) {
         this.claw = claw;
