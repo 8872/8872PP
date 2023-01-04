@@ -15,11 +15,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp(name = "another rotation test")
 public final class CameraRotate extends BaseOpMode {
-    private HeadingPID headingPID;
+    private DriveWithJunctionRotation driveWithJunctionRotation;
     private OpenCvCamera camera;
     JunctionDetection pipeline;
-    public static double PIX_TO_DEGREE = 22.0133;
-    private DefaultRobotCentricDrive robotCentricDrive;
+    private RevIMU imu;
+
+    public final double PIX_TO_DEGREE = 22.0133;
+        private DefaultRobotCentricDrive robotCentricDrive;
 
 
     @Override
@@ -28,6 +30,8 @@ public final class CameraRotate extends BaseOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        imu = new RevIMU(hardwareMap);
+        imu.init();
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         pipeline = new JunctionDetection();
         camera.setPipeline(pipeline);
@@ -46,7 +50,7 @@ public final class CameraRotate extends BaseOpMode {
 //                gamepadEx1::getRightX, gamepadEx1::getLeftY);
 
 
-        headingPID = new HeadingPID(drive, gamepadEx1::getLeftX,
+        driveWithJunctionRotation = new DriveWithJunctionRotation(drive, gamepadEx1::getLeftX,
                 gamepadEx1::getRightX, gamepadEx1::getLeftY);
 
         gamepadEx1.getGamepadButton(GamepadKeys.Button.DPAD_UP)
@@ -59,7 +63,7 @@ public final class CameraRotate extends BaseOpMode {
                 .whenPressed(new SetHeading(drive, 90));
 
         register(drive);
-        drive.setDefaultCommand(headingPID);
+        drive.setDefaultCommand(driveWithJunctionRotation);
     }
 
     @Override

@@ -7,11 +7,15 @@ import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import org.firstinspires.ftc.teamcode.util.AngleController;
+import org.firstinspires.ftc.teamcode.util.ScuffedMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.SlewRateLimiter;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Config
 public class DriveSubsystem extends SubsystemBase {
-    private final MecanumDrive drive;
+    private final ScuffedMecanumDrive drive;
     private final RevIMU imu;
     public static double kP = 0.06;
     public static double kI = 0;
@@ -36,7 +40,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     public DriveSubsystem(MotorEx fL, MotorEx fR, MotorEx bL, MotorEx bR, RevIMU imu){
         this.imu = imu;
-        drive = new MecanumDrive(fL, fR, bL, bR);
+        drive = new ScuffedMecanumDrive(fL, fR, bL, bR);
     }
 
     public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed){
@@ -57,6 +61,24 @@ public class DriveSubsystem extends SubsystemBase {
         drive.driveRobotCentric(strafeSpeed / slowFactor, forwardSpeed / slowFactor, turnSpeed / slowFactor);
     }
 
+    public void driveWithJunctionRotation(double strafeSpeed, double forwardSpeed, double turnSpeed){
+        double[] motorPowers = drive.getMotorPowers(strafeSpeed, forwardSpeed, turnSpeed);
+        output = controller.calculate(imu.getHeading());
+        double[] finalPowers;
+
+        for(int i = 0; i < motorPowers.length; i++)
+            motorPowers[i] -= output;
+
+        double max = Math.abs(Arrays.stream(motorPowers).max().getAsDouble());
+        if(max>1){
+            for(int i = 0; i < motorPowers.length; i++)
+                motorPowers[i]/=max;
+        }
+        finalPowers = motorPowers.clone();
+
+        drive.driveWithMotorPowers(finalPowers[0], finalPowers[1], finalPowers[2], finalPowers[3]);
+    }
+
 
     public void setHeading(double degrees){
         Log.d("asd", ""+degrees);
@@ -65,8 +87,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void updatePID(){
-        Log.d("asd", "heading: "+imu.getHeading());
-        Log.d("asd", "output: "+output);
         output = controller.calculate(imu.getHeading());
         drive.driveWithMotorPowers(-output, -output, -output, -output);
     }
