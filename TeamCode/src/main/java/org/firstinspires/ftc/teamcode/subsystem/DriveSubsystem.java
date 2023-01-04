@@ -6,7 +6,9 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import org.firstinspires.ftc.teamcode.util.AngleController;
+import org.firstinspires.ftc.teamcode.util.ProfiledAngleController;
 import org.firstinspires.ftc.teamcode.util.ScuffedMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.SlewRateLimiter;
 
@@ -20,7 +22,10 @@ public class DriveSubsystem extends SubsystemBase {
     public static double kP = 0.06;
     public static double kI = 0;
     public static double kD = 0.0035;
-    private final AngleController controller = new AngleController(kP, kI, kD, 0);
+    public static double maxVelocity = 20;
+    public static double maxAcceleration = 20;
+    private final ProfiledAngleController controller = new ProfiledAngleController(kP, kI, kD, 0,
+            new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
     private double output;
     public static boolean transformed = true;
 
@@ -82,7 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void setHeading(double degrees){
         Log.d("asd", ""+degrees);
-        controller.setSetPoint(degrees);
+        controller.setGoal(degrees);
         target = degrees;
     }
 
