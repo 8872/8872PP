@@ -15,12 +15,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp(name = "another rotation test")
 public final class CameraRotate extends BaseOpMode {
-    private HeadingPID headingPID;
+    private DriveWithJunctionRotation driveWithJunctionRotation;
     private OpenCvCamera camera;
     JunctionDetection pipeline;
     private RevIMU imu;
+
     public final double PIX_TO_DEGREE = 22.0133;
-    private DefaultRobotCentricDrive robotCentricDrive;
+        private DefaultRobotCentricDrive robotCentricDrive;
 
 
     @Override
@@ -49,7 +50,7 @@ public final class CameraRotate extends BaseOpMode {
 //                gamepadEx1::getRightX, gamepadEx1::getLeftY);
 
 
-        headingPID = new HeadingPID(drive, gamepadEx1::getLeftX,
+        driveWithJunctionRotation = new DriveWithJunctionRotation(drive, gamepadEx1::getLeftX,
                 gamepadEx1::getRightX, gamepadEx1::getLeftY);
 
         gamepadEx1.getGamepadButton(GamepadKeys.Button.DPAD_UP)
@@ -62,7 +63,7 @@ public final class CameraRotate extends BaseOpMode {
                 .whenPressed(new SetHeading(drive, 90));
 
         register(drive);
-        drive.setDefaultCommand(headingPID);
+        drive.setDefaultCommand(driveWithJunctionRotation);
     }
 
     @Override
