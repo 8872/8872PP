@@ -110,6 +110,9 @@ public class DriveSubsystem extends SubsystemBase {
                 * Math.signum(input)
                 * (Math.pow(joystickTransformFactor, Math.abs(input))-1);
     }
+    public boolean atDesiredAngle(){
+        return Math.abs(target-imu.getHeading())<2;
+    }
 
 
 

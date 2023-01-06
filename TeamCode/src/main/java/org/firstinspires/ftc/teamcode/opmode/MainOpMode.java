@@ -46,7 +46,7 @@ public final class MainOpMode extends BaseOpMode {
 
     public static int goal = -100;
 
-    public final double PIX_TO_DEGREE = 22.0133;
+    public static final double PIX_TO_DEGREE = 22.0133;
 
 
     private OpenCvCamera camera;
