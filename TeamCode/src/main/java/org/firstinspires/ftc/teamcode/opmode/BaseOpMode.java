@@ -64,7 +64,7 @@ public class BaseOpMode extends CommandOpMode {
         // what the proper min and max?
         clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
         slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
-        slideServo.setPosition(1.0);
+        slideServo.setPosition(SlideSubsystem.inPosition);
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();

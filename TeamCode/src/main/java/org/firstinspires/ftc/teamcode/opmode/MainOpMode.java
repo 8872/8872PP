@@ -89,48 +89,51 @@ public final class MainOpMode extends BaseOpMode {
         gb2(GamepadKeys.Button.LEFT_BUMPER)
                 .toggleWhenPressed(new GrabAndLift(lift, claw, goal), new ReleaseCone(claw));
 
+//        gb2(GamepadKeys.Button.RIGHT_BUMPER)
+//                .toggleWhenPressed(new SlideI)
+
         moveLiftPID = new MoveLiftPID(lift, gamepadEx2::getRightY);
 
-        gb2(GamepadKeys.Button.DPAD_UP)
+        gb2(GamepadKeys.Button.Y)
                 .whenPressed(new LiftUp(lift, slide, Junction.HIGH));
 
-        gb2(GamepadKeys.Button.DPAD_LEFT)
+        gb2(GamepadKeys.Button.X)
                 .whenPressed(new LiftUp(lift, slide, Junction.MEDIUM));
 
-        gb2(GamepadKeys.Button.DPAD_RIGHT)
+        gb2(GamepadKeys.Button.B)
                 .whenPressed(new LiftUp(lift, slide, Junction.LOW));
 
-        gb2(GamepadKeys.Button.DPAD_DOWN)
+        gb2(GamepadKeys.Button.A)
                 .whenPressed(new LiftDown(lift, slide, claw));
 
-        gb2(GamepadKeys.Button.Y)
+        gb2(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new SetConeStack(lift, ConeStack.FIRST));
 
-        gb2(GamepadKeys.Button.X)
+        gb2(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(new SetConeStack(lift, ConeStack.SECOND));
 
-        gb2(GamepadKeys.Button.B)
+        gb2(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(new SetConeStack(lift, ConeStack.THIRD));
 
-        gb2(GamepadKeys.Button.A)
+        gb2(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new SetConeStack(lift, ConeStack.FOURTH));
 
         //forklift
         gb2(GamepadKeys.Button.RIGHT_BUMPER)
-                .and(gb2(GamepadKeys.Button.A)
-                        .whileHeld(new SetJunction(lift, Junction.NONE)));
+                .and(gb2(GamepadKeys.Button.A))
+                        .whenActive(new SetJunction(lift, Junction.NONE));
 
         gb2(GamepadKeys.Button.RIGHT_BUMPER)
-                .and(gb2(GamepadKeys.Button.B)
-                        .whileHeld(new SetJunction(lift, Junction.LOW)));
+                .and(gb2(GamepadKeys.Button.B))
+                        .whenActive(new SetJunction(lift, Junction.LOW));
 
         gb2(GamepadKeys.Button.RIGHT_BUMPER)
-                .and(gb2(GamepadKeys.Button.X)
-                        .whileHeld(new SetJunction(lift, Junction.MEDIUM)));
+                .and(gb2(GamepadKeys.Button.X))
+                        .whenActive(new SetJunction(lift, Junction.MEDIUM));
 
         gb2(GamepadKeys.Button.RIGHT_BUMPER)
-                .and(gb2(GamepadKeys.Button.Y)
-                        .whileHeld(new SetJunction(lift, Junction.HIGH)));
+                .and(gb2(GamepadKeys.Button.Y))
+                        .whenActive(new SetJunction(lift, Junction.HIGH));
 
 
         register(drive, lift, claw, slide);

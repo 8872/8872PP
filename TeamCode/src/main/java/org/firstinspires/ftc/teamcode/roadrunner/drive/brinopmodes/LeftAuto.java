@@ -3,12 +3,16 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive.brinopmodes;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.command.group.GrabAndLift;
+import org.firstinspires.ftc.teamcode.command.group.LiftUp;
+import org.firstinspires.ftc.teamcode.opmode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -21,13 +25,13 @@ import org.firstinspires.ftc.teamcode.util.Junction;
 
 @Config
 @Autonomous
-public class LeftAuto extends LinearOpMode {
+public class LeftAuto extends BaseOpMode {
 
     public static double initial_x_pos = 55.56;
     public static double initial_y_pos = -2;
+    public static double initial_turn_angle = 110;
     public static double spline_x_pos = 51;
     public static double spline_y_pos = 5.5;
-    public static double retrieve_x_pos = 52;
     public static double retrieve_y_pos = 27.33;
     public static double deposit_x_pos = 54.75;
     public static double deposit_y_pos = -3.33;
@@ -46,8 +50,10 @@ public class LeftAuto extends LinearOpMode {
     private TrajectorySequence preload;
     private TrajectorySequenceBuilder preload_turn;
     private TrajectorySequence retrieve;
-    private TrajectorySequence deposit;//, park, skuffedFix;
+    private TrajectorySequence deposit;
 
+    private ElapsedTime wait500;
+    private ElapsedTime wait300;
     private double waitTime1;
     private ElapsedTime waitTimer1;
 
@@ -101,32 +107,6 @@ public class LeftAuto extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
 
-
-        /*
-        preload = drive.trajectorySequenceBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
-                .turn(2.315)
-                .build();
-
-        retrieve = drive.trajectorySequenceBuilder(preload.end())
-                .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        deposit = drive.trajectorySequenceBuilder(retrieve.end())
-                .back(Math.abs(spline_y_pos-deposit_y_pos),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64),SampleMecanumDrive.getVelocityConstraint(35, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-         */
-        //TODO: make it park based on the sleeve
-//        park = drive.trajectoryBuilder(drive.getPoseEstimate())
-//                .lineToSplineHeading(new Pose2d(0, 0, Math.toRadians(0)))
-//                .build();
-
         waitTime1 = 0.5;
         waitTimer1 = new ElapsedTime();
 
@@ -145,47 +125,40 @@ public class LeftAuto extends LinearOpMode {
 
         telemetry.addData("initialized", true);
         telemetry.update();
+
+        schedule(new GrabAndLift(liftSub, clawSub, -75));
+
         waitForStart();
 
         if (isStopRequested()) return;
-
-
 
         currentState = DRIVE_PHASE.WAIT_FOR_PRELOAD;
 
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
-                    clawSub.grab();
-                    sleep(1000);
-                    liftSub.setJunction(Junction.HIGH);
-                    waitingForExtend = true;
+                    schedule(new LiftUp(liftSub, slideSub, Junction.HIGH));
                     drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
-                            .lineToConstantHeading(new Vector2d(initial_x_pos, initial_y_pos))
-                            .turn(Math.toRadians(-69))
+                            .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos,Math.toRadians(initial_turn_angle)))
                             .build());
                     currentState = DRIVE_PHASE.DEPOSIT;
                     break;
                 case DEPOSIT:
                     if (!drive.isBusy()) {
                         currentState = DRIVE_PHASE.WAIT_FOR_DEPOSIT;
-                        waitTimer1.reset();
+                        wait500.reset();
                     }
                     break;
 
                 case WAIT_FOR_DEPOSIT:
-                    if (waitTimer1.seconds() >= waitTime1) {
+                    if (wait500.seconds() >= 0.5) {
                         clawSub.release();
-                        waitTimerRetrieve.reset();
+                        wait300.reset();
                         currentState = DRIVE_PHASE.MOVE_TO_RETRIEVE;
                     }
                     break;
                 case MOVE_TO_RETRIEVE:
-                    if(waitTimerRetrieve.seconds() >= waitTimeRetrieve){
-                        clawSub.grab();
-                        slideSub.in();
-                        waitingForLower = true;
-                        waitTimer3.reset();
+                    if(wait300.seconds() >= 0.3){
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
