@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.command.group.GrabAndLift;
+import org.firstinspires.ftc.teamcode.command.group.LiftDown;
 import org.firstinspires.ftc.teamcode.command.group.LiftUp;
 import org.firstinspires.ftc.teamcode.opmode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
@@ -159,14 +160,13 @@ public class LeftAuto extends BaseOpMode {
                     break;
                 case MOVE_TO_RETRIEVE:
                     if(wait300.seconds() >= 0.3){
+                        schedule(new LiftDown(liftSub, slideSub, clawSub));
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                     .turn(Math.toRadians(-45))
                                     .build());
                         }else{
-                            waitingForReopen = true;
-                            waitTimer2.reset();
                             currentState = DRIVE_PHASE.RETRIEVE;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                     .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -183,15 +183,14 @@ public class LeftAuto extends BaseOpMode {
 
                 case RETRIEVE:
                     if (!drive.isBusy()) {
-                        clawSub.grab();
-                        liftSub.setJunction(Junction.HIGH);
-                        waitTimer2.reset();
+                        schedule(new GrabAndLift(liftSub, clawSub, -100));
                         currentState = DRIVE_PHASE.WAIT_FOR_GRAB;
+                        wait300.reset();
                     }
                     break;
                 case WAIT_FOR_GRAB:
-                    if(waitTimer2.seconds()>=waitTime2){
-                        waitingForExtend = true;
+                    if(wait300.seconds()>=0.5){
+                        schedule(new LiftUp(liftSub, slideSub, Junction.HIGH));
                         currentState = DRIVE_PHASE.DEPOSIT;
                         drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                 .back(Math.abs(spline_y_pos-deposit_y_pos),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
