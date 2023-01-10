@@ -48,15 +48,7 @@ public class LeftAuto extends BaseOpMode {
     private ClawSubsystem clawSub;
     private SlideSubsystem slideSub;
 
-    private TrajectorySequence preload;
-    private TrajectorySequenceBuilder preload_turn;
-    private TrajectorySequence retrieve;
-    private TrajectorySequence deposit;
 
-    private ElapsedTime wait500;
-    private ElapsedTime wait300;
-    private double waitTime1;
-    private ElapsedTime waitTimer1;
 
     int pickupPosition = -120;
     int coneCounter = 3;
@@ -72,15 +64,6 @@ public class LeftAuto extends BaseOpMode {
         PARK,
         IDLE
     }
-    boolean waitingForExtend = false;
-    boolean waitingForRetract = false;
-    boolean waitingForLower = false;
-    private double waitTime2;
-    private ElapsedTime waitTimer2;
-    private ElapsedTime waitTimerInitial;
-    double waitTimeInitial;
-
-    boolean waitingForReopen = false;
 
     DRIVE_PHASE currentState = DRIVE_PHASE.IDLE;
     Pose2d startPose = new Pose2d(0, 0, Math.toRadians(180));
@@ -108,26 +91,13 @@ public class LeftAuto extends BaseOpMode {
 
         drive.setPoseEstimate(startPose);
 
-        waitTime1 = 0.5;
-        waitTimer1 = new ElapsedTime();
-
-        waitTime2 = 1.5;
-        waitTimer2 = new ElapsedTime();
-
-        waitTimeInitial = 1.0;
-        waitTimerInitial = new ElapsedTime();
-
-        ElapsedTime waitTimer3 = new ElapsedTime();
-        double waitTime3 = 0.5;
-
-        ElapsedTime waitTimerRetrieve = new ElapsedTime();
-        double waitTimeRetrieve = 0.5;
-
+        ElapsedTime wait500 = new ElapsedTime();
+        ElapsedTime wait300 = new ElapsedTime();
 
         telemetry.addData("initialized", true);
         telemetry.update();
 
-        schedule(new GrabAndLift(liftSub, clawSub, -75));
+        schedule(new GrabAndLift(liftSub, clawSub, -100));
 
         waitForStart();
 
@@ -139,9 +109,9 @@ public class LeftAuto extends BaseOpMode {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
                     schedule(new LiftUp(liftSub, slideSub, Junction.HIGH));
-                    drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
-                            .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos,Math.toRadians(initial_turn_angle)))
-                            .build());
+//                    drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
+//                            .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos,Math.toRadians(initial_turn_angle)))
+//                            .build());
                     currentState = DRIVE_PHASE.DEPOSIT;
                     break;
                 case DEPOSIT:
@@ -168,12 +138,12 @@ public class LeftAuto extends BaseOpMode {
                                     .build());
                         }else{
                             currentState = DRIVE_PHASE.RETRIEVE;
-                            drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                    .build());
+//                            drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+//                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(23, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+//                                    .build());
                             spline_x_pos += x_change;
                         }
                         coneCounter--;
@@ -183,21 +153,21 @@ public class LeftAuto extends BaseOpMode {
 
                 case RETRIEVE:
                     if (!drive.isBusy()) {
-                        schedule(new GrabAndLift(liftSub, clawSub, -100));
+                        schedule(new GrabAndLift(liftSub, clawSub, liftSub.getLeftEncoderValue()-100));
                         currentState = DRIVE_PHASE.WAIT_FOR_GRAB;
-                        wait300.reset();
+                        wait500.reset();
                     }
                     break;
                 case WAIT_FOR_GRAB:
-                    if(wait300.seconds()>=0.5){
+                    if(wait500.seconds()>=0.5){
                         schedule(new LiftUp(liftSub, slideSub, Junction.HIGH));
                         currentState = DRIVE_PHASE.DEPOSIT;
-                        drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                .back(Math.abs(spline_y_pos-deposit_y_pos),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .build());
+//                        drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                                .back(Math.abs(spline_y_pos-deposit_y_pos),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+//                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64),SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+//                                .build());
                         deposit_x_pos += x_change;
                         deposit_y_pos += y_change;
                     }
@@ -214,27 +184,6 @@ public class LeftAuto extends BaseOpMode {
                     spline_x_pos = storedSplineX;
                     break;
             }
-            if(waitingForExtend && liftSub.getLeftEncoderValue()<-350){
-                waitingForExtend = false;
-                slideSub.out();
-            }
-            if(waitingForRetract && waitTimer2.seconds() >= waitTime2){
-                slideSub.in();
-                clawSub.grab();
-                waitingForRetract = false;
-                waitingForReopen = true;
-                waitTimer1.reset();
-            }
-            if(waitingForReopen && waitTimer2.seconds() >= waitTime2){
-                clawSub.release();
-                waitingForReopen = false;
-            }
-            if(waitingForLower && waitTimer3.seconds() >= waitTime3){
-                liftSub.setJunction(pickupPosition);
-                pickupPosition += 28;
-                waitingForLower = false;
-            }
-
 
             drive.update();
             liftSub.updatePID();
@@ -244,6 +193,9 @@ public class LeftAuto extends BaseOpMode {
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.addData("drive phase", currentState);
+            telemetry.addData("slide", slideSub.getPosition());
+            telemetry.addData("lift", liftSub.getTargetPosition());
+            telemetry.addData("liftPos", liftSub.getLeftEncoderValue());
             telemetry.update();
         }
     }
