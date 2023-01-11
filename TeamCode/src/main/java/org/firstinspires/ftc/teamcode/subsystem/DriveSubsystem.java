@@ -27,7 +27,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final ProfiledAngleController controller = new ProfiledAngleController(kP, kI, kD, 0,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
     private double output;
-    public static boolean transformed = true;
+    public static boolean transformed = false;
 
     public static int joystickTransformFactor = 30;
 

@@ -132,6 +132,9 @@ public class LiftSubsystem extends SubsystemBase {
     }
 
 
+    public boolean atTarget(int goal){
+        return Math.abs(dr4bLeftMotor.getCurrentPosition()-goal)<60;
+    }
     public boolean atTarget() {
         switch(currentGoal){
             case NONE:
