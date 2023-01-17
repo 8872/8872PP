@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 public class SlideSubsystem extends SubsystemBase {
     private final ServoEx slide;
-    public static double inPosition = 0.85;
-    public static double outPosition = 0;
+    public static double inPosition = 0.55;
+    public static double outPosition = 0.28;
 
     // TODO slide accels to slowly at the beginning. make asymmetric
     public static double maxVelocity = 1; //0.25

@@ -27,7 +27,6 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@Disabled
 @Autonomous(name = "Signal Sleeve Test")
 @Config
 public class VisionTest extends LinearOpMode
@@ -73,9 +72,8 @@ public class VisionTest extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280 , 720, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
             public void onError(int errorCode)
             {

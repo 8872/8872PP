@@ -23,16 +23,16 @@ import org.firstinspires.ftc.teamcode.util.Junction;
 @Autonomous
 public class OldAuto extends LinearOpMode {
 
-    public static double initial_x_pos = 53;//55.56;
-    public static double initial_y_pos = -1.05;//-2;
+    public static double initial_x_pos = 53.75;//55.56;
+    public static double initial_y_pos = -1.2;//-2;
     public static double initial_turn_angle = 123;
-    public static double spline_x_pos = 49.68;//51;
+    public static double spline_x_pos = 50.5;//51;
     public static double spline_y_pos = 7.16;//5.5;
-    public static double retrieve_y_pos = 26.66;//27.33;
-    public static double deposit_x_pos = 53.97;//54.75;
-    public static double deposit_y_pos = -1.05;//-3.33;
-    public static double x_change = 0.3;
-    public static double y_change = 0.3;
+    public static double retrieve_y_pos = 26;//27.33;
+    public static double deposit_x_pos = 53.5;//54.75;
+    public static double deposit_y_pos = -1.2;//-3.33;
+    public static double x_change = 0.33;
+    public static double y_change = 0.1;
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
     private SimpleServo claw, slide;
@@ -43,12 +43,13 @@ public class OldAuto extends LinearOpMode {
     private ClawSubsystem clawSub;
     private SlideSubsystem slideSub;
 
-    int pickupPosition = -120;
-    int coneCounter = 4;
+    int pickupPosition = -100;
+    int coneCounter = 5;
 
     private enum DRIVE_PHASE {
-        INITIAL_GRAB,
         WAIT_FOR_PRELOAD,
+        SLIDE,
+        PRELOAD,
         DEPOSIT,
         WAIT_FOR_DEPOSIT,
         MOVE_TO_RETRIEVE,
@@ -61,6 +62,7 @@ public class OldAuto extends LinearOpMode {
     ElapsedTime delayTimer = new ElapsedTime();
     ElapsedTime wait100 = new ElapsedTime();
     ElapsedTime wait250 = new ElapsedTime();
+    ElapsedTime wait750 = new ElapsedTime();
 
     DRIVE_PHASE currentState = DRIVE_PHASE.IDLE;
     Pose2d startPose = new Pose2d(0, 0, Math.toRadians(180));
@@ -109,25 +111,32 @@ public class OldAuto extends LinearOpMode {
             switch (currentState) {
                 case WAIT_FOR_PRELOAD:
                     liftSub.setJunction(Junction.HIGH);
-                    delayedExtend = true;
-                    delayTimer.reset();
-                    drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(startPose)
-                            .lineToLinearHeading(new Pose2d(initial_x_pos-5,initial_y_pos-2,Math.toRadians(initial_turn_angle)),SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                            .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos,Math.toRadians(initial_turn_angle)),SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                    drive.followTrajectoryAsync(drive.trajectoryBuilder(startPose)
+                            .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos, Math.toRadians(initial_turn_angle))//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                    )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                             .build());
-                    currentState = DRIVE_PHASE.DEPOSIT;
+                    currentState = DRIVE_PHASE.SLIDE;
+                    break;
+                case SLIDE:
+                    if(!drive.isBusy()){
+                        drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos, Math.toRadians(initial_turn_angle))//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                .build());
+                        slideSub.out();
+                        wait750.reset();
+                        currentState = DRIVE_PHASE.DEPOSIT;
+                    }
                     break;
                 case DEPOSIT:
-                    if (!drive.isBusy()) {
+                    if (!drive.isBusy() && wait750.seconds()>=0.75) {
                         currentState = DRIVE_PHASE.WAIT_FOR_DEPOSIT;
                         wait250.reset();
                     }
                     break;
 
                 case WAIT_FOR_DEPOSIT:
-                    if (wait250.seconds() >= 0.25) {
+                    if (wait250.seconds() >= 0) {
                         clawSub.release();
                         wait100.reset();
                         currentState = DRIVE_PHASE.MOVE_TO_RETRIEVE;
@@ -137,7 +146,7 @@ public class OldAuto extends LinearOpMode {
                     if(wait100.seconds() >= 0.1){
                         slideSub.in();
                         liftSub.setJunction(pickupPosition);
-                        pickupPosition-=20;
+                        pickupPosition+=23;
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
@@ -146,12 +155,13 @@ public class OldAuto extends LinearOpMode {
                         }else{
                             currentState = DRIVE_PHASE.RETRIEVE;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .build());
                             spline_x_pos += x_change;
+                            retrieve_y_pos -= y_change;
                         }
                         coneCounter--;
 
@@ -162,25 +172,29 @@ public class OldAuto extends LinearOpMode {
                     if (!drive.isBusy()) {
                         clawSub.grab();
                         liftSub.setJunction(Junction.HIGH);
-                        wait250.reset();
+                        wait750.reset();
                         currentState = DRIVE_PHASE.WAIT_FOR_GRAB;
                     }
                     break;
                 case WAIT_FOR_GRAB:
-                    if(wait250.seconds()>=.25){
+                    if(wait750.seconds()>=0.5){
                         delayedExtend = true;
                         delayTimer.reset();
                         currentState = DRIVE_PHASE.DEPOSIT;
                         drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                .back(Math.abs(spline_y_pos-deposit_y_pos),SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64),SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+//                                .back(Math.abs(5),SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                .back(Math.abs(spline_y_pos-deposit_y_pos-10)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+//                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                                )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                .splineTo(new Vector2d(deposit_x_pos-Math.sin(Math.toRadians(303)*5), deposit_y_pos+Math.cos(Math.toRadians(303))*5), Math.toRadians(312.64)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                .lineToLinearHeading(new Pose2d(deposit_x_pos, deposit_y_pos,Math.toRadians(123)))
                                 .build());
                         deposit_x_pos += x_change;
-                        deposit_y_pos += y_change;
+                        deposit_y_pos -= y_change;
                     }
-
                     break;
                 case PARK:
                     if(!drive.isBusy()){
@@ -193,7 +207,7 @@ public class OldAuto extends LinearOpMode {
                     spline_x_pos = storedSplineX;
                     break;
             }
-            if(delayedExtend && delayTimer.seconds()>=0.4){
+            if(delayedExtend && delayTimer.seconds()>=0){
                 delayedExtend = false;
                 slideSub.out();
             }

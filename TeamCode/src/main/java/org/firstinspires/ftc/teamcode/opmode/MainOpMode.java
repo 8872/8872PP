@@ -89,8 +89,8 @@ public final class MainOpMode extends BaseOpMode {
         gb2(GamepadKeys.Button.LEFT_BUMPER)
                 .toggleWhenPressed(new GrabAndLift(lift, claw, goal), new ReleaseCone(claw));
 
-//        gb2(GamepadKeys.Button.RIGHT_BUMPER)
-//                .toggleWhenPressed(new SlideI)
+        gb2(GamepadKeys.Button.LEFT_STICK_BUTTON)
+                .toggleWhenPressed(new SlideOut(slide), new SlideIn(slide));
 
         moveLiftPID = new MoveLiftPID(lift, gamepadEx2::getRightY);
 
