@@ -55,6 +55,15 @@ public class LiftSubsystem extends SubsystemBase {
         dr4b_pidf_left.setGoal(0);
         dr4b_pidf_right.setGoal(0);
     }
+    public LiftSubsystem(MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor, TouchSensor limitSwitch, double accel) {
+        this.limitSwitch = limitSwitch;
+        this.dr4bLeftMotor = dr4bLeftMotor;
+        this.dr4bRightMotor = dr4bRightMotor;
+        dr4b_pidf_left.setTolerance(tolerance);
+        dr4b_pidf_left.setGoal(0);
+        dr4b_pidf_right.setGoal(0);
+        maxAcceleration = accel;
+    }
 
     public void moveDr4b(double power){
         dr4bRightMotor.set(power / 2);

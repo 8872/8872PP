@@ -19,19 +19,20 @@ import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.util.Junction;
 
 
+//TODO Improvements: make slide not jerk as much with delayed full extension and make the conestack timer increase linearly instead of being constant
 @Config
 @Autonomous
 public class OldAuto extends LinearOpMode {
 
-    public static double initial_x_pos = 53.75;//55.56;
-    public static double initial_y_pos = -1.2;//-2;
+    public static double initial_x_pos = 53.8;//55.56;
+    public static double initial_y_pos = -1.25;//-2;
     public static double initial_turn_angle = 123;
     public static double spline_x_pos = 50.5;//51;
     public static double spline_y_pos = 7.16;//5.5;
-    public static double retrieve_y_pos = 26;//27.33;
-    public static double deposit_x_pos = 53.5;//54.75;
+    public static double retrieve_y_pos = 26.33;//27.33;
+    public static double deposit_x_pos = 53.33;//54.75;
     public static double deposit_y_pos = -1.2;//-3.33;
-    public static double x_change = 0.33;
+    public static double x_change = 0.4;
     public static double y_change = 0.1;
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
@@ -47,18 +48,22 @@ public class OldAuto extends LinearOpMode {
     int coneCounter = 5;
 
     private enum DRIVE_PHASE {
+        BRUH,
         WAIT_FOR_PRELOAD,
         SLIDE,
         PRELOAD,
         DEPOSIT,
         WAIT_FOR_DEPOSIT,
         MOVE_TO_RETRIEVE,
+        WAIT,
         RETRIEVE,
         WAIT_FOR_GRAB,
         PARK,
         IDLE
     }
     boolean delayedExtend = false;
+    boolean delayedLift = false;
+    ElapsedTime liftTimer = new ElapsedTime();
     ElapsedTime delayTimer = new ElapsedTime();
     ElapsedTime wait100 = new ElapsedTime();
     ElapsedTime wait250 = new ElapsedTime();
@@ -105,12 +110,17 @@ public class OldAuto extends LinearOpMode {
         if (isStopRequested()) return;
 
 
-        currentState = DRIVE_PHASE.WAIT_FOR_PRELOAD;
+        currentState = DRIVE_PHASE.BRUH;
 
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
+                case BRUH:
+                    liftSub.setJunction(Junction.MEDIUM);
+                    liftTimer.reset();
+                    delayedLift = true;
+                    currentState = DRIVE_PHASE.WAIT_FOR_PRELOAD;
+                    break;
                 case WAIT_FOR_PRELOAD:
-                    liftSub.setJunction(Junction.HIGH);
                     drive.followTrajectoryAsync(drive.trajectoryBuilder(startPose)
                             .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos, Math.toRadians(initial_turn_angle))//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                     )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -146,14 +156,14 @@ public class OldAuto extends LinearOpMode {
                     if(wait100.seconds() >= 0.1){
                         slideSub.in();
                         liftSub.setJunction(pickupPosition);
-                        pickupPosition+=23;
+                        pickupPosition+=33;
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                     .turn(Math.toRadians(-45))
                                     .build());
                         }else{
-                            currentState = DRIVE_PHASE.RETRIEVE;
+                            currentState = DRIVE_PHASE.WAIT;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                     .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                     SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -168,8 +178,14 @@ public class OldAuto extends LinearOpMode {
                     }
                     break;
 
+                case WAIT:
+                    if(!drive.isBusy()){
+                        liftTimer.reset();
+                        currentState=DRIVE_PHASE.RETRIEVE;
+                    }
+                    break;
                 case RETRIEVE:
-                    if (!drive.isBusy()) {
+                    if (liftTimer.seconds()>=0.3) {
                         clawSub.grab();
                         liftSub.setJunction(Junction.HIGH);
                         wait750.reset();
@@ -188,7 +204,7 @@ public class OldAuto extends LinearOpMode {
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
 //                                )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .splineTo(new Vector2d(deposit_x_pos-Math.sin(Math.toRadians(303)*5), deposit_y_pos+Math.cos(Math.toRadians(303))*5), Math.toRadians(312.64)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                .splineTo(new Vector2d(deposit_x_pos-Math.sin(Math.toRadians(303)*7)-4, deposit_y_pos+Math.cos(Math.toRadians(303))*7), Math.toRadians(312.64)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                 .lineToLinearHeading(new Pose2d(deposit_x_pos, deposit_y_pos,Math.toRadians(123)))
                                 .build());
@@ -210,6 +226,10 @@ public class OldAuto extends LinearOpMode {
             if(delayedExtend && delayTimer.seconds()>=0){
                 delayedExtend = false;
                 slideSub.out();
+            }
+            if(delayedLift && liftTimer.seconds()>=0.75){
+                liftSub.setJunction(Junction.HIGH);
+                delayedLift = false;
             }
 
             drive.update();
