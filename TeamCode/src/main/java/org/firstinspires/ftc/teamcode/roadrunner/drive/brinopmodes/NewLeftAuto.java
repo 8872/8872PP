@@ -31,6 +31,7 @@ import java.util.ArrayList;
 @Autonomous(name = "left side")
 public class NewLeftAuto extends LinearOpMode {
 
+    int reverse = 1;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     double fx = 578.272;
@@ -70,7 +71,6 @@ public class NewLeftAuto extends LinearOpMode {
     int coneCounter = 5;
 
     private enum DRIVE_PHASE {
-        BRUH,
         WAIT_FOR_PRELOAD,
         SLIDE,
         PRELOAD,
@@ -126,11 +126,9 @@ public class NewLeftAuto extends LinearOpMode {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if (currentDetections.size() != 0) {
-                telemetry.addData("see something", 0);
                 boolean tagFound = false;
 
                 for (AprilTagDetection tag : currentDetections) {
-                    telemetry.addData("detection", tag.id);
                     if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -162,7 +160,7 @@ public class NewLeftAuto extends LinearOpMode {
                     liftTimer.reset();
                     delayedLift = true;
                     drive.followTrajectoryAsync(drive.trajectoryBuilder(startPose)
-                            .lineToLinearHeading(new Pose2d(initial_x_pos-2,initial_y_pos+2.5, Math.toRadians(initial_turn_angle))//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            .lineToLinearHeading(new Pose2d(initial_x_pos-2,(initial_y_pos+2.5)*reverse, Math.toRadians(initial_turn_angle)*reverse)//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                     )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                             .build());
                     slideSub.setPos(0.42);
@@ -171,7 +169,7 @@ public class NewLeftAuto extends LinearOpMode {
                 case SLIDE:
                     if(!drive.isBusy()){
                         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos, Math.toRadians(initial_turn_angle))//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                .lineToLinearHeading(new Pose2d(initial_x_pos,initial_y_pos*reverse, Math.toRadians(initial_turn_angle)*reverse)//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                 .build());
                         slideSub.out();
@@ -201,19 +199,19 @@ public class NewLeftAuto extends LinearOpMode {
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .turn(Math.toRadians(-45))
+                                    .turn(Math.toRadians(-45)*reverse)
                                     .build());
                         }else{
                             currentState = DRIVE_PHASE.WAIT;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .forward(3.33)
-                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                    .forward(2)
+                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos*reverse), Math.toRadians(90)*reverse, SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                     SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                     SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .build());
-                            spline_x_pos += x_change;
-                            retrieve_y_pos -= y_change;
+                            spline_x_pos += x_change*reverse;
+                            retrieve_y_pos -= y_change*reverse;
                         }
                         coneCounter--;
 
@@ -249,30 +247,28 @@ public class NewLeftAuto extends LinearOpMode {
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
 //                                )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .splineTo(new Vector2d(deposit_x_pos-Math.sin(Math.toRadians(303)*7)-3.5, (deposit_y_pos+Math.cos(Math.toRadians(303))*7)-2.5), Math.toRadians(303)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                .splineTo(new Vector2d(deposit_x_pos-Math.sin(Math.toRadians(303)*7)-3, (deposit_y_pos+Math.cos(Math.toRadians(303))*7-2)*reverse), Math.toRadians(303)*reverse//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .addDisplacementMarker(() -> {
-                                    slideSub.out();
-                                })
-                                .lineToLinearHeading(new Pose2d(deposit_x_pos, deposit_y_pos,Math.toRadians(123)))
+                                .addDisplacementMarker(() -> slideSub.out())
+                                .lineToLinearHeading(new Pose2d(deposit_x_pos, deposit_y_pos*reverse,Math.toRadians(123)))
                                 .build());
-                        deposit_x_pos += x_change;
-                        deposit_y_pos -= y_change;
+                        deposit_x_pos += x_change*reverse;
+                        deposit_y_pos -= y_change*reverse;
                     }
                     break;
                 case PARK:
                     if(!drive.isBusy()){
                         if(tagOfInterest.id == 0) {
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d(49.37, 23.75, Math.toRadians(270)))
+                                    .lineToLinearHeading(new Pose2d(49.37, 23.75*reverse, Math.toRadians(270)*reverse))
                                     .build());
                         }else if(tagOfInterest.id == 1){
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d(50, 0.2, Math.toRadians(180)))
+                                    .lineToLinearHeading(new Pose2d(50, 0.2*reverse, Math.toRadians(180)*reverse))
                                     .build());
                         }else if(tagOfInterest.id == 2){
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d(48.9, -24.52, Math.toRadians(90)))
+                                    .lineToLinearHeading(new Pose2d(48.9, -24.52*reverse, Math.toRadians(90)*reverse))
                                     .build());
                         }
                         currentState = DRIVE_PHASE.IDLE;
@@ -286,7 +282,7 @@ public class NewLeftAuto extends LinearOpMode {
             }
             if(delayedExtend && delayTimer.seconds()>=0.2){
                 delayedExtend = false;
-                slideSub.setPos(0.35);
+                slideSub.setPos(0.38);
             }
 
             if(delayedLift && liftTimer.seconds()>=0.75){
@@ -309,7 +305,6 @@ public class NewLeftAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
