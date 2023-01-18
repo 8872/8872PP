@@ -61,6 +61,9 @@ public class SlideSubsystem extends SubsystemBase {
 //        }
         slide.setPosition(outPosition);
     }
+    public void setPos(double pos){
+        slide.setPosition(pos);
+    }
 
     public double getPosition(){
         return slide.getPosition();
