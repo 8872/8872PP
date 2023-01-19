@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -29,10 +28,9 @@ import java.util.ArrayList;
 
 //TODO Improvements: make slide not jerk as much with delayed full extension and make the conestack timer increase linearly instead of being constant
 //TODO make the slide extend mostly out in preload to save half a second
-@Disabled
 @Config
-@Autonomous
-public class NewLeftAuto extends LinearOpMode {
+@Autonomous(name = "left auto")
+public class TestLeftAuto extends LinearOpMode {
 
     int reverse = 1;
     OpenCvCamera camera;
@@ -164,7 +162,7 @@ public class NewLeftAuto extends LinearOpMode {
                     delayedLift = true;
                     drive.followTrajectoryAsync(drive.trajectoryBuilder(startPose)
                             .lineToLinearHeading(new Pose2d(initial_x_pos-1,(initial_y_pos+1.5)*reverse, Math.toRadians(initial_turn_angle)*reverse)//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                    )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                            )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                             .build());
                     slideSub.setPos(0.42);
                     currentState = DRIVE_PHASE.SLIDE;
@@ -209,9 +207,9 @@ public class NewLeftAuto extends LinearOpMode {
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                     .forward(2)
                                     .splineTo(new Vector2d(spline_x_pos, spline_y_pos*reverse), Math.toRadians(90)*reverse, SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .build());
                             spline_x_pos += x_change*reverse;
                             retrieve_y_pos -= y_change*reverse;
@@ -250,9 +248,8 @@ public class NewLeftAuto extends LinearOpMode {
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 //                                .splineTo(new Vector2d(deposit_x_pos, deposit_y_pos), Math.toRadians(312.64)//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
 //                                )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .splineTo(new Vector2d(deposit_x_pos-Math.sin(Math.toRadians(303)*7)-2, (deposit_y_pos+Math.cos(Math.toRadians(303))*7-2)*reverse), Math.toRadians(303)*reverse//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                .splineTo(new Vector2d(deposit_x_pos-Math.sin(Math.toRadians(303)*7)-3.5, (deposit_y_pos+Math.cos(Math.toRadians(303))*7+2.5)*reverse), Math.toRadians(303)*reverse//,SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                .addDisplacementMarker(() -> slideSub.out())
                                 .lineToLinearHeading(new Pose2d(deposit_x_pos, deposit_y_pos*reverse,Math.toRadians(123)))
                                 .build());
                         deposit_x_pos += x_change*reverse;
@@ -264,8 +261,8 @@ public class NewLeftAuto extends LinearOpMode {
                         if(tagOfInterest == null) break;
                         if(tagOfInterest.id == 0) {
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .forward(2)
-                                    .splineTo(new Vector2d(spline_x_pos+1, spline_y_pos*reverse), Math.toRadians(90)*reverse)
+                                    .forward(5)
+                                    .splineTo(new Vector2d(spline_x_pos-1, spline_y_pos*reverse), Math.toRadians(90)*reverse)
                                     .forward(Math.abs(retrieve_y_pos-spline_y_pos))
                                     .build());
                         }else if(tagOfInterest.id == 1){
@@ -288,7 +285,7 @@ public class NewLeftAuto extends LinearOpMode {
             }
             if(delayedExtend && delayTimer.seconds()>=0.2){
                 delayedExtend = false;
-                slideSub.setPos(0.38);
+                slideSub.out();
             }
 
             if(delayedLift && liftTimer.seconds()>=0.75){

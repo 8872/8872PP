@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.Junction;
 import org.firstinspires.ftc.teamcode.util.ProfiledPIDFController;
 
 @Config
-public class LiftSubsystem extends SubsystemBase {
+public class LiftSubAuto extends SubsystemBase {
 
     private final MotorEx dr4bLeftMotor, dr4bRightMotor;
     private final TouchSensor limitSwitch;
@@ -35,8 +35,8 @@ public class LiftSubsystem extends SubsystemBase {
     public static double kI = 0.05;
     public static double kD = 0.0003;
     public static double kF = 0.07;
-    public static double maxVelocity = 4000;
-    public static double maxAcceleration = 4000;
+    public static double maxVelocity = 2000;
+    public static double maxAcceleration = 2000;
     private final ProfiledPIDFController dr4b_pidf_left = new ProfiledPIDFController(kP, kI, kD, kF,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), TICKS_IN_DEGREES);
     private final ProfiledPIDFController dr4b_pidf_right = new ProfiledPIDFController(kP, kI, kD, kF,
@@ -47,7 +47,7 @@ public class LiftSubsystem extends SubsystemBase {
     public static Junction currentGoal = Junction.NONE;
     public static int manualLiftSpeed = 30;
 
-    public LiftSubsystem(MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor, TouchSensor limitSwitch) {
+    public LiftSubAuto(MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor, TouchSensor limitSwitch) {
         this.limitSwitch = limitSwitch;
         this.dr4bLeftMotor = dr4bLeftMotor;
         this.dr4bRightMotor = dr4bRightMotor;
