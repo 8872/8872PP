@@ -205,7 +205,7 @@ public class TestLeftAuto extends LinearOpMode {
                         }else{
                             currentState = DRIVE_PHASE.WAIT;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .forward(2)
+                                    .forward(4)
                                     .splineTo(new Vector2d(spline_x_pos, spline_y_pos*reverse), Math.toRadians(90)*reverse, SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                     .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -261,7 +261,7 @@ public class TestLeftAuto extends LinearOpMode {
                         if(tagOfInterest == null) break;
                         if(tagOfInterest.id == 0) {
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .forward(5)
+                                    .forward(4)
                                     .splineTo(new Vector2d(spline_x_pos-1, spline_y_pos*reverse), Math.toRadians(90)*reverse)
                                     .forward(Math.abs(retrieve_y_pos-spline_y_pos))
                                     .build());
