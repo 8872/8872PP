@@ -30,10 +30,10 @@ import java.util.ArrayList;
 //TODO Improvements: make slide not jerk as much with delayed full extension and make the conestack timer increase linearly instead of being constant
 //TODO make the slide extend mostly out in preload to save half a second
 @Config
-@Autonomous(name = "newer left side")
-public class NewestLeftAuto extends LinearOpMode {
+@Autonomous(name = "newer right side")
+public class NewestRightAuto extends LinearOpMode {
 
-    int reverse = 1;
+    int reverse = -1;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     double fx = 578.272;
@@ -48,16 +48,16 @@ public class NewestLeftAuto extends LinearOpMode {
     double tagsize = 0.166;
     AprilTagDetection tagOfInterest = null;
 
-    public double initial_x_pos = 54;//55.56;
+    public double initial_x_pos = 54.5;//55.56;
     public double initial_y_pos = -0.7;//-2;
     public double initial_turn_angle = 123;
-    public double spline_x_pos = 50.5;//51;
+    public double spline_x_pos = 49;//51;
     public double spline_y_pos = 7.16;//5.5;
-    public double retrieve_y_pos = 25.9;//27.33;
-    public double deposit_x_pos = 55.05;//54.75;
+    public double retrieve_y_pos = 26.5;//27.33;
+    public double deposit_x_pos = 54.8;//54.75;
 
-    public double deposit_y_pos = -1.05;//-3.33;
-    public double x_change = 0.5;
+    public double deposit_y_pos = -0.7;//-3.33;
+    public double x_change = 0.75;
     public double y_change = 0.1;
 
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
@@ -164,7 +164,7 @@ public class NewestLeftAuto extends LinearOpMode {
                     liftTimer.reset();
                     delayedLift = true;
                     drive.followTrajectoryAsync(drive.trajectoryBuilder(startPose)
-                            .lineToLinearHeading(new Pose2d(initial_x_pos-0.66,(initial_y_pos+1)*reverse, Math.toRadians(initial_turn_angle)*reverse)//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            .lineToLinearHeading(new Pose2d(initial_x_pos-1,(initial_y_pos+1.5)*reverse, Math.toRadians(initial_turn_angle)*reverse)//, SampleMecanumDrive.getVelocityConstraint(50, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                             .build());
                     slideSub.setPos(0.42);
@@ -177,7 +177,7 @@ public class NewestLeftAuto extends LinearOpMode {
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                 .build());
                         slideSub.out();
-                        wait750.reset();
+                        wait250.reset();
                         currentState = DRIVE_PHASE.DEPOSIT;
                     }
                     break;
@@ -189,7 +189,7 @@ public class NewestLeftAuto extends LinearOpMode {
                     }
                     break;
                 case DEPOSIT:
-                    if (!drive.isBusy() && wait750.seconds()>=0.4) {
+                    if (!drive.isBusy() && wait750.seconds()>=0.4 && wait250.seconds() >= 0.7) {
                         currentState = DRIVE_PHASE.WAIT_FOR_DEPOSIT;
                         wait250.reset();
                     }
@@ -206,7 +206,7 @@ public class NewestLeftAuto extends LinearOpMode {
                     if(wait100.seconds() >= 0.1){
                         slideSub.in();
                         liftSub.setJunction(pickupPosition);
-                        pickupPosition+=35;
+                        pickupPosition+=33;
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
@@ -217,7 +217,7 @@ public class NewestLeftAuto extends LinearOpMode {
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                                     .forward(2)
                                     .splineTo(new Vector2d(spline_x_pos, (spline_y_pos+10)*reverse), Math.toRadians(90)*reverse)
-                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos-10))
+                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos-10.5))
                                     .build());
                             spline_x_pos += x_change*reverse;
                             retrieve_y_pos -= y_change*reverse;
@@ -265,7 +265,7 @@ public class NewestLeftAuto extends LinearOpMode {
                     break;
                 case PARK:
                     if(!drive.isBusy()){
-                        if(tagOfInterest == null) {
+                        if(tagOfInterest == null){
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
                                     .lineToLinearHeading(new Pose2d(48, 0.2*reverse, Math.toRadians(180)*reverse))
                                     .build());

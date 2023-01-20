@@ -68,7 +68,7 @@ public class TestLeftAuto extends LinearOpMode {
     private ClawSubsystem clawSub;
     private SlideSubsystem slideSub;
 
-    int pickupPosition = -100;
+    int pickupPosition = -110;
     int coneCounter = 5;
 
     private enum DRIVE_PHASE {
@@ -205,11 +205,9 @@ public class TestLeftAuto extends LinearOpMode {
                         }else{
                             currentState = DRIVE_PHASE.WAIT;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .forward(4)
-                                    .splineTo(new Vector2d(spline_x_pos, spline_y_pos*reverse), Math.toRadians(90)*reverse, SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos), SampleMecanumDrive.getVelocityConstraint(45, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                    .forward(2)
+                                    .splineTo(new Vector2d(spline_x_pos, (spline_y_pos+10)*reverse), Math.toRadians(90)*reverse)
+                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos-10))
                                     .build());
                             spline_x_pos += x_change*reverse;
                             retrieve_y_pos -= y_change*reverse;
@@ -261,9 +259,9 @@ public class TestLeftAuto extends LinearOpMode {
                         if(tagOfInterest == null) break;
                         if(tagOfInterest.id == 0) {
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                                    .forward(4)
-                                    .splineTo(new Vector2d(spline_x_pos-1, spline_y_pos*reverse), Math.toRadians(90)*reverse)
-                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos))
+                                    .forward(2)
+                                    .splineTo(new Vector2d(spline_x_pos, (spline_y_pos+10)*reverse), Math.toRadians(90)*reverse)
+                                    .forward(Math.abs(retrieve_y_pos-spline_y_pos-10))
                                     .build());
                         }else if(tagOfInterest.id == 1){
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())

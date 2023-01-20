@@ -35,8 +35,8 @@ public class LiftSubAuto extends SubsystemBase {
     public static double kI = 0.05;
     public static double kD = 0.0003;
     public static double kF = 0.07;
-    public static double maxVelocity = 2000;
-    public static double maxAcceleration = 2000;
+    public static double maxVelocity = 2500;
+    public static double maxAcceleration = 2500;
     private final ProfiledPIDFController dr4b_pidf_left = new ProfiledPIDFController(kP, kI, kD, kF,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), TICKS_IN_DEGREES);
     private final ProfiledPIDFController dr4b_pidf_right = new ProfiledPIDFController(kP, kI, kD, kF,
