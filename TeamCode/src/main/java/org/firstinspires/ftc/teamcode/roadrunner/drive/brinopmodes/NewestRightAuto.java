@@ -30,7 +30,7 @@ import java.util.ArrayList;
 //TODO Improvements: make slide not jerk as much with delayed full extension and make the conestack timer increase linearly instead of being constant
 //TODO make the slide extend mostly out in preload to save half a second
 @Config
-@Autonomous(name = "newer right side")
+@Autonomous(name = "right auto??")
 public class NewestRightAuto extends LinearOpMode {
 
     int reverse = -1;
@@ -48,15 +48,15 @@ public class NewestRightAuto extends LinearOpMode {
     double tagsize = 0.166;
     AprilTagDetection tagOfInterest = null;
 
-    public double initial_x_pos = 54.5;//55.56;
-    public double initial_y_pos = -0.7;//-2;
+    public double initial_x_pos = 53;//55.56;
+    public double initial_y_pos = -1.2;//-2;
     public double initial_turn_angle = 123;
     public double spline_x_pos = 49;//51;
     public double spline_y_pos = 7.16;//5.5;
     public double retrieve_y_pos = 26.5;//27.33;
-    public double deposit_x_pos = 54.8;//54.75;
+    public double deposit_x_pos = 52.75;//54.75;
 
-    public double deposit_y_pos = -0.7;//-3.33;
+    public double deposit_y_pos = -1.2;//-3.33;
     public double x_change = 0.75;
     public double y_change = 0.1;
 

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 //TODO Improvements: make slide not jerk as much with delayed full extension and make the conestack timer increase linearly instead of being constant
 //TODO make the slide extend mostly out in preload to save half a second
 @Config
-@Autonomous(name = "newer left side")
+@Autonomous(name = "left auto??")
 public class NewestLeftAuto extends LinearOpMode {
 
     int reverse = 1;
@@ -54,9 +54,9 @@ public class NewestLeftAuto extends LinearOpMode {
     public double spline_x_pos = 50.5;//51;
     public double spline_y_pos = 7.16;//5.5;
     public double retrieve_y_pos = 25.9;//27.33;
-    public double deposit_x_pos = 55.05;//54.75;
+    public double deposit_x_pos = 55.15;//54.75;
 
-    public double deposit_y_pos = -1.05;//-3.33;
+    public double deposit_y_pos = -1.2;//-3.33;
     public double x_change = 0.5;
     public double y_change = 0.1;
 
@@ -89,7 +89,7 @@ public class NewestLeftAuto extends LinearOpMode {
     }
     boolean delayedExtend = false;
     boolean delayedLift = false;
-    double waitTime = -0.05;
+    double waitTime = 0.05;
     ElapsedTime liftTimer = new ElapsedTime();
     ElapsedTime delayTimer = new ElapsedTime();
     ElapsedTime wait100 = new ElapsedTime();
@@ -206,7 +206,7 @@ public class NewestLeftAuto extends LinearOpMode {
                     if(wait100.seconds() >= 0.1){
                         slideSub.in();
                         liftSub.setJunction(pickupPosition);
-                        pickupPosition+=35;
+                        pickupPosition+=38;
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
