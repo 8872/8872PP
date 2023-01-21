@@ -48,7 +48,7 @@ public class NewestRightAuto extends LinearOpMode {
     double tagsize = 0.166;
     AprilTagDetection tagOfInterest = null;
 
-    public double initial_x_pos = 53;//55.56;
+    public double initial_x_pos = 53.33;//55.56;
     public double initial_y_pos = -1.2;//-2;
     public double initial_turn_angle = 123;
     public double spline_x_pos = 49;//51;
@@ -89,7 +89,7 @@ public class NewestRightAuto extends LinearOpMode {
     }
     boolean delayedExtend = false;
     boolean delayedLift = false;
-    double waitTime = -0.05;
+    double waitTime = 0.1;
     ElapsedTime liftTimer = new ElapsedTime();
     ElapsedTime delayTimer = new ElapsedTime();
     ElapsedTime wait100 = new ElapsedTime();
@@ -124,6 +124,7 @@ public class NewestRightAuto extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         clawSub.grab();
+        sleep(500);
         liftSub.setJunction(-50);
         delayTimer.reset();
         while (!isStarted() && !isStopRequested()) {
@@ -206,7 +207,7 @@ public class NewestRightAuto extends LinearOpMode {
                     if(wait100.seconds() >= 0.1){
                         slideSub.in();
                         liftSub.setJunction(pickupPosition);
-                        pickupPosition+=33;
+                        pickupPosition+=38;
                         if(coneCounter <= 0){
                             currentState = DRIVE_PHASE.PARK;
                             drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
@@ -247,7 +248,7 @@ public class NewestRightAuto extends LinearOpMode {
                         delayedLift = true;
                         wait750.reset();
                         currentState = DRIVE_PHASE.WAIT_FOR_GRAB;
-                        waitTime+=0.1;
+                        waitTime+=0.075;
                     }
                     break;
                 case WAIT_FOR_GRAB:
@@ -271,7 +272,7 @@ public class NewestRightAuto extends LinearOpMode {
                                     .build());
                         }else if(tagOfInterest.id == 0) {
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d(45, 24.52*reverse, Math.toRadians(90)*reverse))
+                                    .lineToLinearHeading(new Pose2d(47, 24.52, Math.toRadians(0)*reverse))
                                     .build());
                         }else if(tagOfInterest.id == 1){
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
@@ -279,7 +280,7 @@ public class NewestRightAuto extends LinearOpMode {
                                     .build());
                         }else if(tagOfInterest.id == 2){
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d(45, -24.52*reverse, Math.toRadians(90)*reverse))
+                                    .lineToLinearHeading(new Pose2d(47, -24.52, Math.toRadians(90)*reverse))
                                     .build());
                         }
                         currentState = DRIVE_PHASE.IDLE;

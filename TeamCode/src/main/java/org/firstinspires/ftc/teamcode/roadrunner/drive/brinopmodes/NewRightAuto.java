@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.util.Junction;
 //TODO Improvements: make slide not jerk as much with delayed full extension and make the conestack timer increase linearly instead of being constant
 //TODO make the slide extend mostly out in preload to save half a second
 @Config
+@Disabled
 @Autonomous(name = "right side")
 public class NewRightAuto extends LinearOpMode {
 

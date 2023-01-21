@@ -124,6 +124,7 @@ public class NewestLeftAuto extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         clawSub.grab();
+        sleep(500);
         liftSub.setJunction(-50);
         delayTimer.reset();
         while (!isStarted() && !isStopRequested()) {
@@ -177,7 +178,7 @@ public class NewestLeftAuto extends LinearOpMode {
                                 )//SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                                 .build());
                         slideSub.out();
-                        wait750.reset();
+                        wait250.reset();
                         currentState = DRIVE_PHASE.DEPOSIT;
                     }
                     break;
@@ -189,7 +190,7 @@ public class NewestLeftAuto extends LinearOpMode {
                     }
                     break;
                 case DEPOSIT:
-                    if (!drive.isBusy() && wait750.seconds()>=0.4) {
+                    if (!drive.isBusy() && wait750.seconds()>=0.4 && wait250.seconds() >= 0.75) {
                         currentState = DRIVE_PHASE.WAIT_FOR_DEPOSIT;
                         wait250.reset();
                     }
@@ -279,7 +280,7 @@ public class NewestLeftAuto extends LinearOpMode {
                                     .build());
                         }else if(tagOfInterest.id == 2){
                             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d(45, -24.52*reverse, Math.toRadians(90)*reverse))
+                                    .lineToLinearHeading(new Pose2d(47, -24.52*reverse, Math.toRadians(180)*reverse))
                                     .build());
                         }
                         currentState = DRIVE_PHASE.IDLE;
