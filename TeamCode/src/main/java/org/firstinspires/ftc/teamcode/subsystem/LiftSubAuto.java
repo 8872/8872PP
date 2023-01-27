@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import org.firstinspires.ftc.teamcode.util.ConeStack;
-import org.firstinspires.ftc.teamcode.util.Junction;
+import org.firstinspires.ftc.teamcode.util.Height;
 import org.firstinspires.ftc.teamcode.util.ProfiledPIDFController;
 
 @Config
@@ -44,7 +41,7 @@ public class LiftSubAuto extends SubsystemBase {
     private double output_left;
     private double output_right;
     public static double tolerance = 10;
-    public static Junction currentGoal = Junction.NONE;
+    public static Height currentGoal = Height.NONE;
     public static int manualLiftSpeed = 30;
 
     public LiftSubAuto(MotorEx dr4bLeftMotor, MotorEx dr4bRightMotor, TouchSensor limitSwitch) {
@@ -73,7 +70,7 @@ public class LiftSubAuto extends SubsystemBase {
         dr4b_pidf_right.setGoal(goal);
     }
 
-    public void setJunction(Junction junction){
+    public void setJunction(Height junction){
         currentGoal = junction;
         switch(junction){
             case NONE:
@@ -99,7 +96,7 @@ public class LiftSubAuto extends SubsystemBase {
         }
     }
 
-    public void setConeStack(ConeStack cone) {
+    public void setConeStack(Height cone) {
         switch(cone) {
             case FIRST:
                 dr4b_pidf_left.setGoal(firstCone);
@@ -151,7 +148,7 @@ public class LiftSubAuto extends SubsystemBase {
         return false;
     }
 
-    public void setCurrentGoal(Junction junction){
+    public void setCurrentGoal(Height junction){
         currentGoal = junction;
     }
 
@@ -164,15 +161,15 @@ public class LiftSubAuto extends SubsystemBase {
         return (int) dr4b_pidf_left.getGoal().position;
     }
 
-    public Junction getCurrentGoal() {
+    public Height getCurrentGoal() {
         return currentGoal;
     }
 
     public boolean isSlideIncompatible(){
-        return currentGoal == Junction.LOW || currentGoal == Junction.GROUND;
+        return currentGoal == Height.LOW || currentGoal == Height.GROUND;
     }
 
     public boolean isGrabAndLiftIncompatible(){
-        return currentGoal != Junction.NONE;
+        return currentGoal != Height.NONE;
     }
 }

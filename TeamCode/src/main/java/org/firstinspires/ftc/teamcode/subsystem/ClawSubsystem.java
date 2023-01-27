@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 
@@ -15,13 +17,11 @@ public class ClawSubsystem extends SubsystemBase {
 
     }
 
-    // grab cone
-    public void grab() {
-        claw.turnToAngle(grabPosition);
+    public Command runGrabCommand() {
+        return new InstantCommand(() -> claw.turnToAngle(grabPosition), this);
     }
 
-    // release cone
-    public void release() {
-        claw.turnToAngle(releasePosition);
+    public Command runReleaseCommand() {
+        return new InstantCommand(() -> claw.turnToAngle(releasePosition), this);
     }
 }

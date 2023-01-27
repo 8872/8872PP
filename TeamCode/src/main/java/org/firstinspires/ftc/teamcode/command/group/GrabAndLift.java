@@ -1,25 +1,21 @@
 package org.firstinspires.ftc.teamcode.command.group;
 
-import android.util.Log;
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
-import org.firstinspires.ftc.teamcode.command.claw.ReleaseCone;
-import org.firstinspires.ftc.teamcode.command.lift.MoveToJunction;
-import org.firstinspires.ftc.teamcode.command.lift.SetTick;
 import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.util.EmptyCommand;
 
+@Config
 public class GrabAndLift extends SequentialCommandGroup {
-
-    public GrabAndLift(LiftSubsystem lift, ClawSubsystem claw, int goal) {
+    public static int goal = -100;
+    public GrabAndLift(LiftSubsystem lift, ClawSubsystem claw) {
         addCommands(
-                new GrabCone(claw),
+                claw.runGrabCommand(),
                 new ConditionalCommand(new EmptyCommand(),
                         new SequentialCommandGroup(
-                                new SetTick(lift, goal),
-                                new MoveToJunction(lift)
+                                lift.goTo(goal)
                         ), lift::isGrabAndLiftIncompatible)
         );
         addRequirements(lift, claw);

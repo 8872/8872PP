@@ -84,14 +84,13 @@ public class BaseOpMode extends CommandOpMode {
         tad("dr4bRightMotor Position", dr4bRightMotor.getCurrentPosition());
 
         tad("Drive Heading PID Output", drive.getOutput());
-        tad("target", drive.getTarget());
-
-        tad("claw Position", clawServo.getPosition());
-        tad("slide Position", slideServo.getPosition());
+        tad("Drive Heading Target", drive.getTarget());
+        tad("Claw Position", clawServo.getPosition());
+        tad("Slide Position", slideServo.getPosition());
 
         tad("IMU Heading", imu.getAbsoluteHeading());
 
-        tad("Limit Pressed", limitSwitch.isPressed());
+        tad("Limit Switch Pressed", limitSwitch.isPressed());
         telemetry.update();
     }
 
