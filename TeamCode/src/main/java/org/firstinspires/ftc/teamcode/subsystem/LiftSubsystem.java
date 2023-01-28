@@ -75,10 +75,6 @@ public class LiftSubsystem extends SubsystemBase {
         return currentHeight;
     }
 
-    public boolean isSlideIncompatible(){
-        return currentHeight == Height.LOW.getHeight() || currentHeight == Height.GROUND.getHeight();
-    }
-
     public boolean isGrabAndLiftIncompatible(){
         return currentHeight != Height.NONE.getHeight();
     }
