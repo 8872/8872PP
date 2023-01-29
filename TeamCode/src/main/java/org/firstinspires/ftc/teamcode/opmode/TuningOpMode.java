@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.PIDFControllerEx;
 @Disabled
 @Config
 @TeleOp(name = "Tuning OpMode")
-public class TuningOpMode extends OpMode {
+public final class TuningOpMode extends OpMode {
 
     public static int none = 10;
     public static int low = -450;

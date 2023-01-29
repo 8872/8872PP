@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.util.Height;
 
-public class DownSequence extends SequentialCommandGroup {
+public final class DownSequence extends SequentialCommandGroup {
 
     public DownSequence(LiftSubsystem lift, TurretSubsystem turret, ArmSubsystem arm) {
         addCommands(

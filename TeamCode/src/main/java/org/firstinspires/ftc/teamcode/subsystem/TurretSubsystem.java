@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
 
 @Config
-public class TurretSubsystem extends ProfiledServoSubsystem {
+public final class TurretSubsystem extends ProfiledServoSubsystem {
     public static double maxVelocity = 100;
     public static double maxAcceleration = 100;
 

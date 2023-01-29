@@ -9,15 +9,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
 @Config
-public class TestTurretOpMode extends OpMode {
+public final class TestTurretOpMode extends OpMode {
     private ServoEx turret, arm, claw;
 
-    private Claw currentClawState = Claw.OPEN;
+    private ClawState currentClawState = ClawState.OPEN;
     private Control currentControlState = Control.MANUAL;
+    private ArmState currentArmState = ArmState.DOWN;
 
-    public static int down = 180, left = 270, right = 90, up = 0;
+    public static int turretDown = 180, turretLeft = 270, turretRight = 90, turretUp = 0;
+    public static int armDown = 0, armDeposit = 90;
+    public static double clawOpen = 0.3, clawClose = 0.6;
 
-    private enum Claw {
+
+    private enum ClawState {
         OPEN,
         CLOSED
     }
@@ -26,6 +30,12 @@ public class TestTurretOpMode extends OpMode {
         MANUAL,
         SET
     }
+
+    private enum ArmState {
+        DOWN,
+        DEPOSIT
+    }
+
 
     @Override
     public void init() {
@@ -36,45 +46,59 @@ public class TestTurretOpMode extends OpMode {
 
     @Override
     public void loop() {
-        if(currentControlState == Control.MANUAL) {
+        if (currentControlState == Control.MANUAL) {
             arm.setPosition((gamepad1.right_stick_y + 1) / 2);
             turret.turnToAngle(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x), AngleUnit.RADIANS);
         } else {
-            if(gamepad1.dpad_down) {
-                turret.turnToAngle(down);
+            if (gamepad1.dpad_down) {
+                turret.turnToAngle(turretDown);
             }
-            if(gamepad1.dpad_left) {
-                turret.turnToAngle(left);
+            if (gamepad1.dpad_left) {
+                turret.turnToAngle(turretLeft);
             }
-            if(gamepad1.dpad_right) {
-                turret.turnToAngle(right);
+            if (gamepad1.dpad_right) {
+                turret.turnToAngle(turretRight);
             }
-            if(gamepad1.dpad_up) {
-                turret.turnToAngle(up);
+            if (gamepad1.dpad_up) {
+                turret.turnToAngle(turretUp);
             }
+
+            if (gamepad1.a && currentArmState == ArmState.DEPOSIT) {
+                currentArmState = ArmState.DOWN;
+                arm.turnToAngle(armDown);
+            } else if (gamepad1.a && currentArmState == ArmState.DOWN) {
+                currentArmState = ArmState.DEPOSIT;
+                arm.turnToAngle(armDeposit);
+            }
+
         }
 
-        if(gamepad1.b && currentControlState == Control.SET) {
+        if (gamepad1.left_bumper && currentControlState == Control.SET) {
             currentControlState = Control.MANUAL;
-        } else if(gamepad1.b && currentControlState == Control.MANUAL) {
+        } else if (gamepad1.left_bumper && currentControlState == Control.MANUAL) {
             currentControlState = Control.SET;
         }
 
-        if(gamepad1.a && currentClawState == Claw.OPEN) {
-            claw.setPosition(0);
-            currentClawState = Claw.CLOSED;
-        } else if(gamepad1.a && currentClawState == Claw.CLOSED) {
-            claw.setPosition(1);
-            currentClawState = Claw.OPEN;
+        if (gamepad1.right_bumper && currentClawState == ClawState.OPEN) {
+            currentClawState = ClawState.CLOSED;
+            claw.setPosition(clawOpen);
+        } else if (gamepad1.right_bumper && currentClawState == ClawState.CLOSED) {
+            currentClawState = ClawState.OPEN;
+            claw.setPosition(clawClose);
         }
 
-        telemetry.addData("arm position", arm.getPosition());
-        telemetry.addData("turret position", turret.getPosition());
-        telemetry.addData("claw position", claw.getPosition());
+        tad("arm position", arm.getPosition());
+        tad("turret position", turret.getPosition());
+        tad("claw position", claw.getPosition());
 
-        telemetry.addData("claw state", currentClawState);
-        telemetry.addData("controls state", currentControlState);
+        tad("claw state", currentClawState);
+        tad("control state", currentControlState);
+        tad("arm state", currentArmState);
 
         telemetry.update();
+    }
+
+    private void tad(String caption, Object text) {
+        telemetry.addData(caption, text);
     }
 }

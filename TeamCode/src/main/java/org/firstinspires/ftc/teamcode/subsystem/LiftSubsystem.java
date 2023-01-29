@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.*;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -16,7 +19,6 @@ public class LiftSubsystem extends SubsystemBase {
 
     private final double TICKS_IN_DEGREES = 8192.0 / 360;
 
-    // PID coefficients for left dr4b motor
     public static double kP = 0.003;
     public static double kI = 0.05;
     public static double kD = 0.0003;
@@ -44,7 +46,7 @@ public class LiftSubsystem extends SubsystemBase {
         rightPIDF.setGoal(0);
     }
 
-    private void setHeight(Height height){
+    private void setHeight(Height height) {
         currentHeight = height.getHeight();
         leftPIDF.setGoal(height.getHeight());
         rightPIDF.setGoal(height.getHeight());
@@ -56,7 +58,7 @@ public class LiftSubsystem extends SubsystemBase {
         rightPIDF.setGoal(tick);
     }
 
-    public int getLeftEncoderValue(){
+    public int getLeftEncoderValue() {
         return left.getCurrentPosition();
     }
 
@@ -67,15 +69,15 @@ public class LiftSubsystem extends SubsystemBase {
 
 
     public void changeSetPoint(double joystickInput) {
-        leftPIDF.setGoal((int) (left.getCurrentPosition()+joystickInput*manualLiftSpeed));
-        rightPIDF.setGoal((int) (right.getCurrentPosition()+joystickInput*manualLiftSpeed));
+        leftPIDF.setGoal((int) (left.getCurrentPosition() + joystickInput * manualLiftSpeed));
+        rightPIDF.setGoal((int) (right.getCurrentPosition() + joystickInput * manualLiftSpeed));
     }
 
     public int getCurrentGoal() {
         return currentHeight;
     }
 
-    public boolean isGrabAndLiftIncompatible(){
+    public boolean isGrabAndLiftIncompatible() {
         return currentHeight != Height.NONE.getHeight();
     }
 
