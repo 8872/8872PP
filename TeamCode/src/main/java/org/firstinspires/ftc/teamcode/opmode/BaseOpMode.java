@@ -11,21 +11,19 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.subsystem.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class BaseOpMode extends CommandOpMode {
     protected MotorEx fL, fR, bL, bR, dr4bLeftMotor, dr4bRightMotor;
-    protected SimpleServo clawServo, slideServo;
+    protected SimpleServo clawServo, turretServo, armServo;
     protected DriveSubsystem drive;
     protected LiftSubsystem lift;
     protected ClawSubsystem claw;
-    protected SlideSubsystem slide;
+    protected TurretSubsystem turret;
+    protected ArmSubsystem arm;
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
@@ -46,7 +44,8 @@ public class BaseOpMode extends CommandOpMode {
         drive = new DriveSubsystem(fL, fR, bL, bR, imu);
         lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
         claw = new ClawSubsystem(clawServo);
-        slide = new SlideSubsystem(slideServo);
+        turret = new TurretSubsystem(turretServo);
+        arm = new ArmSubsystem(armServo);
 
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -63,8 +62,10 @@ public class BaseOpMode extends CommandOpMode {
         dr4bRightMotor = new MotorEx(hardwareMap, "dr4bRight");
         // what the proper min and max?
         clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
-        slideServo = new SimpleServo(hardwareMap, "slide", 0, 120);
-        slideServo.setPosition(SlideSubsystem.inPosition);
+        // TODO change to 355 when switch to axon
+        turretServo = new SimpleServo(hardwareMap, "turret", 0, 300);
+        armServo = new SimpleServo(hardwareMap, "arm", 0, 355);
+
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
         dr4bLeftMotor.resetEncoder();
         dr4bRightMotor.resetEncoder();
@@ -86,7 +87,8 @@ public class BaseOpMode extends CommandOpMode {
         tad("Drive Heading PID Output", drive.getOutput());
         tad("Drive Heading Target", drive.getTarget());
         tad("Claw Position", clawServo.getPosition());
-        tad("Slide Position", slideServo.getPosition());
+        tad("Turret Position", turretServo.getPosition());
+        tad("Arm Position", armServo.getPosition());
 
         tad("IMU Heading", imu.getAbsoluteHeading());
 
@@ -120,17 +122,17 @@ public class BaseOpMode extends CommandOpMode {
     }
 
     // gamepad button 1 = gb1
-    protected GamepadButton gb1(GamepadKeys.Button button){
+    protected GamepadButton gb1(GamepadKeys.Button button) {
         return gamepadEx1.getGamepadButton(button);
     }
 
     // gamepad button 2 = gb2
-    protected GamepadButton gb2(GamepadKeys.Button button){
+    protected GamepadButton gb2(GamepadKeys.Button button) {
         return gamepadEx2.getGamepadButton(button);
     }
 
     // telemetry add data = tad
-    protected void tad(String caption, Object value){
+    protected void tad(String caption, Object value) {
         telemetry.addData(caption, value);
     }
 }
