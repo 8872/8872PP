@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
 public final class ArmSubsystem extends ProfiledServoSubsystem {
     public static double maxVelocity = 100;
     public static double maxAcceleration = 100;
+    // arm down: 0.94
+    // arm deposit: 0.6
 
     public ArmSubsystem(ServoEx turret) {
         super(turret, maxVelocity, maxAcceleration);

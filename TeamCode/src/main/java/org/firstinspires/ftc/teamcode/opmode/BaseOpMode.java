@@ -49,7 +49,7 @@ public class BaseOpMode extends CommandOpMode {
 
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry.addData("Mode", "Done initializing");
+        tad("Mode", "Done initializing");
         telemetry.update();
     }
 

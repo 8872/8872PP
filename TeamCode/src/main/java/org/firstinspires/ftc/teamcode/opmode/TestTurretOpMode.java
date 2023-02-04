@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -13,12 +15,24 @@ public final class TestTurretOpMode extends OpMode {
     private ServoEx turret, arm, claw;
 
     private ClawState currentClawState = ClawState.OPEN;
-    private Control currentControlState = Control.MANUAL;
+    private Control currentControlState = Control.SET;
     private ArmState currentArmState = ArmState.DOWN;
 
-    public static int turretDown = 180, turretLeft = 270, turretRight = 90, turretUp = 0;
-    public static int armDown = 0, armDeposit = 90;
+    public static double turretDown = 0, turretLeft = 0.25, turretRight = 0.5, turretUp = 0.75;
+    public static double armDown = 0.95, armDeposit = 0.6;
     public static double clawOpen = 0.3, clawClose = 0.6;
+    // turret
+    // right forward: 0.93
+    // left forward*: 0.07
+    // right back: 0.66
+    // left back: 0.35
+    // start position: 0.51
+    // left: 0.23
+    // right:0.805
+    // arm
+    // arm down: 0.94
+    // arm deposit: 0.6
+
 
 
     private enum ClawState {
@@ -42,6 +56,7 @@ public final class TestTurretOpMode extends OpMode {
         turret = new SimpleServo(hardwareMap, "turret", 0, 300);
         arm = new SimpleServo(hardwareMap, "arm", 0, 355);
         claw = new SimpleServo(hardwareMap, "claw", 0, 300);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     @Override
@@ -51,24 +66,24 @@ public final class TestTurretOpMode extends OpMode {
             turret.turnToAngle(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x), AngleUnit.RADIANS);
         } else {
             if (gamepad1.dpad_down) {
-                turret.turnToAngle(turretDown);
+                turret.setPosition(turretDown);
             }
             if (gamepad1.dpad_left) {
-                turret.turnToAngle(turretLeft);
+                turret.setPosition(turretLeft);
             }
             if (gamepad1.dpad_right) {
-                turret.turnToAngle(turretRight);
+                turret.setPosition(turretRight);
             }
             if (gamepad1.dpad_up) {
-                turret.turnToAngle(turretUp);
+                turret.setPosition(turretUp);
             }
 
             if (gamepad1.a && currentArmState == ArmState.DEPOSIT) {
                 currentArmState = ArmState.DOWN;
-                arm.turnToAngle(armDown);
+                arm.setPosition(armDown);
             } else if (gamepad1.a && currentArmState == ArmState.DOWN) {
                 currentArmState = ArmState.DEPOSIT;
-                arm.turnToAngle(armDeposit);
+                arm.setPosition(armDeposit);
             }
 
         }

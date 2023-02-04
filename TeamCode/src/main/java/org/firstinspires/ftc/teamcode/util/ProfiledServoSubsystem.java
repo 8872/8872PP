@@ -8,7 +8,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class ProfiledServoSubsystem extends SubsystemBase {
+public abstract class ProfiledServoSubsystem extends SubsystemBase {
     private final ServoEx turret;
 
     protected double maxVelocity = 100;
