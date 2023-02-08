@@ -2,19 +2,19 @@ package org.firstinspires.ftc.teamcode.command.group;
 
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import org.firstinspires.ftc.teamcode.subsystem.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.subsystem.TurretSubsystem;
-import org.firstinspires.ftc.teamcode.util.Height;
+import org.firstinspires.ftc.teamcode.powerplayutil.Height;
+import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
+import org.firstinspires.ftc.teamcode.subsystem.LiftSys;
+import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 
 public final class UpSequence extends SequentialCommandGroup {
 
-    public UpSequence(LiftSubsystem lift, TurretSubsystem turret, ArmSubsystem arm, Height height, int turretDegrees) {
+    public UpSequence(LiftSys lift, TurretSys turret, ArmSys arm, Height height, TurretSys.Pose pose) {
         addCommands(
                 new ParallelCommandGroup(
                         lift.goTo(height),
                         arm.goTo(90)
-                ), turret.goTo(turretDegrees),
+                ), turret.goTo(pose),
                 arm.goTo(45)
         );
 

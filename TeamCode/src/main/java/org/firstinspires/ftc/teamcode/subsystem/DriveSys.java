@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
 @Config
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSys extends SubsystemBase {
     private final ScuffedMecanumDrive drive;
     private final RevIMU imu;
     public static double kP = 0.06;
@@ -32,14 +32,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     private double target;
 
-    public DriveSubsystem(MotorEx fL, MotorEx fR, MotorEx bL, MotorEx bR, RevIMU imu){
+    public DriveSys(MotorEx fL, MotorEx fR, MotorEx bL, MotorEx bR, RevIMU imu) {
         this.imu = imu;
         drive = new ScuffedMecanumDrive(fL, fR, bL, bR);
     }
 
-
     public Command fieldCentric(DoubleSupplier strafeSpeed, DoubleSupplier forwardSpeed,
-                                DoubleSupplier turnSpeed, DoubleSupplier gyroAngle){
+                                DoubleSupplier turnSpeed, DoubleSupplier gyroAngle) {
         return new RunCommand(
                 () -> drive.driveFieldCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(),
                         turnSpeed.getAsDouble(), gyroAngle.getAsDouble()),
@@ -48,7 +47,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command robotCentric(DoubleSupplier strafeSpeed, DoubleSupplier forwardSpeed,
-                                DoubleSupplier turnSpeed){
+                                DoubleSupplier turnSpeed) {
         return new RunCommand(
                 () -> drive.driveRobotCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(),
                         turnSpeed.getAsDouble()),
@@ -57,7 +56,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command slowMode(DoubleSupplier strafeSpeed, DoubleSupplier forwardSpeed,
-                                DoubleSupplier turnSpeed){
+                            DoubleSupplier turnSpeed) {
         return new RunCommand(
                 () -> drive.driveRobotCentric(strafeSpeed.getAsDouble() / slowFactor,
                         forwardSpeed.getAsDouble() / slowFactor,
@@ -67,19 +66,19 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command driveWithConeRotation(DoubleSupplier strafeSpeed, DoubleSupplier forwardSpeed,
-                                         DoubleSupplier turnSpeed){
+                                         DoubleSupplier turnSpeed) {
         double[] motorPowers = drive.getMotorPowers(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(),
                 turnSpeed.getAsDouble());
         output = controller.calculate(imu.getHeading());
         double[] finalPowers;
 
-        for(int i = 0; i < motorPowers.length; i++)
+        for (int i = 0; i < motorPowers.length; i++)
             motorPowers[i] -= output;
 
         double max = Math.abs(Arrays.stream(motorPowers).max().getAsDouble());
-        if(max>1){
-            for(int i = 0; i < motorPowers.length; i++)
-                motorPowers[i]/=max;
+        if (max > 1) {
+            for (int i = 0; i < motorPowers.length; i++)
+                motorPowers[i] /= max;
         }
         finalPowers = motorPowers.clone();
 
@@ -90,12 +89,12 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
 
-    public void setHeading(double degrees){
+    public void setHeading(double degrees) {
         controller.setGoal(degrees);
         target = degrees;
     }
 
-    public double getOutput(){
+    public double getOutput() {
         return output;
     }
 
@@ -104,14 +103,14 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     // desmos: https://www.desmos.com/calculator/j2e6yaorld
-    public double joystickTransform(double input){
+    public double joystickTransform(double input) {
         return (1.0 / (joystickTransformFactor - 1))
                 * Math.signum(input)
-                * (Math.pow(joystickTransformFactor, Math.abs(input))-1);
+                * (Math.pow(joystickTransformFactor, Math.abs(input)) - 1);
     }
 
-    public boolean atDesiredAngle(){
-        return Math.abs(target-imu.getHeading())<2;
+    public boolean atDesiredAngle() {
+        return Math.abs(target - imu.getHeading()) < 2;
     }
 
     @Override

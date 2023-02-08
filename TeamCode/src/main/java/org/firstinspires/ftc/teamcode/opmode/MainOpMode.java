@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.command.group.DownSequence;
 import org.firstinspires.ftc.teamcode.command.group.UpSequence;
-import org.firstinspires.ftc.teamcode.util.Height;
+import org.firstinspires.ftc.teamcode.powerplayutil.Height;
+import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 import org.firstinspires.ftc.teamcode.vision.JunctionDetection;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -52,12 +53,12 @@ public final class MainOpMode extends BaseOpMode {
         gb1(RIGHT_BUMPER).whileHeld(
                 drive.driveWithConeRotation(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
 
-//        gb2(LEFT_BUMPER).toggleWhenPressed(new GrabAndLift(lift, claw), claw.runReleaseCommand());
+//        gb2(LEFT_BUMPER).toggleWhenPressed(claw.grab().andThen(arm.goTo(ArmSys.Pose.GRAB)), claw.release());
 
 
-        gb2(Y).whenPressed(new UpSequence(lift, turret, arm, Height.HIGH, 135));
-        gb2(X).whenPressed(new UpSequence(lift, turret, arm, Height.MEDIUM, 135));
-        gb2(B).whenPressed(new UpSequence(lift, turret, arm, Height.LOW, 135));
+        gb2(Y).whenPressed(new UpSequence(lift, turret, arm, Height.HIGH, TurretSys.Pose.LEFT_FORWARD));
+        gb2(X).whenPressed(new UpSequence(lift, turret, arm, Height.MEDIUM, TurretSys.Pose.LEFT_FORWARD));
+        gb2(B).whenPressed(new UpSequence(lift, turret, arm, Height.LOW, TurretSys.Pose.LEFT_FORWARD));
         gb2(A).whenPressed(new DownSequence(lift, turret, arm));
 
         gb2(DPAD_UP).whenPressed(lift.goTo(Height.FIRST));

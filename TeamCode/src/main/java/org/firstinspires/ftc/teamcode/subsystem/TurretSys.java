@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.hardware.ServoEx;
+import org.firstinspires.ftc.teamcode.util.Position;
 import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
 
 @Config
-public final class TurretSubsystem extends ProfiledServoSubsystem {
+public final class TurretSys extends ProfiledServoSubsystem {
     public static double maxVelocity = 100;
     public static double maxAcceleration = 100;
     // right forward: 0.88
@@ -17,7 +17,7 @@ public final class TurretSubsystem extends ProfiledServoSubsystem {
     // left: 0.15
     // right: 0.715
 
-    public enum Position {
+    public enum Pose implements Position {
         RIGHT_FORWARD(0.88),
         LEFT_FORWARD(0),
         RIGHT_BACK(0.57),
@@ -27,7 +27,8 @@ public final class TurretSubsystem extends ProfiledServoSubsystem {
         ZERO(0.435);
 
         private final double height;
-        Position(double height) {
+
+        Pose(double height) {
             this.height = height;
         }
 
@@ -36,12 +37,7 @@ public final class TurretSubsystem extends ProfiledServoSubsystem {
         }
     }
 
-    public Command goTo(Position position) {
-        return goTo(position.getHeight());
-    }
-
-
-    public TurretSubsystem(ServoEx turret) {
+    public TurretSys(ServoEx turret) {
         super(turret, maxVelocity, maxAcceleration);
     }
 }

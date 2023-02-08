@@ -19,11 +19,11 @@ import java.math.RoundingMode;
 public class BaseOpMode extends CommandOpMode {
     protected MotorEx fL, fR, bL, bR, dr4bLeftMotor, dr4bRightMotor;
     protected SimpleServo clawServo, turretServo, armServo;
-    protected DriveSubsystem drive;
-    protected LiftSubsystem lift;
-    protected ClawSubsystem claw;
-    protected TurretSubsystem turret;
-    protected ArmSubsystem arm;
+    protected DriveSys drive;
+    protected LiftSys lift;
+    protected ClawSys claw;
+    protected TurretSys turret;
+    protected ArmSys arm;
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
@@ -41,11 +41,11 @@ public class BaseOpMode extends CommandOpMode {
         imu = new RevIMU(hardwareMap);
         imu.init();
 
-        drive = new DriveSubsystem(fL, fR, bL, bR, imu);
-        lift = new LiftSubsystem(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
-        claw = new ClawSubsystem(clawServo);
-        turret = new TurretSubsystem(turretServo);
-        arm = new ArmSubsystem(armServo);
+        drive = new DriveSys(fL, fR, bL, bR, imu);
+        lift = new LiftSys(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        claw = new ClawSys(clawServo);
+        turret = new TurretSys(turretServo);
+        arm = new ArmSys(armServo);
 
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

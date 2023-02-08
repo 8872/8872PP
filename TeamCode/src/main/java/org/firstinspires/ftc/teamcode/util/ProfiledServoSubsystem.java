@@ -31,11 +31,7 @@ public class ProfiledServoSubsystem extends SubsystemBase {
         this.turret = turret;
     }
 
-//    public Command rotateToNow(int degrees) {
-//        return new InstantCommand(() -> turret.turnToAngle(degrees), this);
-//    }
-
-    protected Command goTo(double position) {
+    public Command goTo(double position) {
         initial = time.time();
         return new InstantCommand(() -> {
             currentTarget = position;
@@ -45,6 +41,10 @@ public class ProfiledServoSubsystem extends SubsystemBase {
         }, this)
                 .andThen(new WaitUntilCommand(this::atTarget));
 
+    }
+
+    public Command goTo(Position position) {
+        return goTo(position.getHeight());
     }
 
     private boolean atTarget() {

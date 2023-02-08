@@ -8,11 +8,11 @@ import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import org.firstinspires.ftc.teamcode.util.Height;
+import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.util.ProfiledPIDFController;
 
 @Config
-public class LiftSubsystem extends SubsystemBase {
+public class LiftSys extends SubsystemBase {
 
     private final MotorEx left, right;
     private final TouchSensor limitSwitch;
@@ -37,7 +37,7 @@ public class LiftSubsystem extends SubsystemBase {
 
     public static int threshold = 20;
 
-    public LiftSubsystem(MotorEx left, MotorEx right, TouchSensor limitSwitch) {
+    public LiftSys(MotorEx left, MotorEx right, TouchSensor limitSwitch) {
         this.limitSwitch = limitSwitch;
         this.left = left;
         this.right = right;
