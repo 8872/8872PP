@@ -22,15 +22,15 @@ public final class TestTurretOpMode extends OpMode {
     public static double armDown = 0.95, armDeposit = 0.6;
     public static double clawOpen = 0.3, clawClose = 0.6;
     // turret
-    // right forward: 0.93
-    // left forward*: 0.07
-    // right back: 0.66
-    // left back: 0.35
-    // start position: 0.51
-    // left: 0.23
-    // right:0.805
+    // right forward: 0.88
+    // left forward*: 0
+    // right back: 0.57
+    // left back: 0.29
+    // start position: 0.435
+    // left: 0.15
+    // right: 0.715
     // arm
-    // arm down: 0.94
+    // arm down: 1
     // arm deposit: 0.6
 
 
@@ -62,8 +62,8 @@ public final class TestTurretOpMode extends OpMode {
     @Override
     public void loop() {
         if (currentControlState == Control.MANUAL) {
-            arm.setPosition((gamepad1.right_stick_y + 1) / 2);
-            turret.turnToAngle(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x), AngleUnit.RADIANS);
+//            arm.setPosition((gamepad1.right_stick_y + 1) / 2);
+//            turret.turnToAngle(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x), AngleUnit.RADIANS);
         } else {
             if (gamepad1.dpad_down) {
                 turret.setPosition(turretDown);

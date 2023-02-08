@@ -8,7 +8,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public abstract class ProfiledServoSubsystem extends SubsystemBase {
+public class ProfiledServoSubsystem extends SubsystemBase {
     private final ServoEx turret;
 
     protected double maxVelocity = 100;
@@ -16,7 +16,7 @@ public abstract class ProfiledServoSubsystem extends SubsystemBase {
 
     private TrapezoidProfile profile;
 
-    private int currentTarget;
+    private double currentTarget;
 
     private final ElapsedTime time = new ElapsedTime();
     private double initial;
@@ -31,14 +31,14 @@ public abstract class ProfiledServoSubsystem extends SubsystemBase {
         this.turret = turret;
     }
 
-    public Command rotateToNow(int degrees) {
-        return new InstantCommand(() -> turret.turnToAngle(degrees), this);
-    }
+//    public Command rotateToNow(int degrees) {
+//        return new InstantCommand(() -> turret.turnToAngle(degrees), this);
+//    }
 
-    public Command rotateTo(int degrees) {
+    protected Command goTo(double position) {
         initial = time.time();
         return new InstantCommand(() -> {
-            currentTarget = degrees;
+            currentTarget = position;
             profile = new TrapezoidProfile(
                     new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
                     new TrapezoidProfile.State(currentTarget, 0));
@@ -55,6 +55,6 @@ public abstract class ProfiledServoSubsystem extends SubsystemBase {
     public void periodic() {
         double current = time.time();
         TrapezoidProfile.State outState = profile.calculate(current - initial);
-        turret.turnToAngle(outState.position);
+        turret.setPosition(outState.position);
     }
 }

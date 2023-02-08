@@ -11,11 +11,11 @@ public final class DownSequence extends SequentialCommandGroup {
 
     public DownSequence(LiftSubsystem lift, TurretSubsystem turret, ArmSubsystem arm) {
         addCommands(
-                arm.rotateTo(90),
-                turret.rotateTo(0),
+                arm.goTo(90),
+                turret.goTo(0),
                 new ParallelCommandGroup(
                         lift.goTo(Height.NONE),
-                        arm.rotateTo(0)
+                        arm.goTo(0)
                 )
         );
 

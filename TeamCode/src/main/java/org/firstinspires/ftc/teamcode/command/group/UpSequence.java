@@ -13,9 +13,9 @@ public final class UpSequence extends SequentialCommandGroup {
         addCommands(
                 new ParallelCommandGroup(
                         lift.goTo(height),
-                        arm.rotateTo(90)
-                ), turret.rotateTo(turretDegrees),
-                arm.rotateTo(45)
+                        arm.goTo(90)
+                ), turret.goTo(turretDegrees),
+                arm.goTo(45)
         );
 
         addRequirements(lift, turret, arm);
