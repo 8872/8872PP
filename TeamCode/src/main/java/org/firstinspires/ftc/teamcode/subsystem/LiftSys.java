@@ -19,10 +19,10 @@ public class LiftSys extends SubsystemBase {
 
     private final double TICKS_IN_DEGREES = 8192.0 / 360;
 
-    public static double kP = 0.003;
-    public static double kI = 0.05;
-    public static double kD = 0.0003;
-    public static double kF = 0.07;
+    public static double kP = 0.003; //0.0016
+    public static double kI = 0; //0.06
+    public static double kD = 0.0003; //0.00018
+    public static double kF = 0.07; //0.06
     public static double maxVelocity = 4000;
     public static double maxAcceleration = 4000;
     private final ProfiledPIDFController leftPIDF = new ProfiledPIDFController(kP, kI, kD, kF,

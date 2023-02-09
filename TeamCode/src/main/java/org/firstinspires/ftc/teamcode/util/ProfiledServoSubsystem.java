@@ -14,7 +14,7 @@ public class ProfiledServoSubsystem extends SubsystemBase {
     protected double maxVelocity = 100;
     protected double maxAcceleration = 100;
 
-    private TrapezoidProfile profile;
+    protected TrapezoidProfile profile;
 
     private double currentTarget;
 
@@ -25,6 +25,7 @@ public class ProfiledServoSubsystem extends SubsystemBase {
         this.turret = turret;
         this.maxVelocity = maxVelocity;
         this.maxAcceleration = maxAcceleration;
+        initial = time.time();
     }
 
     public ProfiledServoSubsystem(ServoEx turret) {

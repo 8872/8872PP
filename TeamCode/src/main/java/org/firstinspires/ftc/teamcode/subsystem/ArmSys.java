@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import org.firstinspires.ftc.teamcode.util.Position;
 import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
 
@@ -28,5 +29,7 @@ public final class ArmSys extends ProfiledServoSubsystem {
 
     public ArmSys(ServoEx turret) {
         super(turret, maxVelocity, maxAcceleration);
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
+                new TrapezoidProfile.State(Pose.DOWN.getHeight(), 0));
     }
 }

@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.util.PIDFControllerEx;
 
 //@Disabled
 @Config
-@TeleOp(name = "Tuning OpMode")
+@TeleOp
 public final class TuningOpMode extends OpMode {
 
     public static int none = 10;
-    public static int low = -450;
-    public static int medium = -839;
+    public static int low = -400;
+    public static int medium = -855;
     public static int high = -1800;
     public static int ground = -25;
 
@@ -27,7 +27,7 @@ public final class TuningOpMode extends OpMode {
     public static double kP = 0.003;
     public static double kI = 0.05;
     public static double kD = 0.0003;
-    public static double kF = 0.05;
+    public static double kF = 0.07;
     private PIDFControllerEx left_controller;
     private PIDFControllerEx right_controller;
     private double output_left;
@@ -58,13 +58,13 @@ public final class TuningOpMode extends OpMode {
         output_left = left_controller.calculate(dr4bLeftMotor.getCurrentPosition());
         output_right = right_controller.calculate(dr4bRightMotor.getCurrentPosition());
 
-        if (gamepad1.dpad_down) {
+        if (gamepad1.a) {
             setGoal(none);
-        } else if (gamepad1.dpad_up) {
+        } else if (gamepad1.y) {
             setGoal(high);
-        } else if (gamepad1.dpad_left) {
+        } else if (gamepad1.b) {
             setGoal(medium);
-        } else if (gamepad1.dpad_right) {
+        } else if (gamepad1.x) {
             setGoal(low);
         }
 

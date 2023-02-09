@@ -47,6 +47,10 @@ public class BaseOpMode extends CommandOpMode {
         turret = new TurretSys(turretServo);
         arm = new ArmSys(armServo);
 
+//        schedule(
+//                arm.goTo(ArmSys.Pose.DOWN),
+//                turret.goTo(TurretSys.Pose.ZERO)
+//        );
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         tad("Mode", "Done initializing");
