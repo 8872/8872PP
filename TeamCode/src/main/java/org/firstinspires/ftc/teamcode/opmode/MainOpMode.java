@@ -2,16 +2,12 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.command.group.DownSequence;
-import org.firstinspires.ftc.teamcode.command.group.UpSequence;
+import org.firstinspires.ftc.teamcode.command.group.HighSequence;
 import org.firstinspires.ftc.teamcode.powerplayutil.Height;
+import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
 import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 import org.firstinspires.ftc.teamcode.vision.JunctionDetection;
-import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;
 
@@ -65,6 +61,12 @@ public final class MainOpMode extends BaseOpMode {
         gb2(DPAD_LEFT).whenPressed(lift.goTo(Height.LOW));
         gb2(DPAD_RIGHT).whenPressed(lift.goTo(Height.MEDIUM));
         gb2(DPAD_DOWN).whenPressed(lift.goTo(Height.NONE));
+
+        gb2(A).toggleWhenPressed(arm.goTo(ArmSys.Pose.DOWN), arm.goTo(ArmSys.Pose.DEPOSIT));
+        gb2(Y).whenPressed(new HighSequence(lift, turret, arm, TurretSys.Pose.RIGHT_FORWARD));
+//        gb2(X).whenPressed(new UpSequence(lift, turret, arm, Height.HIGH, TurretSys.Pose.LEFT_FORWARD));
+//        gb2(B).whenPressed(new UpSequence(lift, turret, arm, Height.HIGH, TurretSys.Pose.RIGHT));
+
 
         //forklift
 //        gb2(RIGHT_BUMPER)

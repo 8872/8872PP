@@ -115,7 +115,7 @@ public class DriveSys extends SubsystemBase {
 
     @Override
     public void periodic() {
-        output = controller.calculate(imu.getHeading());
-        drive.driveWithMotorPowers(-output, -output, -output, -output);
+//        output = controller.calculate(imu.getHeading());
+//        drive.driveWithMotorPowers(-output, -output, -output, -output);
     }
 }

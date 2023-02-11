@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.NoRequirementInstantCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.hardware.ServoEx;
@@ -11,12 +11,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ProfiledServoSubsystem extends SubsystemBase {
     private final ServoEx turret;
 
-    protected double maxVelocity = 100;
-    protected double maxAcceleration = 100;
+    protected double maxVelocity = 3;
+    protected double maxAcceleration = 3;
 
     protected TrapezoidProfile profile;
 
-    private double currentTarget;
+    protected double currentTarget;
+    protected double previousTarget;
 
     private final ElapsedTime time = new ElapsedTime();
     private double initial;
@@ -33,13 +34,15 @@ public class ProfiledServoSubsystem extends SubsystemBase {
     }
 
     public Command goTo(double position) {
-        initial = time.time();
-        return new InstantCommand(() -> {
+        return new NoRequirementInstantCommand(() -> {
+            initial = time.time();
+            previousTarget = currentTarget;
             currentTarget = position;
             profile = new TrapezoidProfile(
                     new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
-                    new TrapezoidProfile.State(currentTarget, 0));
-        }, this)
+                    new TrapezoidProfile.State(currentTarget, 0),
+                    new TrapezoidProfile.State(previousTarget, 0));
+        })
                 .andThen(new WaitUntilCommand(this::atTarget));
 
     }

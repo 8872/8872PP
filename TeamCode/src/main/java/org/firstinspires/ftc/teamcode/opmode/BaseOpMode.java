@@ -88,6 +88,8 @@ public class BaseOpMode extends CommandOpMode {
         tad("dr4bLeftMotor Position", dr4bLeftMotor.getCurrentPosition());
         tad("dr4bRightMotor Position", dr4bRightMotor.getCurrentPosition());
 
+        tad("Lift Target Position", lift.getCurrentGoal());
+
         tad("Drive Heading PID Output", drive.getOutput());
         tad("Drive Heading Target", drive.getTarget());
         tad("Claw Position", clawServo.getPosition());

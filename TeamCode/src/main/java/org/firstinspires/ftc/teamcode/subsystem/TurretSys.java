@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
 
 @Config
 public final class TurretSys extends ProfiledServoSubsystem {
-    public static double maxVelocity = 100;
-    public static double maxAcceleration = 100;
+    public static double maxVelocity = 3;
+    public static double maxAcceleration = 3;
     // right forward: 0.88
     // left forward*: 0
     // right back: 0.57
@@ -42,5 +42,6 @@ public final class TurretSys extends ProfiledServoSubsystem {
         super(turret, maxVelocity, maxAcceleration);
         profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
                 new TrapezoidProfile.State(Pose.ZERO.getHeight(), 0));
+        currentTarget = Pose.ZERO.getHeight();
     }
 }
