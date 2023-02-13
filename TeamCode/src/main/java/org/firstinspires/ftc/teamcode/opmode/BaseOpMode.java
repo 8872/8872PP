@@ -137,6 +137,14 @@ public class BaseOpMode extends CommandOpMode {
         return gamepadEx2.getGamepadButton(button);
     }
 
+    protected double gb1(GamepadKeys.Trigger trigger) {
+        return gamepadEx1.getTrigger(trigger);
+    }
+
+    protected double gb2(GamepadKeys.Trigger trigger) {
+        return gamepadEx2.getTrigger(trigger);
+    }
+
     // telemetry add data = tad
     protected void tad(String caption, Object value) {
         telemetry.addData(caption, value);

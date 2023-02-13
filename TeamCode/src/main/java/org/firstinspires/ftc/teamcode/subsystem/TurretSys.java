@@ -25,7 +25,8 @@ public final class TurretSys extends ProfiledServoSubsystem {
         LEFT_BACK(0.29),
         LEFT(0.15),
         RIGHT(0.715),
-        ZERO(0.435);
+        ZERO(0.435),
+        ONE_EIGHTY(1);
 
         private final double height;
 
