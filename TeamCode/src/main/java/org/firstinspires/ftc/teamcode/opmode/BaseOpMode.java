@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.command.button.GamepadTrigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
@@ -12,6 +13,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.subsystem.*;
+import org.firstinspires.ftc.teamcode.util.TriggerGamepadEx1;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,11 +31,16 @@ public class BaseOpMode extends CommandOpMode {
 
     protected GamepadEx gamepadEx1;
     protected GamepadEx gamepadEx2;
+    protected TriggerGamepadEx1 triggerGamepadEx1;
+    protected TriggerGamepadEx1 triggerGamepadEx2;
 
     @Override
     public void initialize() {
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
+
+        triggerGamepadEx1 = new TriggerGamepadEx1(gamepad1, gamepadEx1);
+        triggerGamepadEx2 = new TriggerGamepadEx1(gamepad2, gamepadEx2);
 
         initHardware();
         setUpHardwareDevices();
@@ -137,12 +144,12 @@ public class BaseOpMode extends CommandOpMode {
         return gamepadEx2.getGamepadButton(button);
     }
 
-    protected double gb1(GamepadKeys.Trigger trigger) {
-        return gamepadEx1.getTrigger(trigger);
+    protected GamepadTrigger gb1(GamepadKeys.Trigger trigger) {
+        return triggerGamepadEx1.getGamepadTrigger(trigger);
     }
 
-    protected double gb2(GamepadKeys.Trigger trigger) {
-        return gamepadEx2.getTrigger(trigger);
+    protected GamepadTrigger gb2(GamepadKeys.Trigger trigger) {
+        return triggerGamepadEx2.getGamepadTrigger(trigger);
     }
 
     // telemetry add data = tad
