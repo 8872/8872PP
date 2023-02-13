@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.group.DownSequence;
 import org.firstinspires.ftc.teamcode.command.group.HighSequence;
@@ -67,6 +68,8 @@ public final class MainOpMode extends BaseOpMode {
         gb2(Y).whenPressed(new HighSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
         gb2(X).whenPressed(new MediumSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
         gb2(B).whenPressed(new LowSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
+
+        gb1(GamepadKeys.Trigger.LEFT_TRIGGER).and(gb1(Y)).whenActive(new HighSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD));
 
         // forklift
 //        gb2(RIGHT_BUMPER)
