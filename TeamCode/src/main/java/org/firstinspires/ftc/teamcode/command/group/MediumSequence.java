@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.DelayedCommand;
 
 @Config
 public final class MediumSequence extends SequentialCommandGroup {
-    public static double armPosition = 0.93;
+    public static double armPosition = 0.85;
 
     public MediumSequence(LiftSys lift, TurretSys turret, ArmSys arm, TurretSys.Pose pose) {
         addCommands(

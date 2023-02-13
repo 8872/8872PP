@@ -35,7 +35,7 @@ public class LiftSys extends SubsystemBase {
 
     public static int manualLiftSpeed = 30;
 
-    public static int threshold = 20;
+    public static int threshold = 30;
 
     public LiftSys(MotorEx left, MotorEx right, TouchSensor limitSwitch) {
         this.limitSwitch = limitSwitch;

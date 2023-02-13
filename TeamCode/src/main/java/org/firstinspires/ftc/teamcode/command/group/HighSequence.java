@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.DelayedCommand;
 
 @Config
 public final class HighSequence extends SequentialCommandGroup {
-    public static double armPosition = 0.93;
+    public static double armPosition = 0.85;
 
     public HighSequence(LiftSys lift, TurretSys turret, ArmSys arm, TurretSys.Pose pose) {
         addCommands(
@@ -19,7 +19,7 @@ public final class HighSequence extends SequentialCommandGroup {
                         lift.goTo(Height.HIGH),
                         arm.goTo(ArmSys.Pose.DEPOSIT),
                         new DelayedCommand(turret.goTo(pose), 300),
-                        new DelayedCommand(arm.goTo(armPosition), 400)
+                        new DelayedCommand(arm.goTo(armPosition), 700)
                 )
         );
 

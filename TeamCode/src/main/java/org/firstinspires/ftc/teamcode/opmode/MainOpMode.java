@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.group.DownSequence;
 import org.firstinspires.ftc.teamcode.command.group.HighSequence;
@@ -14,6 +13,8 @@ import org.firstinspires.ftc.teamcode.vision.JunctionDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 
 @Config
 @TeleOp
@@ -69,36 +70,45 @@ public final class MainOpMode extends BaseOpMode {
         gb2(X).whenPressed(new MediumSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
         gb2(B).whenPressed(new LowSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
 
-        gb1(GamepadKeys.Trigger.LEFT_TRIGGER).and(gb1(Y)).whenActive(new HighSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD));
+//         forklift
+        gb2(RIGHT_BUMPER)
+                .and(gb2(Y))
+                .whenActive(lift.goTo(Height.HIGH).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)));
+        gb2(RIGHT_BUMPER)
+                .and(gb2(X))
+                .whenActive(lift.goTo(Height.MEDIUM).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)));
 
-        // forklift
-//        gb2(RIGHT_BUMPER)
-//                .and(gb2(Y))
-//                .whenActive(lift.goTo(Height.HIGH).alongWith(arm.goTo(ArmSys.Pose.DOWN)));
-//        gb2(RIGHT_BUMPER)
-//                .and(gb2(X))
-//                .whenActive(lift.goTo(Height.MEDIUM).alongWith(arm.goTo(ArmSys.Pose.DOWN)));
-//        gb2(RIGHT_BUMPER)
-//                .and(gb2(B))
-//                .whenActive(lift.goTo(Height.LOW).alongWith(arm.goTo(ArmSys.Pose.DOWN)));
-//
-//        // back left
-//        gb2(Y).whenPressed(new ConditionalCommand(
-//                new HighSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD), new InstantCommand(),
-//                triggerReaderLeft2::isDown));
-//        gb2(X).whenPressed(new ConditionalCommand(
-//                new MediumSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD), new InstantCommand(),
-//                triggerReaderLeft2::isDown));
-//        gb2(B).whenPressed(new ConditionalCommand(
-//                new LowSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD), new InstantCommand(),
-//                triggerReaderLeft2::isDown));
+        // front left
+        gb2(LEFT_TRIGGER).and(gb2(Y))
+                .whenActive(new HighSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD));
+        gb2(LEFT_TRIGGER).and(gb2(X))
+                .whenActive(new MediumSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD));
+        gb2(LEFT_TRIGGER).and(gb2(B))
+                .whenActive(new LowSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD));
 
+        // front right
+        gb2(RIGHT_TRIGGER).and(gb2(Y))
+                .whenActive(new HighSequence(lift, turret, arm, TurretSys.Pose.RIGHT_FORWARD));
+        gb2(RIGHT_TRIGGER).and(gb2(X))
+                .whenActive(new MediumSequence(lift, turret, arm, TurretSys.Pose.RIGHT_FORWARD));
+        gb2(RIGHT_TRIGGER).and(gb2(B))
+                .whenActive(new LowSequence(lift, turret, arm, TurretSys.Pose.RIGHT_FORWARD));
 
-//        gb2(X).whenPressed(new UpSequence(lift, turret, arm, Height.HIGH, TurretSys.Pose.LEFT_FORWARD));
-//        gb2(B).whenPressed(new UpSequence(lift, turret, arm, Height.HIGH, TurretSys.Pose.RIGHT));
+        // back left
+        gb2(DPAD_LEFT).and(gb2(Y))
+                .whenActive(new HighSequence(lift, turret, arm, TurretSys.Pose.LEFT_BACK));
+        gb2(DPAD_LEFT).and(gb2(X))
+                .whenActive(new MediumSequence(lift, turret, arm, TurretSys.Pose.LEFT_BACK));
+        gb2(DPAD_LEFT).and(gb2(B))
+                .whenActive(new LowSequence(lift, turret, arm, TurretSys.Pose.LEFT_BACK));
 
-
-        ;
+        // back right
+        gb2(DPAD_RIGHT).and(gb2(Y))
+                .whenActive(new HighSequence(lift, turret, arm, TurretSys.Pose.RIGHT_BACK));
+        gb2(DPAD_RIGHT).and(gb2(X))
+                .whenActive(new MediumSequence(lift, turret, arm, TurretSys.Pose.RIGHT_BACK));
+        gb2(DPAD_RIGHT).and(gb2(B))
+                .whenActive(new LowSequence(lift, turret, arm, TurretSys.Pose.RIGHT_BACK));
 
 
         register(drive, lift, claw, turret, arm);

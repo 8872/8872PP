@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.arcrobotics.ftclib.command.button.GamepadTrigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -8,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.HashMap;
 
-public class TriggerGamepadEx1 {
+public class TriggerGamepadEx {
     public Gamepad gamepad;
 
     private HashMap<GamepadKeys.Trigger, TriggerReader> triggerReaders;
@@ -24,7 +23,7 @@ public class TriggerGamepadEx1 {
      *
      * @param gamepad the gamepad object from the opmode
      */
-    public TriggerGamepadEx1(Gamepad gamepad, GamepadEx ex) {
+    public TriggerGamepadEx(Gamepad gamepad, GamepadEx ex) {
         this.gamepad = gamepad;
         triggerReaders = new HashMap<>();
         gamepadTriggers = new HashMap<>();
