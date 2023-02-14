@@ -9,8 +9,8 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 @Config
 public class ClawSys extends SubsystemBase {
     private final ServoEx claw;
-    public static double grabPosition = 35;
-    public static double releasePosition = 45;
+    public static double grabPosition = 0.85;
+    public static double releasePosition = 0;
 
     public ClawSys(ServoEx claw) {
         this.claw = claw;
@@ -18,10 +18,10 @@ public class ClawSys extends SubsystemBase {
     }
 
     public Command grab() {
-        return new InstantCommand(() -> claw.turnToAngle(grabPosition), this);
+        return new InstantCommand(() -> claw.setPosition(grabPosition), this);
     }
 
     public Command release() {
-        return new InstantCommand(() -> claw.turnToAngle(releasePosition), this);
+        return new InstantCommand(() -> claw.setPosition(releasePosition), this);
     }
 }

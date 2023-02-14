@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.command.group.MediumSequence;
 import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
 import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
+import org.firstinspires.ftc.teamcode.util.DelayedCommand;
 import org.firstinspires.ftc.teamcode.vision.JunctionDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 
@@ -62,8 +63,8 @@ public final class MainOpMode extends BaseOpMode {
 
 
         gb2(A).whenPressed(new DownSequence(lift, turret, arm));
-        gb2(LEFT_BUMPER).toggleWhenPressed(claw.grab().andThen(arm.goTo(ArmSys.Pose.GRAB)),
-                claw.release().andThen(arm.goTo(ArmSys.Pose.DOWN)));
+        gb2(LEFT_BUMPER).toggleWhenPressed(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 200)),
+                claw.release().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN), 200)));
 
         // 180
         gb2(Y).whenPressed(new HighSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
