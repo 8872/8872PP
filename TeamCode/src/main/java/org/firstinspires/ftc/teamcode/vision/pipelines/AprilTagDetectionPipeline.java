@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision.pipelines;
 
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
 import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 import org.firstinspires.ftc.teamcode.util.DelayedCommand;
-import org.firstinspires.ftc.teamcode.vision.JunctionDetection;
+import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;

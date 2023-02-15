@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionDetection;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
