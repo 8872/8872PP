@@ -4,9 +4,9 @@ public enum Height {
     // junction
     NONE(10),
     GROUND(-25),
-    LOW(-200),
-    MEDIUM(-360),
-    HIGH(-850),
+    LOW(-230),
+    MEDIUM(-400),
+    HIGH(-870),
     // cone stack
     FIRST(-142),
     SECOND(-121),

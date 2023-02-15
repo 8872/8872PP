@@ -77,10 +77,6 @@ public class LiftSys extends SubsystemBase {
         return currentHeight;
     }
 
-    public boolean isGrabAndLiftIncompatible() {
-        return currentHeight != Height.NONE.getHeight();
-    }
-
     public Command goTo(Height junction) {
         return new InstantCommand(() -> setHeight(junction))
                 .andThen(new WaitUntilCommand(this::atTarget));

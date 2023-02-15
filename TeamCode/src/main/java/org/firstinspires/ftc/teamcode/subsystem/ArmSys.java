@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
 
 @Config
 public final class ArmSys extends ProfiledServoSubsystem {
-    public static double maxVelocity = 3;
-    public static double maxAcceleration = 3;
+    public static double maxVelocity = 2;
+    public static double maxAcceleration = 2;
     // arm down: 1
     // arm deposit: 0.6
 
