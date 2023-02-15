@@ -5,7 +5,7 @@ public enum Height {
     NONE(10),
     GROUND(-25),
     LOW(-230),
-    MEDIUM(-400),
+    MEDIUM(-410),
     HIGH(-870),
     // cone stack
     FIRST(-142),

@@ -27,6 +27,7 @@ public class DetectionTests {
         drive = new SampleMecanumDrive(hardwareMap);
     }
 
+    //could be replaced with height test
     public static boolean minAreaTest(MatOfPoint contour){
         return Imgproc.contourArea(contour) > MIN_CONTOUR_AREA;
     }

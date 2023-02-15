@@ -6,8 +6,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-public class JunctionPipeline extends OpenCvPipeline {
-    private Point center = null;
+public class InfoPipeline extends OpenCvPipeline {
+    private RotatedRect rect = null;
     //TODO: If the edges of the frame stop junctions touching them from being detected, add borders
     @Override
     public Mat processFrame(Mat input){
@@ -72,8 +72,7 @@ public class JunctionPipeline extends OpenCvPipeline {
                 Imgproc.line(input, rectPoints[i], rectPoints[(i + 1) % 4], new Scalar(255, 0, 0), 4);
             }
 
-
-            center = largestRect.center.clone();
+            rect = largestRect.clone();
         }
 
         contours.clear();
@@ -83,7 +82,7 @@ public class JunctionPipeline extends OpenCvPipeline {
 
         return input;
     }
-    public Point getCenter() {
-        return center;
+    public RotatedRect getRect() {
+        return rect;
     }
 }

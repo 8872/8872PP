@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionDetection;
+import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionPipeline;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -16,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class CVTestOpMode extends OpMode {
 
     private OpenCvCamera camera;
-    JunctionDetection pipeline;
+    JunctionPipeline pipeline;
     private RevIMU imu;
     @Override
     public void init() {
@@ -24,10 +25,8 @@ public class CVTestOpMode extends OpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        imu = new RevIMU(hardwareMap);
-        imu.init();
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new JunctionDetection();
+        pipeline = new JunctionPipeline();
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -43,17 +42,12 @@ public class CVTestOpMode extends OpMode {
 
     @Override
     public void loop() {
-        Point center = pipeline.getCenter();
-
-        if(center!=null) {
+        Point center;
+        if((center = pipeline.getCenter()) != null) {
             double x = center.x;
-            double y = center.y;
-            telemetry.addData("error", (x-640) + ", " + (y-360));
-            telemetry.addData("center", x + ", " + y);
-            telemetry.addData("heading", imu.getHeading());
+            telemetry.addData("error", (x-640));
+            telemetry.addData("center", x);
         }
-        telemetry.addData("width", pipeline.getWidth());
-        telemetry.addData("height", pipeline.getHeight());
         telemetry.update();
     }
 }

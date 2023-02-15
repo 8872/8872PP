@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision.pipelines;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -8,6 +9,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+@Disabled
 public class JunctionDetection extends OpenCvPipeline {
 
     boolean newResultFlag = false;
