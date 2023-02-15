@@ -25,20 +25,24 @@ public class ContourDetectionPipeline extends OpenCvPipeline {
 
         //close to connect broken edges
         //scale everything by 5-6
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 2));
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 3));
         Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, kernel);
 
         //find contours
         ArrayList<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(thresh, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 2);
 
 
 
 
 
 
+        thresh.release();
+        mat.release();
+        kernel.release();
 
-        return thresh;
+        return input;
     }
 }
