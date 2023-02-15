@@ -11,9 +11,9 @@ public class ContourDetectionPipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
 
         //blur and convert to YCrCb color space
-        Mat mat = new Mat();
+        Mat ycrcb = new Mat();
         Imgproc.GaussianBlur(input, input, new Size(5, 5), 0);
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
 
         //thresholding values, may need to be further tuned
         Scalar lowThresh = new Scalar(0, 50, 10);
@@ -21,7 +21,7 @@ public class ContourDetectionPipeline extends OpenCvPipeline {
 
         //thresholding for yellow objects
         Mat thresh = new Mat();
-        Core.inRange(mat, lowThresh, highThresh, thresh);
+        Core.inRange(ycrcb, lowThresh, highThresh, thresh);
 
         //close to connect broken edges
         //scale everything by 5-6
@@ -34,13 +34,8 @@ public class ContourDetectionPipeline extends OpenCvPipeline {
 
         Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 2);
 
-
-
-
-
-
         thresh.release();
-        mat.release();
+        ycrcb.release();
         kernel.release();
 
         return input;
