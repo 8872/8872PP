@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.*;
 import org.firstinspires.ftc.teamcode.util.GamepadTrigger;
 import org.firstinspires.ftc.teamcode.util.TriggerGamepadEx;
@@ -34,6 +35,8 @@ public class BaseOpMode extends CommandOpMode {
     protected TriggerGamepadEx triggerGamepadEx1;
     protected TriggerGamepadEx triggerGamepadEx2;
 
+    protected SampleMecanumDrive rrDrive;
+
     @Override
     public void initialize() {
         gamepadEx1 = new GamepadEx(gamepad1);
@@ -54,10 +57,7 @@ public class BaseOpMode extends CommandOpMode {
         turret = new TurretSys(turretServo);
         arm = new ArmSys(armServo);
 
-//        schedule(
-//                arm.goTo(ArmSys.Pose.DOWN),
-//                turret.goTo(TurretSys.Pose.ZERO)
-//        );
+        rrDrive = new SampleMecanumDrive(hardwareMap);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         tad("Mode", "Done initializing");
