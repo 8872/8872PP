@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.group.DownSequence;
 import org.firstinspires.ftc.teamcode.command.group.HighSequence;
@@ -52,19 +54,11 @@ public final class MainOpMode extends BaseOpMode {
 
         gb1(LEFT_BUMPER).whileHeld(
                 drive.slowMode(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
-//        gb1(RIGHT_BUMPER).whileHeld(
-//                drive.driveWithConeRotation(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
-
-
-        gb2(DPAD_UP).whenPressed(lift.goTo(Height.HIGH));
-        gb2(DPAD_LEFT).whenPressed(lift.goTo(Height.LOW));
-        gb2(DPAD_RIGHT).whenPressed(lift.goTo(Height.MEDIUM));
-        gb2(DPAD_DOWN).whenPressed(lift.goTo(Height.NONE));
-
 
         gb2(A).whenPressed(new DownSequence(lift, turret, arm));
         gb2(LEFT_BUMPER).toggleWhenPressed(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 200)),
-                claw.release().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN), 200)));
+                claw.release().andThen(new ConditionalCommand(new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN), 200),
+                        new InstantCommand(), () -> (lift.getCurrentGoal() == Height.NONE.getHeight()))));
 
         // 180
         gb2(Y).whenPressed(new HighSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
@@ -113,6 +107,7 @@ public final class MainOpMode extends BaseOpMode {
 
 
         register(drive, lift, claw, turret, arm);
+        lift.setDefaultCommand(lift.setPower(gamepadEx2::getRightY));
         drive.setDefaultCommand(drive.robotCentric(
                 gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
 

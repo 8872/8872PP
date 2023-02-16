@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.arcrobotics.ftclib.command.*;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.util.ProfiledPIDFController;
+
+import java.util.function.DoubleSupplier;
 
 @Config
 public class LiftSys extends SubsystemBase {
@@ -89,6 +88,15 @@ public class LiftSys extends SubsystemBase {
     public Command goTo(int tick) {
         return new InstantCommand(() -> setHeight(tick))
                 .andThen(new WaitUntilCommand(this::atTarget));
+    }
+
+    public Command setPower(DoubleSupplier power) {
+        return new RunCommand(() -> {
+            left.set(power.getAsDouble() / 2);
+            right.set(power.getAsDouble() / 2);
+            leftPIDF.setGoal(left.getCurrentPosition());
+            rightPIDF.setGoal(right.getCurrentPosition());
+        }, this);
     }
 
     @Override
