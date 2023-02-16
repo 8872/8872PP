@@ -47,6 +47,9 @@ public final class CameraInfoOpmode extends BaseOpMode {
     private OpenCvCamera camera;
     private InfoPipeline pipeline;
 
+    public CameraInfoOpmode() throws IOException {
+    }
+
     @Override
     public void initialize() {
         super.initialize();
@@ -68,8 +71,8 @@ public final class CameraInfoOpmode extends BaseOpMode {
         });
 
 
-        gb1(LEFT_BUMPER).whileHeld(
-                drive.slowMode(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
+//        gb1(LEFT_BUMPER).whileHeld(
+//                drive.slowMode(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
 //        gb1(RIGHT_BUMPER).whileHeld(
 //                drive.driveWithConeRotation(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
 
@@ -136,27 +139,48 @@ public final class CameraInfoOpmode extends BaseOpMode {
 
     }
 
+    BufferedWriter x = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/x"));
+    BufferedWriter y = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/y"));
+    BufferedWriter height = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/height"));
+    BufferedWriter heightWidthRatio = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/heightWidthRatio"));
+    BufferedWriter horizontalChange = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/horizontalChange"));
+    BufferedWriter heightChange = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/heightChange"));
+    BufferedWriter driveVelocity = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/driveVelocity"));
+    BufferedWriter fps = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/fps"));
     @Override
     public void run() {
-        super.run();
+        if(gamepad1.back){
+            try {
+                RotatedRect rect = pipeline.getRect();
+                if (rect != null) {
+                    telemetry.addData("center x", rect.center.x);
+                    x.write(rect.center.x + "\n");
+                    telemetry.addData("center y", rect.center.y);
+                    y.write(rect.center.y+"\n");
+                    telemetry.addData("height", rect.size.height);
+                    height.write(rect.size.height+"\n");
+                    telemetry.addData("height width ratio", rect.size.height/rect.size.width);
+                    heightWidthRatio.write(rect.size.height/rect.size.width+"\n");
+                    telemetry.addData("horizontal change", rect.center.x-previousX);
+                    horizontalChange.write(rect.center.x-previousX+"\n");
+                    telemetry.addData("height change", rect.size.height-previousHeight);
+                    heightChange.write("rect.size.height-previousHeight"+"\n");
+                    previousX = rect.center.x;
+                    previousHeight=rect.size.height;
 
-
-        RotatedRect rect = pipeline.getRect();
-        if (rect != null) {
-            telemetry.addData("center x", rect.center.x);
-            telemetry.addData("center y", rect.center.y);
-            telemetry.addData("height", rect.size.height);
-            telemetry.addData("height width ratio", rect.size.height/rect.size.width);
-            telemetry.addData("horizontal change", rect.center.x-previousX);
-            telemetry.addData("height change", rect.size.height-previousHeight);
-            previousX = rect.center.x;
-            previousHeight=rect.size.height;
+                    Pose2d poseVelo = Objects.requireNonNull(roadrunnerDrive.getPoseVelocity(), "poseVelocity() was null in CameraInfoOpmode");
+                    telemetry.addData("drive velocity", Math.sqrt(Math.pow(poseVelo.getX(), 2) + Math.pow(poseVelo.getY(), 2)));
+                    driveVelocity.write(Math.sqrt(Math.pow(poseVelo.getX(), 2) + Math.pow(poseVelo.getY(), 2))+"\n");
+                    telemetry.addData("fps", camera.getFps());
+                    fps.write(camera.getFps()+"\n");
+                    telemetry.update();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        Pose2d poseVelo = Objects.requireNonNull(roadrunnerDrive.getPoseVelocity(), "poseVelocity() was null in CameraInfoOpmode");
-        telemetry.addData("drive velocity", Math.sqrt(Math.pow(poseVelo.getX(), 2) + Math.pow(poseVelo.getY(), 2)));
-        telemetry.addData("fps", camera.getFps());
 
-        telemetry.update();
+
 
 
     }
