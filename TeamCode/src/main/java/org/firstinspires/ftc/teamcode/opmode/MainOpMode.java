@@ -54,6 +54,7 @@ public final class MainOpMode extends BaseOpMode {
 
         gb1(LEFT_BUMPER).whileHeld(
                 drive.slowMode(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
+        gb1(X).toggleWhenPressed(flipper.out(), flipper.in());
 
         gb2(A).whenPressed(new DownSequence(lift, turret, arm));
         gb2(LEFT_BUMPER).toggleWhenPressed(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 200)),

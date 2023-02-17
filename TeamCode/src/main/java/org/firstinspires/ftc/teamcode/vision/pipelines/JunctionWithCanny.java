@@ -6,7 +6,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-public class InfoPipeline extends OpenCvPipeline {
+public class JunctionWithCanny extends OpenCvPipeline {
     private RotatedRect rect = null;
     private boolean processed = false;
     //TODO: If the edges of the frame stop junctions touching them from being detected, add borders
@@ -31,13 +31,19 @@ public class InfoPipeline extends OpenCvPipeline {
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 15));
         Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, kernel);
 
+        Mat masked = new Mat();
+        input.copyTo(masked, thresh);
+
+        Mat edges = new Mat();
+        Imgproc.Canny(masked, edges, 100, 300);
+
         //find contours
         ArrayList<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.findContours(thresh, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         //TODO: time optimization: remove once tuned
         //draw contours in green
-        Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 2);
+        Imgproc.drawContours(edges, contours, -1, new Scalar(0,255,0), 2);
 
         Rect boundingRect;
         RotatedRect rotatedRect;
@@ -77,19 +83,20 @@ public class InfoPipeline extends OpenCvPipeline {
             Point[] rectPoints = new Point[4];
             largestRect.points(rectPoints);
             for (int i = 0; i < 4; i++) {
-                Imgproc.line(input, rectPoints[i], rectPoints[(i + 1) % 4], new Scalar(255, 0, 0), 4);
+                Imgproc.line(edges, rectPoints[i], rectPoints[(i + 1) % 4], new Scalar(255, 0, 0), 4);
             }
 
             rect = largestRect.clone();
             processed = true;
         }
 
+        masked.release();
         contours.clear();
         thresh.release();
         ycrcb.release();
         kernel.release();
 
-        return input;
+        return edges;
     }
     public RotatedRect getRect() {
         if(!processed) return null;

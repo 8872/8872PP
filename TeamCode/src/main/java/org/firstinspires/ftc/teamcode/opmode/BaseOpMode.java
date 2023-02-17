@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.*;
+import org.firstinspires.ftc.teamcode.subsystem.FlipperSys;
 import org.firstinspires.ftc.teamcode.util.GamepadTrigger;
 import org.firstinspires.ftc.teamcode.util.TriggerGamepadEx;
 
@@ -21,12 +22,13 @@ import java.math.RoundingMode;
 
 public class BaseOpMode extends CommandOpMode {
     protected MotorEx fL, fR, bL, bR, dr4bLeftMotor, dr4bRightMotor;
-    protected SimpleServo clawServo, turretServo, armServo;
+    protected SimpleServo clawServo, turretServo, armServo, flipperServo;
     protected DriveSys drive;
     protected LiftSys lift;
     protected ClawSys claw;
     protected TurretSys turret;
     protected ArmSys arm;
+    protected FlipperSys flipper;
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
@@ -56,6 +58,7 @@ public class BaseOpMode extends CommandOpMode {
         claw = new ClawSys(clawServo);
         turret = new TurretSys(turretServo);
         arm = new ArmSys(armServo);
+        flipper = new FlipperSys(flipperServo);
 
         rrDrive = new SampleMecanumDrive(hardwareMap);
 
@@ -76,6 +79,7 @@ public class BaseOpMode extends CommandOpMode {
         // TODO change to 355 when switch to axon
         turretServo = new SimpleServo(hardwareMap, "turret", 0, 300);
         armServo = new SimpleServo(hardwareMap, "arm", 0, 355);
+        flipperServo = new SimpleServo(hardwareMap, "flipper", 0, 355);
 
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
         dr4bLeftMotor.resetEncoder();
