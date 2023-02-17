@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class InfoPipeline extends OpenCvPipeline {
     private RotatedRect rect = null;
+    private boolean processed = false;
     //TODO: If the edges of the frame stop junctions touching them from being detected, add borders
     @Override
     public Mat processFrame(Mat input){
@@ -47,13 +48,20 @@ public class InfoPipeline extends OpenCvPipeline {
             boundingRect = Imgproc.boundingRect(contour);
 
             //filter out small or disproportionate objects
-            if(boundingRect.height < 200 || boundingRect.height / boundingRect.width <= 2)
+            if(boundingRect.height < 200 || boundingRect.height / boundingRect.width < 2)
                 continue;
 
             //get minimum area bounding rectangle
             MatOfPoint2f  h = new MatOfPoint2f();
             contour.convertTo(h, CvType.CV_32F);
             rotatedRect = Imgproc.minAreaRect(h);
+
+            //correct height and width values
+            if(rotatedRect.size.width > rotatedRect.size.height){
+                double temp = rotatedRect.size.width;
+                rotatedRect.size.width = rotatedRect.size.height;
+                rotatedRect.size.height = temp;
+            }
 
             //get rectangle with largest width
             if(rotatedRect.size.width > largestWidth) {
@@ -73,6 +81,7 @@ public class InfoPipeline extends OpenCvPipeline {
             }
 
             rect = largestRect.clone();
+            processed = true;
         }
 
         contours.clear();
@@ -83,6 +92,8 @@ public class InfoPipeline extends OpenCvPipeline {
         return input;
     }
     public RotatedRect getRect() {
+        if(!processed) return null;
+        processed = false;
         return rect;
     }
 }
