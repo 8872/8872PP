@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.command.group.DownSequence;
 import org.firstinspires.ftc.teamcode.command.group.HighSequence;
@@ -23,6 +24,7 @@ public class RightSideAuto extends BaseOpMode {
     public void initialize() {
         super.initialize();
 
+        // TODO: tune trajectories and start pose
         preload = rrDrive.trajectoryBuilder(new Pose2d(33.59, -63.86, Math.toRadians(90.00)))
                 .lineTo(new Vector2d(33.59, -14.61))
                 .build();
@@ -62,8 +64,10 @@ public class RightSideAuto extends BaseOpMode {
                 new FollowTrajectoryCommand(rrDrive, toConeStack),
                 lift.goTo(coneStack[i]).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)),
                 claw.grab(),
-                new FollowTrajectoryCommand(rrDrive, toHighJunction),
-                new HighSequence(lift, turret, arm, TurretSys.Pose.RIGHT_FORWARD),
+                new ParallelCommandGroup(
+                        new FollowTrajectoryCommand(rrDrive, toHighJunction),
+                        new HighSequence(lift, turret, arm, TurretSys.Pose.RIGHT_FORWARD)
+                ),
                 // camera align
                 claw.release(),
                 new DownSequence(lift, turret, arm)

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.command.group.DownSequence;
 import org.firstinspires.ftc.teamcode.command.group.HighSequence;
@@ -61,8 +62,10 @@ public class LeftSideAuto extends BaseOpMode {
                 new FollowTrajectoryCommand(rrDrive, toConeStack),
                 lift.goTo(coneStack[i]).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)),
                 claw.grab(),
-                new FollowTrajectoryCommand(rrDrive, toHighJunction),
-                new HighSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD),
+                new ParallelCommandGroup(
+                        new FollowTrajectoryCommand(rrDrive, toHighJunction),
+                        new HighSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD)
+                ),
                 // camera align
                 claw.release(),
                 new DownSequence(lift, turret, arm)
