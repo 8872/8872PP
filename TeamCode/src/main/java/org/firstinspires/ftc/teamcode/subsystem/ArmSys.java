@@ -15,9 +15,9 @@ public final class ArmSys extends ProfiledServoSubsystem {
 
     public enum Pose implements Position {
         DOWN(1),
-        DEPOSIT(0.6),
+        VERTICAL(0.6),
         GRAB(0.82),
-        FORKLIFT(0.85);
+        HORIZONTAL(0.85);
 
         private final double height;
 

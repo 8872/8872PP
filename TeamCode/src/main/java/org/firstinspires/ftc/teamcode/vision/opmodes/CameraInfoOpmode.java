@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision.opmodes;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import fi.iki.elonen.NanoHTTPD;
@@ -12,25 +11,16 @@ import org.firstinspires.ftc.teamcode.command.group.LowSequence;
 import org.firstinspires.ftc.teamcode.command.group.MediumSequence;
 import org.firstinspires.ftc.teamcode.opmode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.powerplayutil.Height;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
 import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 import org.firstinspires.ftc.teamcode.util.DelayedCommand;
 import org.firstinspires.ftc.teamcode.vision.pipelines.InfoPipeline;
-import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionDetection;
-import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;
@@ -49,12 +39,14 @@ public final class CameraInfoOpmode extends BaseOpMode {
 
     public class App extends NanoHTTPD {
         private DoubleSupplier fps;
+
         public App(DoubleSupplier fps) throws IOException {
             super(7070);
             start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
             System.out.println("\nRunning! Point your browsers to http://localhost:7070/ \n");
             this.fps = fps;
         }
+
         public App() throws IOException {
             super(7070);
             start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
@@ -135,10 +127,10 @@ public final class CameraInfoOpmode extends BaseOpMode {
 //         forklift
         gb1(RIGHT_BUMPER)
                 .and(gb1(Y))
-                .whenActive(lift.goTo(Height.HIGH).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)));
+                .whenActive(lift.goTo(Height.HIGH).alongWith(arm.goTo(ArmSys.Pose.HORIZONTAL)));
         gb1(RIGHT_BUMPER)
                 .and(gb1(X))
-                .whenActive(lift.goTo(Height.MEDIUM).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)));
+                .whenActive(lift.goTo(Height.MEDIUM).alongWith(arm.goTo(ArmSys.Pose.HORIZONTAL)));
 
         // front left
         gb1(LEFT_TRIGGER).and(gb1(Y))
@@ -180,7 +172,7 @@ public final class CameraInfoOpmode extends BaseOpMode {
     }
 
     @Override
-    public void run(){
+    public void run() {
         CommandScheduler.getInstance().run();
         rect = pipeline.getRect();
         if (rect != null) {
@@ -192,8 +184,8 @@ public final class CameraInfoOpmode extends BaseOpMode {
             telemetry.addData("height change", rect.size.height - previousHeight);
             telemetry.addData("fps", camera.getFps());
             telemetry.update();
-            if(gamepad1.b){
-                turretServo.rotateByAngle((rect.center.x-640)/30);
+            if (gamepad1.b) {
+                turretServo.rotateByAngle((rect.center.x - 640) / 30);
             }
         }
 

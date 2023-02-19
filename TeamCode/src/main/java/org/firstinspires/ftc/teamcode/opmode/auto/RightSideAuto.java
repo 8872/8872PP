@@ -62,7 +62,7 @@ public class RightSideAuto extends BaseOpMode {
     private SequentialCommandGroup cycleConeStack(int i) {
         return new SequentialCommandGroup(
                 new FollowTrajectoryCommand(rrDrive, toConeStack),
-                lift.goTo(coneStack[i]).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)),
+                lift.goTo(coneStack[i]).alongWith(arm.goTo(ArmSys.Pose.HORIZONTAL)),
                 claw.grab(),
                 new ParallelCommandGroup(
                         new FollowTrajectoryCommand(rrDrive, toHighJunction),

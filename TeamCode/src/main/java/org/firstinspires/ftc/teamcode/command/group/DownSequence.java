@@ -14,7 +14,7 @@ public final class DownSequence extends SequentialCommandGroup {
     public DownSequence(LiftSys lift, TurretSys turret, ArmSys arm) {
         addCommands(
                 new ParallelCommandGroup(
-                        arm.goTo(ArmSys.Pose.DEPOSIT),
+                        arm.goTo(ArmSys.Pose.VERTICAL),
                         new DelayedCommand(turret.goTo(TurretSys.Pose.ZERO), 100),
                         new DelayedCommand(lift.goTo(Height.NONE), 600),
                         new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN), 600)

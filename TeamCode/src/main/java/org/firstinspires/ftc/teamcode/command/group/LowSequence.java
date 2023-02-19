@@ -16,10 +16,11 @@ public final class LowSequence extends SequentialCommandGroup {
     public LowSequence(LiftSys lift, TurretSys turret, ArmSys arm, TurretSys.Pose pose) {
         addCommands(
                 new ParallelCommandGroup(
-                        arm.goTo(ArmSys.Pose.DEPOSIT),
+                        arm.goTo(ArmSys.Pose.VERTICAL),
                         lift.goTo(Height.LOW),
                         new DelayedCommand(turret.goTo(pose), 200),
-                        new DelayedCommand(arm.goTo(armPosition), 800)
+                        new DelayedCommand(arm.goTo(ArmSys.Pose.HORIZONTAL, 2, 2),
+                                800)
                 )
         );
 

@@ -17,9 +17,10 @@ public final class MediumSequence extends SequentialCommandGroup {
         addCommands(
                 new ParallelCommandGroup(
                         lift.goTo(Height.MEDIUM),
-                        arm.goTo(ArmSys.Pose.DEPOSIT),
+                        arm.goTo(ArmSys.Pose.VERTICAL),
                         new DelayedCommand(turret.goTo(pose), 300),
-                        new DelayedCommand(arm.goTo(armPosition), 700)
+                        new DelayedCommand(arm.goTo(ArmSys.Pose.HORIZONTAL, 2, 2),
+                                700)
                 )
         );
 

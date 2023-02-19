@@ -33,22 +33,25 @@ public class ProfiledServoSubsystem extends SubsystemBase {
         this.turret = turret;
     }
 
-    public Command goTo(double position) {
+    public Command goTo(double position, double velocity, double acceleration) {
         return new NoRequirementInstantCommand(() -> {
             initial = time.time();
             previousTarget = currentTarget;
             currentTarget = position;
             profile = new TrapezoidProfile(
-                    new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
+                    new TrapezoidProfile.Constraints(velocity, acceleration),
                     new TrapezoidProfile.State(currentTarget, 0),
                     new TrapezoidProfile.State(previousTarget, 0));
         })
                 .andThen(new WaitUntilCommand(this::atTarget));
+    }
 
+    public Command goTo(Position position, double velocity, double acceleration) {
+        return goTo(position.getHeight(), velocity, acceleration);
     }
 
     public Command goTo(Position position) {
-        return goTo(position.getHeight());
+        return goTo(position.getHeight(), maxVelocity, maxAcceleration);
     }
 
     private boolean atTarget() {

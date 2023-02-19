@@ -69,10 +69,10 @@ public final class MainOpMode extends BaseOpMode {
 //         forklift
         gb2(RIGHT_BUMPER)
                 .and(gb2(Y))
-                .whenActive(lift.goTo(Height.HIGH).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)));
+                .whenActive(lift.goTo(Height.HIGH).alongWith(arm.goTo(ArmSys.Pose.HORIZONTAL)));
         gb2(RIGHT_BUMPER)
                 .and(gb2(X))
-                .whenActive(lift.goTo(Height.MEDIUM).alongWith(arm.goTo(ArmSys.Pose.FORKLIFT)));
+                .whenActive(lift.goTo(Height.MEDIUM).alongWith(arm.goTo(ArmSys.Pose.HORIZONTAL)));
 
         // front left
         gb2(LEFT_TRIGGER).and(gb2(Y))
