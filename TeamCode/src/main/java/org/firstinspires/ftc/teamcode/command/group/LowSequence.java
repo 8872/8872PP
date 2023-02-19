@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.command.group;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.powerplayutil.Height;
@@ -15,13 +16,18 @@ public final class LowSequence extends SequentialCommandGroup {
 
     public LowSequence(LiftSys lift, TurretSys turret, ArmSys arm, TurretSys.Pose pose) {
         addCommands(
-                new ParallelCommandGroup(
-                        arm.goTo(ArmSys.Pose.VERTICAL),
-                        lift.goTo(Height.LOW),
-                        new DelayedCommand(turret.goTo(pose), 200),
-                        new DelayedCommand(arm.goTo(ArmSys.Pose.HORIZONTAL, 2, 2),
-                                800)
+                new ConditionalCommand(
+                        new ParallelCommandGroup(
+                                lift.goTo(Height.LOW),
+                                arm.goTo(ArmSys.Pose.VERTICAL),
+                                new DelayedCommand(turret.goTo(pose), 200),
+                                new DelayedCommand(arm.goTo(ArmSys.Pose.HORIZONTAL, 2, 2),
+                                        800)
+                        ), lift.goTo(Height.LOW)
+                        .alongWith(turret.goTo(pose)),
+                        () -> (lift.getCurrentGoal() == Height.NONE.getHeight())
                 )
+
         );
 
         addRequirements(lift, turret, arm);

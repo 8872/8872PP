@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.powerplayutil;
 
 public enum Height {
     // junction
-    NONE(10),
+    NONE(0),
     GROUND(-25),
     LOW(-200),
     MEDIUM(-420),
