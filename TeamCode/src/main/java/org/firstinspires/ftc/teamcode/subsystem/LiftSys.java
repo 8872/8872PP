@@ -66,18 +66,8 @@ public class LiftSys extends SubsystemBase {
                 left.getCurrentPosition() > currentHeight - threshold;
     }
 
-
-    public void changeSetPoint(double joystickInput) {
-        leftPIDF.setGoal((int) (left.getCurrentPosition() + joystickInput * manualLiftSpeed));
-        rightPIDF.setGoal((int) (right.getCurrentPosition() + joystickInput * manualLiftSpeed));
-    }
-
     public int getCurrentGoal() {
         return currentHeight;
-    }
-
-    public boolean isGrabAndLiftIncompatible() {
-        return currentHeight != Height.NONE.getHeight();
     }
 
     public Command goTo(Height height) {

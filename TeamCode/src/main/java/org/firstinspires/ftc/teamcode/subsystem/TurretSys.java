@@ -10,23 +10,16 @@ import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
 public final class TurretSys extends ProfiledServoSubsystem {
     public static double maxVelocity = 3;
     public static double maxAcceleration = 3;
-    // right forward: 0.88
-    // left forward*: 0
-    // right back: 0.57
-    // left back: 0.29
-    // start position: 0.435
-    // left: 0.15
-    // right: 0.715
 
     public enum Pose implements Position {
-        RIGHT_FORWARD(0.88),
-        LEFT_FORWARD(0),
-        RIGHT_BACK(0.57),
-        LEFT_BACK(0.29),
-        LEFT(0.15),
-        RIGHT(0.715),
-        ZERO(0.435),
-        ONE_EIGHTY(1);
+        RIGHT_FORWARD(0.97),
+        LEFT_FORWARD(0.15),
+        RIGHT_BACK(0.67),
+        LEFT_BACK(0.43),
+        LEFT(0.29),
+        RIGHT(0.832),
+        ZERO(0.557),
+        ONE_EIGHTY(0);
 
         private final double height;
 

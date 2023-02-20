@@ -7,18 +7,19 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 
 @TeleOp
 @Config
 public final class TestTurretOpMode extends OpMode {
     private ServoEx turret, arm, claw;
+    private AnalogInput turretEnc;
 
     private ClawState currentClawState = ClawState.OPEN;
     private Control currentControlState = Control.SET;
     private ArmState currentArmState = ArmState.DOWN;
 
-    public static double turretDown = 0, turretLeft = 0.25, turretRight = 0.5, turretUp = 0.75;
+    public static double turretDown = 0, turretLeft = 0.25, turretRight = 0.5, turretUp = 1;
     public static double armDown = 0.95, armDeposit = 0.6;
     public static double clawOpen = 0.3, clawClose = 0.6;
     // turret
@@ -32,7 +33,6 @@ public final class TestTurretOpMode extends OpMode {
     // arm
     // arm down: 1
     // arm deposit: 0.6
-
 
 
     private enum ClawState {
@@ -57,6 +57,7 @@ public final class TestTurretOpMode extends OpMode {
         arm = new SimpleServo(hardwareMap, "arm", 0, 355);
         claw = new SimpleServo(hardwareMap, "claw", 0, 300);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        turretEnc = hardwareMap.get(AnalogInput.class, "turretEnc");
     }
 
     @Override
@@ -109,6 +110,9 @@ public final class TestTurretOpMode extends OpMode {
         tad("claw state", currentClawState);
         tad("control state", currentControlState);
         tad("arm state", currentArmState);
+
+        double turretPosition = turretEnc.getVoltage() / 3.3 * 360;
+        tad("turret position", turretPosition);
 
         telemetry.update();
     }

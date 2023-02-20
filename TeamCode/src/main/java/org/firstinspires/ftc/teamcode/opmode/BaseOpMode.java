@@ -10,10 +10,11 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.*;
-import org.firstinspires.ftc.teamcode.subsystem.FlipperSys;
 import org.firstinspires.ftc.teamcode.util.GamepadTrigger;
 import org.firstinspires.ftc.teamcode.util.TriggerGamepadEx;
 
@@ -31,6 +32,8 @@ public class BaseOpMode extends CommandOpMode {
     protected FlipperSys flipper;
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
+
+    private AnalogInput turretEnc;
 
     protected GamepadEx gamepadEx1;
     protected GamepadEx gamepadEx2;
@@ -55,6 +58,8 @@ public class BaseOpMode extends CommandOpMode {
 
         drive = new DriveSys(fL, fR, bL, bR, imu);
         lift = new LiftSys(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
+        lift.goTo(Height.NONE);
+
         claw = new ClawSys(clawServo);
         turret = new TurretSys(turretServo);
         arm = new ArmSys(armServo);
@@ -80,6 +85,8 @@ public class BaseOpMode extends CommandOpMode {
         turretServo = new SimpleServo(hardwareMap, "turret", 0, 300);
         armServo = new SimpleServo(hardwareMap, "arm", 0, 355);
         flipperServo = new SimpleServo(hardwareMap, "flipper", 0, 355);
+
+        turretEnc = hardwareMap.get(AnalogInput.class, "turretEnc");
 
         limitSwitch = hardwareMap.get(TouchSensor.class, "touch");
         dr4bLeftMotor.resetEncoder();
@@ -110,6 +117,9 @@ public class BaseOpMode extends CommandOpMode {
         tad("IMU Heading", imu.getAbsoluteHeading());
 
         tad("Limit Switch Pressed", limitSwitch.isPressed());
+
+        double turretPosition = turretEnc.getVoltage() / 3.3 * 360;
+        tad("turret position", turretPosition);
         telemetry.update();
     }
 
