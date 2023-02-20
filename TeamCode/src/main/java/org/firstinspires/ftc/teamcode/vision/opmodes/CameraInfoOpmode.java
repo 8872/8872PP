@@ -37,31 +37,8 @@ public final class CameraInfoOpmode extends BaseOpMode {
     //       instead of the above import use the following:
     // import org.nanohttpd.NanoHTTPD;
 
-    public class App extends NanoHTTPD {
-        private DoubleSupplier fps;
 
-        public App(DoubleSupplier fps) throws IOException {
-            super(7070);
-            start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-            System.out.println("\nRunning! Point your browsers to http://localhost:7070/ \n");
-            this.fps = fps;
-        }
 
-        public App() throws IOException {
-            super(7070);
-            start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-            System.out.println("\nRunning! Point your browsers to http://localhost:7070/ \n");
-        }
-
-        @Override
-        public Response serve(IHTTPSession session) {
-            String msg = "<html><body><h1>Hello server</h1>\n";
-
-            msg += "fps: " + fps.getAsDouble() + "\n";
-
-            return newFixedLengthResponse(msg + "</body></html>\n");
-        }
-    }
 
 
     double previousHeight = 0;
@@ -95,13 +72,6 @@ public final class CameraInfoOpmode extends BaseOpMode {
             public void onError(int errorCode) {
             }
         });
-
-        try {
-            new App(camera::getFps);
-        } catch (IOException ioe) {
-            System.err.println("Couldn't start server:\n" + ioe);
-        }
-
 
 //        gb1(LEFT_BUMPER).whileHeld(
 //                drive.slowMode(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
