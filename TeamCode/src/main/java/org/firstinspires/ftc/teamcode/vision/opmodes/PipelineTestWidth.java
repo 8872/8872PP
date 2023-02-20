@@ -6,18 +6,17 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionDetection;
-import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionPipeline;
-import org.opencv.core.Point;
+import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionWithWidth;
+import org.opencv.core.RotatedRect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp
-public class CVTestOpMode extends OpMode {
+public class PipelineTestWidth extends OpMode {
 
     private OpenCvCamera camera;
-    JunctionPipeline pipeline;
+    JunctionWithWidth pipeline;
     private RevIMU imu;
     @Override
     public void init() {
@@ -26,14 +25,14 @@ public class CVTestOpMode extends OpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new JunctionPipeline();
+        pipeline = new JunctionWithWidth();
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(1280 , 720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming( 320, 180, OpenCvCameraRotation.UPRIGHT);
             }
             @Override
             public void onError(int errorCode) {}
@@ -42,10 +41,10 @@ public class CVTestOpMode extends OpMode {
 
     @Override
     public void loop() {
-        Point center;
-        if((center = pipeline.getCenter()) != null) {
-            double x = center.x;
-            telemetry.addData("error", (x-640));
+        RotatedRect rect;
+        if((rect = pipeline.getRect()) != null) {
+            double x = rect.center.x;
+            telemetry.addData("error", (x-160));
             telemetry.addData("center", x);
         }
         telemetry.update();

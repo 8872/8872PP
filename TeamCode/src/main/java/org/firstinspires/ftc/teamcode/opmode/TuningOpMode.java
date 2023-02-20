@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.util.PIDFControllerEx;
 
 //@Disabled
@@ -15,11 +16,11 @@ import org.firstinspires.ftc.teamcode.util.PIDFControllerEx;
 @TeleOp
 public final class TuningOpMode extends OpMode {
 
-    public static int none = 10;
-    public static int low = -400;
-    public static int medium = -855;
-    public static int high = -1800;
-    public static int ground = -25;
+    public static int none = Height.NONE.getHeight();
+    public static int low = Height.LOW.getHeight();
+    public static int medium = Height.MEDIUM.getHeight();
+    public static int high = Height.HIGH.getHeight();
+    public static int ground = Height.GROUND.getHeight();
 
     private final double TICKS_IN_DEGREES = 8192.0 / 360;
 

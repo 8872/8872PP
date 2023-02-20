@@ -56,7 +56,7 @@ public final class MainOpMode extends BaseOpMode {
                 drive.slowMode(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));
         gb1(X).toggleWhenPressed(flipper.out(), flipper.in());
 
-        gb2(A).whenPressed(new DownSequence(lift, turret, arm));
+        gb2(A).whenPressed(new DownSequence(lift, turret, arm, claw));
         gb2(LEFT_BUMPER).toggleWhenPressed(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 200)),
                 claw.release().andThen(new ConditionalCommand(new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN), 200),
                         new InstantCommand(), () -> (lift.getCurrentGoal() == Height.NONE.getHeight()))));

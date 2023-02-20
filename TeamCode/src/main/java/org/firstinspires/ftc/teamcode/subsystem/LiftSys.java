@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.*;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -82,10 +83,12 @@ public class LiftSys extends SubsystemBase {
 
     public Command setPower(DoubleSupplier power) {
         return new RunCommand(() -> {
-            left.set(power.getAsDouble() / 2);
-            right.set(power.getAsDouble() / 2);
-            leftPIDF.setGoal(left.getCurrentPosition());
-            rightPIDF.setGoal(right.getCurrentPosition());
+            if(Math.abs(power.getAsDouble()) > 0.01) {
+                left.set(power.getAsDouble() / 2);
+                right.set(power.getAsDouble() / 2);
+                leftPIDF.setGoal(left.getCurrentPosition());
+                rightPIDF.setGoal(right.getCurrentPosition());
+            }
         }, this);
     }
 
@@ -99,6 +102,7 @@ public class LiftSys extends SubsystemBase {
         double output_left = leftPIDF.calculate(left.getCurrentPosition());
         double output_right = rightPIDF.calculate(right.getCurrentPosition());
         left.set(output_left);
+        Log.d("asd", "output left: "+ output_left);
         right.set(output_right);
     }
 }

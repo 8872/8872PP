@@ -85,14 +85,14 @@ public final class CameraInfoOpmode extends BaseOpMode {
         gb1(DPAD_DOWN).whenPressed(lift.goTo(Height.NONE));
 
 
-        gb1(A).whenPressed(new DownSequence(lift, turret, arm));
+        gb1(A).whenPressed(new DownSequence(lift, turret, arm, claw));
         gb1(LEFT_BUMPER).toggleWhenPressed(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 200)),
                 claw.release().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN), 200)));
 
         // 180
         gb1(Y).whenPressed(new HighSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
         gb1(X).whenPressed(new MediumSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
-//        gb1(B).whenPressed(new LowSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
+        gb1(B).whenPressed(new LowSequence(lift, turret, arm, TurretSys.Pose.ONE_EIGHTY));
 
 //         forklift
         gb1(RIGHT_BUMPER)

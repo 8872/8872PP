@@ -12,8 +12,8 @@ public final class TurretSys extends ProfiledServoSubsystem {
     public static double maxAcceleration = 3;
 
     public enum Pose implements Position {
-        RIGHT_FORWARD(0.97),
-        LEFT_FORWARD(0.15),
+        RIGHT_FORWARD(0.9875),
+        LEFT_FORWARD(0.135),
         RIGHT_BACK(0.67),
         LEFT_BACK(0.43),
         LEFT(0.29),

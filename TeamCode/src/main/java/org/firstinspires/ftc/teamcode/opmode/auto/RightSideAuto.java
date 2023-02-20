@@ -44,7 +44,7 @@ public class RightSideAuto extends BaseOpMode {
                         new HighSequence(lift, turret, arm, TurretSys.Pose.LEFT_FORWARD),
                         // camera align
                         claw.release(),
-                        new DownSequence(lift, turret, arm)
+                        new DownSequence(lift, turret, arm, claw)
                 )
         );
 
@@ -70,7 +70,7 @@ public class RightSideAuto extends BaseOpMode {
                 ),
                 // camera align
                 claw.release(),
-                new DownSequence(lift, turret, arm)
+                new DownSequence(lift, turret, arm, claw)
         );
     }
 }

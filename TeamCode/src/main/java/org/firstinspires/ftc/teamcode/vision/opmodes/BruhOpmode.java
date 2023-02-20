@@ -111,9 +111,7 @@ public final class BruhOpmode extends BaseOpMode {
             telemetry.addData("height width ratio", rect.size.height / rect.size.width);
             telemetry.addData("fps", camera.getFps());
             telemetry.update();
-            if(gamepad1.b){
-                turretServo.rotateByAngle(-(rect.center.x-640)/30);
-            }
+
         }
 
     }
