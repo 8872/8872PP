@@ -23,7 +23,9 @@ import org.firstinspires.ftc.teamcode.util.DelayedCommand;
 import org.firstinspires.ftc.teamcode.util.TriggerGamepadEx;
 import org.firstinspires.ftc.teamcode.vision.pipelines.InfoPipeline;
 import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionDetection;
+import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionWithArea;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -44,7 +46,8 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 public final class BruhOpmode extends BaseOpMode {
 
     private OpenCvCamera camera;
-    private InfoPipeline pipeline;
+    private JunctionWithArea pipeline;
+
 
     @Override
     public void initialize() {
@@ -66,6 +69,7 @@ public final class BruhOpmode extends BaseOpMode {
         arm = new ArmSys(armServo);
         flipper = new FlipperSys(flipperServo);
 
+
         rrDrive = new SampleMecanumDrive(hardwareMap);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -73,12 +77,12 @@ public final class BruhOpmode extends BaseOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new InfoPipeline();
+        pipeline = new JunctionWithArea();
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(320, 180, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -90,6 +94,7 @@ public final class BruhOpmode extends BaseOpMode {
         gb1(DPAD_LEFT).whenPressed(lift.goTo(Height.LOW));
         gb1(DPAD_RIGHT).whenPressed(lift.goTo(Height.MEDIUM));
         gb1(DPAD_DOWN).whenPressed(lift.goTo(Height.NONE));
+        gb1(RIGHT_BUMPER).whenPressed(arm.goTo(ArmSys.Pose.HORIZONTAL, 2, 2));
 
         gb1(LEFT_BUMPER).toggleWhenPressed(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 200)),
                 claw.release().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN), 200)));
@@ -103,62 +108,17 @@ public final class BruhOpmode extends BaseOpMode {
     @Override
     public void run(){
         CommandScheduler.getInstance().run();
-        RotatedRect rect = pipeline.getRect();
-        if (rect != null) {
-            telemetry.addData("center x", rect.center.x);
-            telemetry.addData("center y", rect.center.y);
-            telemetry.addData("height", rect.size.height);
-            telemetry.addData("height width ratio", rect.size.height / rect.size.width);
-            telemetry.addData("fps", camera.getFps());
-            telemetry.update();
+        if(gamepad1.y){
+            Rect rect = pipeline.getRect();
+            if(rect == null)
+                return;
+            int junctionX = rect.x+rect.width/2;
+            double turnAmount =  (junctionX-160)*(70.42/320);
 
+            double turretPos = turretEnc.getVoltage() / 3.3 * 360;
+            double newPos = -(turretPos + ((junctionX-160)*(70.42/320)));
+            turretServo.setPosition(turretPIDF.calculate(turret.getEncoderPosition()-(newPos+20)/320+1));
         }
-
     }
 
-//    BufferedWriter x = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/x"));
-//    BufferedWriter y = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/y"));
-//    BufferedWriter height = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/height"));
-//    BufferedWriter heightWidthRatio = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/heightWidthRatio"));
-//    BufferedWriter horizontalChange = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/horizontalChange"));
-//    BufferedWriter heightChange = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/heightChange"));
-//    BufferedWriter driveVelocity = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/driveVelocity"));
-//    BufferedWriter fps = new BufferedWriter(new FileWriter("src/main/java/org/firstinspires/ftc/teamcode/vision/data/fps"));
-//    @Override
-//    public void run() {
-//        if(gamepad1.back){
-////            try {
-//                RotatedRect rect = pipeline.getRect();
-//                if (rect != null) {
-//                    telemetry.addData("center x", rect.center.x);
-////                    x.write(rect.center.x + "\n");
-//                    telemetry.addData("center y", rect.center.y);
-////                    y.write(rect.center.y+"\n");
-//                    telemetry.addData("height", rect.size.height);
-////                    height.write(rect.size.height+"\n");
-//                    telemetry.addData("height width ratio", rect.size.height/rect.size.width);
-////                    heightWidthRatio.write(rect.size.height/rect.size.width+"\n");
-//                    telemetry.addData("horizontal change", rect.center.x-previousX);
-////                    horizontalChange.write(rect.center.x-previousX+"\n");
-//                    telemetry.addData("height change", rect.size.height-previousHeight);
-////                    heightChange.write("rect.size.height-previousHeight"+"\n");
-//                    previousX = rect.center.x;
-//                    previousHeight=rect.size.height;
-//
-////                    Pose2d poseVelo = Objects.requireNonNull(roadrunnerDrive.getPoseVelocity(), "poseVelocity() was null in CameraInfoOpmode");
-////                    telemetry.addData("drive velocity", Math.sqrt(Math.pow(poseVelo.getX(), 2) + Math.pow(poseVelo.getY(), 2)));
-////                    driveVelocity.write(Math.sqrt(Math.pow(poseVelo.getX(), 2) + Math.pow(poseVelo.getY(), 2))+"\n");
-//                    telemetry.addData("fps", camera.getFps());
-////                    fps.write(camera.getFps()+"\n");
-//                    telemetry.update();
-//                }
-////            } catch (IOException e) {
-////                throw new RuntimeException(e);
-////            }
-//        }
-//
-//
-//
-//
-//    }
 }

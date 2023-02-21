@@ -12,11 +12,16 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.*;
 import org.firstinspires.ftc.teamcode.util.GamepadTrigger;
 import org.firstinspires.ftc.teamcode.util.TriggerGamepadEx;
+import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionWithArea;
+import org.firstinspires.ftc.teamcode.vision.util.TurretPIDF;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,7 +38,7 @@ public class BaseOpMode extends CommandOpMode {
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
-    private AnalogInput turretEnc;
+    protected AnalogInput turretEnc;
 
     protected GamepadEx gamepadEx1;
     protected GamepadEx gamepadEx2;
@@ -41,6 +46,10 @@ public class BaseOpMode extends CommandOpMode {
     protected TriggerGamepadEx triggerGamepadEx2;
 
     protected SampleMecanumDrive rrDrive;
+
+    protected JunctionWithArea pipeline;
+    protected OpenCvCamera camera;
+    protected TurretPIDF turretPIDF;
 
     @Override
     public void initialize() {
@@ -61,11 +70,20 @@ public class BaseOpMode extends CommandOpMode {
         lift.goTo(Height.NONE);
 
         claw = new ClawSys(clawServo);
-        turret = new TurretSys(turretServo);
+        turret = new TurretSys(turretServo, turretEnc, turretPIDF);
+        //turret = new TurretSys(turretServo, () -> gamepadEx2.getButton(GamepadKeys.Button.DPAD_DOWN), turretEnc);
         arm = new ArmSys(armServo);
         flipper = new FlipperSys(flipperServo);
 
         rrDrive = new SampleMecanumDrive(hardwareMap);
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        pipeline = new JunctionWithArea();
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        camera.setPipeline(pipeline);
+
+        turretPIDF = new TurretPIDF(() -> camera.getFps());
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         tad("Mode", "Done initializing");
