@@ -122,6 +122,8 @@ public final class CameraInfoOpmode extends BaseOpMode {
             telemetry.addData("x", x);
             telemetry.addData("error", x-160);
         }
-
+        telemetry.addData("currentPos", turret.currentPos);
+        telemetry.addData("change", turret.change);
+        telemetry.update();
     }
 }

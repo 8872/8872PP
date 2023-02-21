@@ -65,6 +65,14 @@ public class BaseOpMode extends CommandOpMode {
         imu = new RevIMU(hardwareMap);
         imu.init();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        pipeline = new JunctionWithArea();
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        camera.setPipeline(pipeline);
+
+        turretPIDF = new TurretPIDF(() -> camera.getFps());
+
         drive = new DriveSys(fL, fR, bL, bR, imu);
         lift = new LiftSys(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
         lift.goTo(Height.NONE);
@@ -77,13 +85,6 @@ public class BaseOpMode extends CommandOpMode {
 
         rrDrive = new SampleMecanumDrive(hardwareMap);
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        pipeline = new JunctionWithArea();
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        camera.setPipeline(pipeline);
-
-        turretPIDF = new TurretPIDF(() -> camera.getFps());
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         tad("Mode", "Done initializing");

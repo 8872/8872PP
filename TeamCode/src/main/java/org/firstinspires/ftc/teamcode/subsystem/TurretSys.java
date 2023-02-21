@@ -23,6 +23,8 @@ public final class TurretSys extends ProfiledServoSubsystem {
     private final ServoEx turret;
     private boolean trackingMode;
     private TurretPIDF turretPIDF;
+    public double currentPos;
+    public double change;
 
     public enum Pose implements Position {
         RIGHT_FORWARD(0.9875),
@@ -62,7 +64,9 @@ public final class TurretSys extends ProfiledServoSubsystem {
             super.periodic();
         } else {
             updateTarget();
-            turret.setPosition(turretPIDF.calculate(getEncoderPosition()-currentTarget));
+            currentPos = getEncoderPosition();
+            change = turretPIDF.calculate(currentPos-currentTarget);
+            turret.setPosition(currentPos+change);//getEncoderPosition()-currentTarget));
         }
     }
 
@@ -84,10 +88,6 @@ public final class TurretSys extends ProfiledServoSubsystem {
     }
 
     public double getEncoderPosition(){
-        if(turretEnc == null) {
-            Log.println(Log.WARN, "turretEnc null", "turretEnc null");
-            return 0;
-        }
         double turretPos = turretEnc.getVoltage() / 3.3 * 360;
         return (-turretPos+20)/320+1;
     }
@@ -99,5 +99,6 @@ public final class TurretSys extends ProfiledServoSubsystem {
     public void startTracking(){
         trackingMode = true;
     }
+
 
 }
