@@ -102,7 +102,7 @@ public class LiftSys extends SubsystemBase {
         double output_left = leftPIDF.calculate(left.getCurrentPosition());
         double output_right = rightPIDF.calculate(right.getCurrentPosition());
         left.set(output_left);
-        Log.d("asd", "output left: "+ output_left);
+//        Log.d("asd", "output left: "+ output_left);
         right.set(output_right);
     }
 }

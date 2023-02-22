@@ -25,6 +25,7 @@ public final class TurretSys extends ProfiledServoSubsystem {
     private TurretPIDF turretPIDF;
     public double currentPos;
     public double change;
+    public double target;
 
     public enum Pose implements Position {
         RIGHT_FORWARD(0.9875),
@@ -63,10 +64,33 @@ public final class TurretSys extends ProfiledServoSubsystem {
         if (!trackingMode) {
             super.periodic();
         } else {
-            updateTarget();
-            currentPos = getEncoderPosition();
-            change = turretPIDF.calculate(currentPos-currentTarget);
-            turret.setPosition(currentPos+change);//getEncoderPosition()-currentTarget));
+            double current = time.milliseconds();
+            if (current >= 200){
+                updateTarget();
+                currentPos = getEncoderPosition();
+                currentPos = currentPos > 355 ? 355 : currentPos;
+                currentPos = currentPos < 0 ? 0 : currentPos;
+                double factor = target < currentPos ? 5 : -5;
+                turret.turnToAngle(Math.ceil(currentPos)+factor);
+                Log.d("asd", "floored currentPos: "+Math.floor(currentPos));
+                Log.d("asd", "turret angle: " + turret.getAngle());
+                Log.d("asd", "target position: " + target);
+                time.reset();
+            }
+
+
+//            change = turretPIDF.calculate(target - currentPos);
+
+//            profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(2, 2),
+//                    new TrapezoidProfile.State(target, 0));
+//            double factor = target < currentPos ? -1 : 1;
+//            if(current >= 500) {
+//                Log.d("asd", "target: " + target);
+//                Log.d("asd", "currentPos: " + currentPos);
+//                Log.d("asd", "turret position: " + turret.getAngle());
+//                turret.turnToAngle(currentPos+factor);
+//                time.reset();
+//            }
         }
     }
 
@@ -82,21 +106,22 @@ public final class TurretSys extends ProfiledServoSubsystem {
             return;
 
         int junctionX = rect.x+rect.width/2;
-        double turretPos = turretEnc.getVoltage() / 3.3 * 360;
-        double newPos = -(turretPos + ((junctionX-160)*PIX_TO_DEGREES));
-        currentTarget = ((newPos+20)/320+1);
+        double turretPos = getEncoderPosition();
+        target = (turretPos + ((junctionX-160)*PIX_TO_DEGREES));
     }
 
     public double getEncoderPosition(){
-        double turretPos = turretEnc.getVoltage() / 3.3 * 360;
-        return (-turretPos+20)/320+1;
+        double angle = (turretEnc.getVoltage() - 0.167) / 2.952 * 355;
+        return -angle+355;
     }
 
+    //TODO: make regular and follow mode transition nice
     public void stopTracking(){
         trackingMode = false;
     }
 
     public void startTracking(){
+        time.reset();
         trackingMode = true;
     }
 

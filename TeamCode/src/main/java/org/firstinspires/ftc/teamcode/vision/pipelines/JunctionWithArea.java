@@ -7,12 +7,10 @@ import java.util.ArrayList;
 
 public class JunctionWithArea extends OpenCvPipeline {
     private Rect rect = null;
-    private boolean processed = false;
-    //TODO: If the edges of the frame stop junctions touching them from being detected, add borders
     @Override
     public Mat processFrame(Mat input){
 
-        //Imgproc.line(input, new Point(0,0), new Point(320, 0), new Scalar(0,0,0),50);
+        Imgproc.line(input, new Point(0,0), new Point(320, 0), new Scalar(0,0,0),50);
 
         //blur and convert to YCrCb color space
         Mat ycrcb = new Mat();
@@ -27,22 +25,12 @@ public class JunctionWithArea extends OpenCvPipeline {
         Core.inRange(ycrcb, lowThresh, highThresh, thresh);
 
 
-
-
-//        Mat masked = new Mat();
-//        input.copyTo(masked, thresh);
-
-
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 25));
         Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_ERODE, kernel);
 
 
         ArrayList<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(thresh, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        //TODO: time optimization: remove once tuned
-        //draw contours in green
-        Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 2);
 
         Mat biggestContour = null;
         double largestArea = 0;
@@ -58,7 +46,6 @@ public class JunctionWithArea extends OpenCvPipeline {
         if(biggestContour != null){
             rect = Imgproc.boundingRect(biggestContour);
             Imgproc.rectangle(input, rect, new Scalar(0,0,255), 1);
-            processed = true;
         }
 
 
@@ -71,8 +58,6 @@ public class JunctionWithArea extends OpenCvPipeline {
         return input;
     }
     public Rect getRect() {
-        if(!processed) return null;
-        processed = false;
         return rect;
     }
 }

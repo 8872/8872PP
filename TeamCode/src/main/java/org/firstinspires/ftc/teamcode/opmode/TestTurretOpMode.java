@@ -8,11 +8,14 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 @TeleOp
 @Config
 public final class TestTurretOpMode extends OpMode {
     private ServoEx turret, arm, claw;
+    private ServoImplEx turretEx;
     private AnalogInput turretEnc;
 
     private ClawState currentClawState = ClawState.OPEN;
@@ -53,11 +56,14 @@ public final class TestTurretOpMode extends OpMode {
 
     @Override
     public void init() {
-        turret = new SimpleServo(hardwareMap, "turret", 0, 300);
+        turret = new SimpleServo(hardwareMap, "turret", 355, 0);
         arm = new SimpleServo(hardwareMap, "arm", 0, 355);
         claw = new SimpleServo(hardwareMap, "claw", 0, 300);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         turretEnc = hardwareMap.get(AnalogInput.class, "turretEnc");
+        turretEx = hardwareMap.get(ServoImplEx.class, "turret");
+//        turretEx.setPwmRange(new PwmControl.PwmRange());
+
     }
 
     @Override
@@ -104,15 +110,18 @@ public final class TestTurretOpMode extends OpMode {
         }
 
         tad("arm position", arm.getPosition());
-        tad("turret position", turret.getPosition());
+        tad("turret servo position", turret.getPosition());
         tad("claw position", claw.getPosition());
 
         tad("claw state", currentClawState);
         tad("control state", currentControlState);
         tad("arm state", currentArmState);
 
-        double turretPosition = turretEnc.getVoltage() / 3.3 * 360;
-        tad("turret position", turretPosition);
+        double turretPosition = (turretEnc.getVoltage() - 0.167) / 2.952 * 355;
+        tad("turret encoder voltage / 3.3", turretEnc.getVoltage() / 3.3);
+        tad("turret encoder voltage", turretEnc.getVoltage());
+        tad("turret encoder position", turretPosition);
+        tad("turret servo angle", turret.getAngle());
 
         telemetry.update();
     }

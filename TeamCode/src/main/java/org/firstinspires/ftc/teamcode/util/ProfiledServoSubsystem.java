@@ -19,7 +19,7 @@ public class ProfiledServoSubsystem extends SubsystemBase {
     protected double currentTarget;
     protected double previousTarget;
 
-    private final ElapsedTime time = new ElapsedTime();
+    protected final ElapsedTime time = new ElapsedTime();
     private double initial;
 
     public ProfiledServoSubsystem(ServoEx turret, double maxVelocity, double maxAcceleration) {

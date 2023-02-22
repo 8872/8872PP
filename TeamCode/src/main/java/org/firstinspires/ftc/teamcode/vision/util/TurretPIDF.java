@@ -6,7 +6,7 @@ public class TurretPIDF {
 
     public static final double MAX_ERROR = 0.11;
 
-    public static double Kp = 0.15;
+    public static double Kp = 1;//0.15;
     public static double Ki = 0;
     public static double Kd = 0;
     public static double Kf = 0.01;
@@ -23,7 +23,7 @@ public class TurretPIDF {
     }
 
     public double calculate(double error){
-        double targetVel = (error / MAX_ERROR) * Kp + Kf;
+        double targetVel = ((error / MAX_ERROR) * Kp)*320;
         return fpsGiven ? targetVel / fps.getAsDouble() : targetVel / 30;
     }
 

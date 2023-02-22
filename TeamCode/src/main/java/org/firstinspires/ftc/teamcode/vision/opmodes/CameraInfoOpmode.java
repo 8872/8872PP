@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision.opmodes;
 
+import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
@@ -122,8 +123,18 @@ public final class CameraInfoOpmode extends BaseOpMode {
             telemetry.addData("x", x);
             telemetry.addData("error", x-160);
         }
-        telemetry.addData("currentPos", turret.currentPos);
-        telemetry.addData("change", turret.change);
+        turret.updateTarget();
+        if(gamepad1.dpad_up){
+            turretServo.turnToAngle(turret.target);
+            sleep(500);
+        }
+//        telemetry.addData("currentPos", turret.currentPos);
+//        telemetry.addData("change", turret.change);
+        telemetry.addData("encoder position", -Math.floor((turretEnc.getVoltage() - 0.167) / 2.952 * 355)+355);
+        telemetry.addData("servo position", turretServo.getAngle());
+        telemetry.addData("target", turret.target);
+//        Log.d("server angle", ""+turretServo.getAngle());
+//        Log.d("server position", ""+turretServo.getPosition());
         telemetry.update();
     }
 }

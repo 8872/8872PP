@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import android.util.Log;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -101,9 +102,9 @@ public class BaseOpMode extends CommandOpMode {
         // what the proper min and max?
         clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
         // TODO change to 355 when switch to axon
-        turretServo = new SimpleServo(hardwareMap, "turret", 0, 300);
+        turretServo = new SimpleServo(hardwareMap, "turret", 0, 355);
         armServo = new SimpleServo(hardwareMap, "arm", 0, 355);
-        flipperServo = new SimpleServo(hardwareMap, "flipper", 0, 355);
+        flipperServo = new SimpleServo(hardwareMap, "flipper", 0, 200);
 
         turretEnc = hardwareMap.get(AnalogInput.class, "turretEnc");
 
@@ -139,6 +140,7 @@ public class BaseOpMode extends CommandOpMode {
 
         double turretPosition = turretEnc.getVoltage() / 3.3 * 360;
         tad("turret position", turretPosition);
+
         telemetry.update();
     }
 
