@@ -72,14 +72,14 @@ public class BaseOpMode extends CommandOpMode {
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         camera.setPipeline(pipeline);
 
-        turretPIDF = new TurretPIDF(() -> camera.getFps());
+        turretPIDF = new TurretPIDF();
 
         drive = new DriveSys(fL, fR, bL, bR, imu);
         lift = new LiftSys(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
         lift.goTo(Height.NONE);
 
         claw = new ClawSys(clawServo);
-        turret = new TurretSys(turretServo, turretEnc, turretPIDF);
+        turret = new TurretSys(turretServo, turretEnc);
         //turret = new TurretSys(turretServo, () -> gamepadEx2.getButton(GamepadKeys.Button.DPAD_DOWN), turretEnc);
         arm = new ArmSys(armServo);
         flipper = new FlipperSys(flipperServo);

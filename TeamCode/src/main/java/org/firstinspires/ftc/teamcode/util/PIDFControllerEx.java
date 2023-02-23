@@ -21,7 +21,7 @@ public class PIDFControllerEx {
     private double kP, kI, kD, kF;
     private double setPoint;
     private double measuredValue;
-    private double minIntegral, maxIntegral;
+    private double minIntegral,maxIntegral;
 
     private double errorVal_p;
     private double errorVal_v;

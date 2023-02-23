@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.util;// Copyright (c) FIRST and other WPI
 // the WPILib BSD license file in the root directory of this project.
 
 
-import org.firstinspires.ftc.teamcode.util.CircularBuffer;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +12,7 @@ import java.util.List;
  * especially with processes that generate occasional, extreme outliers (such as values from vision
  * processing, LIDAR, or ultrasonic sensors).
  */
-public class MaxFilter {
+public class MinFilter {
     private final CircularBuffer m_valueBuffer;
     private final List<Double> m_orderedValues;
     private final int m_size;
@@ -24,7 +22,7 @@ public class MaxFilter {
      *
      * @param size The number of samples in the moving window.
      */
-    public MaxFilter(int size) {
+    public MinFilter(int size) {
         // Circular buffer of values currently in the window, ordered by time
         m_valueBuffer = new CircularBuffer(size);
         // List of values currently in the window, ordered by value
@@ -63,13 +61,7 @@ public class MaxFilter {
         // Add next value to circular buffer
         m_valueBuffer.addFirst(next);
 
-        if (curSize % 2 != 0) {
-            // If size is odd, return middle element of sorted list
-            return m_orderedValues.get(curSize / 2);
-        } else {
-            // If size is even, return average of middle elements
-            return (m_orderedValues.get(curSize / 2 - 1) + m_orderedValues.get(curSize / 2)) / 2.0;
-        }
+        return m_orderedValues.get(0);
     }
 
     /** Resets the filter, clearing the window of all elements. */

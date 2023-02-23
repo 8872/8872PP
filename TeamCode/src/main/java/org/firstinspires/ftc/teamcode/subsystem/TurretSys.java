@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import org.firstinspires.ftc.teamcode.util.LinearFilter;
+import org.firstinspires.ftc.teamcode.util.MinFilter;
 import org.firstinspires.ftc.teamcode.util.Position;
 import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
 import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionWithArea;
@@ -17,25 +19,29 @@ import java.util.function.BooleanSupplier;
 public final class TurretSys extends ProfiledServoSubsystem {
     public static double maxVelocity = 3;
     public static double maxAcceleration = 3;
-    public final double PIX_TO_DEGREES = 70.42/320;
     private JunctionWithArea pipeline;
     private final AnalogInput turretEnc;
     private final ServoEx turret;
+    public static double pix_to_degree = 0.192;
     private boolean trackingMode;
-    private TurretPIDF turretPIDF;
-    public double currentPos;
+    MinFilter minFilter = new MinFilter(50);
+    LinearFilter lowpass = LinearFilter.singlePoleIIR(0.1, 0.02);
+    public double turretPosition = 0;
+    public double targetPos;
     public double change;
     public double target;
+    Rect rect;
+
 
     public enum Pose implements Position {
-        RIGHT_FORWARD(0.9875),
-        LEFT_FORWARD(0.135),
-        RIGHT_BACK(0.67),
-        LEFT_BACK(0.43),
-        LEFT(0.29),
-        RIGHT(0.832),
-        ZERO(0.557),
-        ONE_EIGHTY(0);
+        RIGHT_FORWARD(0.0125),
+        LEFT_FORWARD(0.865),
+        RIGHT_BACK(0.33),
+        LEFT_BACK(0.57),
+        LEFT(0.71),
+        RIGHT(0.168),
+        ZERO(0.43),
+        ONE_EIGHTY(1);
 
         private final double height;
 
@@ -48,49 +54,38 @@ public final class TurretSys extends ProfiledServoSubsystem {
         }
     }
 
-    public TurretSys(ServoEx turret, AnalogInput turretEnc, TurretPIDF turretPIDF) {
+    public TurretSys(ServoEx turret, AnalogInput turretEnc) {
         super(turret, maxVelocity, maxAcceleration);
         profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration),
                 new TrapezoidProfile.State(Pose.ZERO.getHeight(), 0));
         currentTarget = Pose.ZERO.getHeight();
         this.turretEnc = turretEnc;
         this.turret = turret;
-        this.turretPIDF = turretPIDF;
         trackingMode = false;
     }
 
     @Override
     public void periodic() {
+        updatePosition();
         if (!trackingMode) {
             super.periodic();
         } else {
-            double current = time.milliseconds();
-            if (current >= 200){
-                updateTarget();
-                currentPos = getEncoderPosition();
-                currentPos = currentPos > 355 ? 355 : currentPos;
-                currentPos = currentPos < 0 ? 0 : currentPos;
-                double factor = target < currentPos ? 5 : -5;
-                turret.turnToAngle(Math.ceil(currentPos)+factor);
-                Log.d("asd", "floored currentPos: "+Math.floor(currentPos));
-                Log.d("asd", "turret angle: " + turret.getAngle());
-                Log.d("asd", "target position: " + target);
+            if((rect = pipeline.getRect()) != null){
+                updateTarget(rect);
+                double error = target-turretPosition;
+                change = TurretPIDF.calculateD(error, time);
                 time.reset();
-            }
+                if(targetPos+change > 0 && targetPos+change < 350)
+                    targetPos += change;
+                turret.turnToAngle(targetPos);
 
-
-//            change = turretPIDF.calculate(target - currentPos);
-
-//            profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(2, 2),
-//                    new TrapezoidProfile.State(target, 0));
-//            double factor = target < currentPos ? -1 : 1;
-//            if(current >= 500) {
-//                Log.d("asd", "target: " + target);
-//                Log.d("asd", "currentPos: " + currentPos);
-//                Log.d("asd", "turret position: " + turret.getAngle());
-//                turret.turnToAngle(currentPos+factor);
+//                updateTarget(rect);
+//                double error = turretPosition-target;
+//                change = TurretPIDF.calculateP(error, time);
 //                time.reset();
-//            }
+//                targetPos = target-turretPosition < 0 ? targetPos - change : targetPos + change;
+//                turret.turnToAngle(targetPos);
+            }
         }
     }
 
@@ -100,30 +95,24 @@ public final class TurretSys extends ProfiledServoSubsystem {
             Log.println(Log.WARN, "pipeline null", "pipeline null");
     }
 
-    public void updateTarget(){
-        Rect rect = pipeline.getRect();
-        if(rect == null)
-            return;
-
-        int junctionX = rect.x+rect.width/2;
-        double turretPos = getEncoderPosition();
-        target = (turretPos + ((junctionX-160)*PIX_TO_DEGREES));
+    public void updatePosition(){
+        double angle = (turretEnc.getVoltage() - 0.189) / 2.957 * 355;
+        turretPosition = angle;//minFilter.calculate(lowpass.calculate(angle));
     }
 
-    public double getEncoderPosition(){
-        double angle = (turretEnc.getVoltage() - 0.167) / 2.952 * 355;
-        return -angle+355;
-    }
-
-    //TODO: make regular and follow mode transition nice
-    public void stopTracking(){
-        trackingMode = false;
+    public void updateTarget(Rect rect){
+        double junctionX = rect.x + (double) rect.width / 2;
+        target = (turretPosition + ((junctionX-160)*pix_to_degree));
     }
 
     public void startTracking(){
-        time.reset();
         trackingMode = true;
+        targetPos = turretPosition;
+        time.reset();
     }
 
+    public void stopTracking(){
+        trackingMode = false;
+    }
 
 }

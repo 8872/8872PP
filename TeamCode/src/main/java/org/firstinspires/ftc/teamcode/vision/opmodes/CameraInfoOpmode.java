@@ -117,24 +117,11 @@ public final class CameraInfoOpmode extends BaseOpMode {
     @Override
     public void run() {
         CommandScheduler.getInstance().run();
-        rect = pipeline.getRect();
-        if (rect != null) {
-            int x = rect.x+rect.width/2;
-            telemetry.addData("x", x);
-            telemetry.addData("error", x-160);
-        }
-        turret.updateTarget();
-        if(gamepad1.dpad_up){
-            turretServo.turnToAngle(turret.target);
-            sleep(500);
-        }
-//        telemetry.addData("currentPos", turret.currentPos);
-//        telemetry.addData("change", turret.change);
-        telemetry.addData("encoder position", -Math.floor((turretEnc.getVoltage() - 0.167) / 2.952 * 355)+355);
-        telemetry.addData("servo position", turretServo.getAngle());
+
+        telemetry.addData("targetPos", turret.targetPos);
+        telemetry.addData("change", turret.change);
+        telemetry.addData("encoderPos", turret.turretPosition);
         telemetry.addData("target", turret.target);
-//        Log.d("server angle", ""+turretServo.getAngle());
-//        Log.d("server position", ""+turretServo.getPosition());
         telemetry.update();
     }
 }
