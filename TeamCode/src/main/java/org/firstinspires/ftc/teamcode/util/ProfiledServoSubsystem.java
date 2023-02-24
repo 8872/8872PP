@@ -22,6 +22,8 @@ public class ProfiledServoSubsystem extends SubsystemBase {
     protected final ElapsedTime time = new ElapsedTime();
     private double initial;
 
+    protected boolean trackingMode;
+
     public ProfiledServoSubsystem(ServoEx turret, double maxVelocity, double maxAcceleration) {
         this.turret = turret;
         this.maxVelocity = maxVelocity;
@@ -35,6 +37,7 @@ public class ProfiledServoSubsystem extends SubsystemBase {
 
     public Command goTo(double position, double velocity, double acceleration) {
         return new NoRequirementInstantCommand(() -> {
+            trackingMode = false;
             initial = time.time();
             previousTarget = currentTarget;
             currentTarget = position;
@@ -52,6 +55,10 @@ public class ProfiledServoSubsystem extends SubsystemBase {
 
     public Command goTo(Position position) {
         return goTo(position.getHeight(), maxVelocity, maxAcceleration);
+    }
+
+    public Command goTo(double position){
+        return goTo(position, maxVelocity, maxAcceleration);
     }
 
     private boolean atTarget() {

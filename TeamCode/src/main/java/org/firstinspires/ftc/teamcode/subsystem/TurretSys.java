@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -20,14 +21,11 @@ public final class TurretSys extends ProfiledServoSubsystem {
     private final AnalogInput turretEnc;
     private final ServoEx turret;
     public static double pix_to_degree = 0.192;
-    private boolean trackingMode;
-
-    MedianFilter medianFilter = new MedianFilter(5);
-
     public double turretPosition = 0;
     public double targetPos;
     public double change;
     public double target;
+    private double manualTarget;
     Rect rect;
 
 
@@ -73,16 +71,9 @@ public final class TurretSys extends ProfiledServoSubsystem {
                 double error = target-turretPosition;
                 change = TurretPIDF.calculateDSq(error, time);
                 time.reset();
-                if(targetPos+change > 0 && targetPos+change < 350)
+                if(targetPos+change > 0 && targetPos+change < 355)
                     targetPos += change;
                 turret.turnToAngle(targetPos);
-
-//                updateTarget(rect);
-//                double error = turretPosition-target;
-//                change = TurretPIDF.calculateP(error, time);
-//                time.reset();
-//                targetPos = target-turretPosition < 0 ? targetPos - change : targetPos + change;
-//                turret.turnToAngle(targetPos);
             }
         }
     }
@@ -107,10 +98,33 @@ public final class TurretSys extends ProfiledServoSubsystem {
         trackingMode = true;
         targetPos = turretPosition;
         time.reset();
+        manualTarget = toDegrees(currentTarget);
     }
 
-    public void stopTracking(){
-        trackingMode = false;
+    public void stopTracking() {
+        currentTarget = toServoMeasurement(turretPosition);
+        CommandScheduler.getInstance().schedule(goTo(toServoMeasurement(manualTarget), maxVelocity, maxAcceleration));
+    }
+
+    public void toggleTracking(){
+        if(!trackingMode){
+            trackingMode = true;
+            targetPos = turretPosition;
+            time.reset();
+            //manualTarget = currentTarget;
+        }else{
+            trackingMode = false;
+//            currentTarget = turretPosition;
+//            CommandScheduler.getInstance().schedule(goTo(manualTarget, maxVelocity, maxAcceleration));
+        }
+    }
+
+    public static double toDegrees(double position){
+        return position*355;
+    }
+
+    public static double toServoMeasurement(double position){
+        return position/355;
     }
 
 }
