@@ -5,10 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import org.firstinspires.ftc.teamcode.util.LinearFilter;
-import org.firstinspires.ftc.teamcode.util.MinFilter;
-import org.firstinspires.ftc.teamcode.util.Position;
-import org.firstinspires.ftc.teamcode.util.ProfiledServoSubsystem;
+import org.firstinspires.ftc.teamcode.util.*;
 import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionWithArea;
 import org.firstinspires.ftc.teamcode.vision.util.TurretPIDF;
 import org.opencv.core.Rect;
@@ -24,8 +21,9 @@ public final class TurretSys extends ProfiledServoSubsystem {
     private final ServoEx turret;
     public static double pix_to_degree = 0.192;
     private boolean trackingMode;
-    MinFilter minFilter = new MinFilter(50);
-    LinearFilter lowpass = LinearFilter.singlePoleIIR(0.1, 0.02);
+
+    MedianFilter medianFilter = new MedianFilter(5);
+
     public double turretPosition = 0;
     public double targetPos;
     public double change;
@@ -73,7 +71,7 @@ public final class TurretSys extends ProfiledServoSubsystem {
             if((rect = pipeline.getRect()) != null){
                 updateTarget(rect);
                 double error = target-turretPosition;
-                change = TurretPIDF.calculateD(error, time);
+                change = TurretPIDF.calculateDSq(error, time);
                 time.reset();
                 if(targetPos+change > 0 && targetPos+change < 350)
                     targetPos += change;

@@ -7,53 +7,47 @@ import java.util.ArrayList;
 
 public class JunctionWithArea extends OpenCvPipeline {
     private Rect rect = null;
+    private Rect ratioCheck;
+    private final Scalar lowThresh = new Scalar(0, 50, 10);
+    private final Scalar highThresh = new Scalar(255, 180, 95);
+    private final Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 25));
+    private final ArrayList<MatOfPoint> contours = new ArrayList<>();
+
     @Override
     public Mat processFrame(Mat input){
-
-        Imgproc.line(input, new Point(0,0), new Point(320, 0), new Scalar(0,0,0),50);
-
         //blur and convert to YCrCb color space
-        Mat ycrcb = new Mat();
-        Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);
 
         //thresholding values, may need to be further tuned
-        Scalar lowThresh = new Scalar(0, 50, 10);
-        Scalar highThresh = new Scalar(255, 180, 95);
 
         //thresholding for yellow objects
-        Mat thresh = new Mat();
-        Core.inRange(ycrcb, lowThresh, highThresh, thresh);
 
+        Core.inRange(input, lowThresh, highThresh, input);
 
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 25));
-        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_ERODE, kernel);
+        Imgproc.morphologyEx(input, input, Imgproc.MORPH_ERODE, kernel);
 
-
-        ArrayList<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.findContours(thresh, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(input, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         Mat biggestContour = null;
         double largestArea = 0;
 
         for (MatOfPoint contour : contours) {
             double area = Imgproc.contourArea(contour);
-            if(area > largestArea) {
-                biggestContour = contour.clone();
+            ratioCheck = Imgproc.boundingRect(contour);
+
+            if(ratioCheck.height / ratioCheck.width >= 1 && area > largestArea) {
+                biggestContour = contour;
                 largestArea = area;
             }
         }
 
         if(biggestContour != null){
             rect = Imgproc.boundingRect(biggestContour);
-            Imgproc.rectangle(input, rect, new Scalar(0,0,255), 1);
+            biggestContour.release();
         }
 
-
-        thresh.release();
-        ycrcb.release();
         kernel.release();
         contours.clear();
-
 
         return input;
     }

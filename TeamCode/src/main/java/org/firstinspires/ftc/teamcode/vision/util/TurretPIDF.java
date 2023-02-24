@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.vision.util;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.util.MedianFilter;
 
 import java.util.function.DoubleSupplier;
 
@@ -10,7 +11,7 @@ public class TurretPIDF {
 
     public static double Kp = 0.2;//0.15;
     public static double Ki = 0;
-    public static double Kd = -15;
+    public static double Kd = 3;
     public static double Kf = 4;
     public static double MAX_VELOCITY = 100;
     private static double totalError = 0;
@@ -25,7 +26,7 @@ public class TurretPIDF {
             errorVal_v = 0;
         }
 
-        double targetVel = error * error * Kp + Kf + Kd * errorVal_v;
+        double targetVel = error * Math.abs(error) * Kp + Kf * error / Math.abs(error) + Kd * errorVal_v;
         //if(targetVel > MAX_VELOCITY) targetVel = MAX_VELOCITY;
         return targetVel*time.seconds();
     }
@@ -69,4 +70,5 @@ public class TurretPIDF {
         if (error > 0 && prev < 0) return true;
         return error < 0 && prev > 0;
     }
+
 }
