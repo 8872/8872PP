@@ -12,7 +12,7 @@ public class TurretPIDF {
     public static double Kp = 0.2;//0.15;
     public static double Ki = 0;
     public static double Kd = 3;
-    public static double Kf = 4;
+    public static double Kf = 5;
     public static double MAX_VELOCITY = 100;
     private static double totalError = 0;
     private static double previousError = 0;

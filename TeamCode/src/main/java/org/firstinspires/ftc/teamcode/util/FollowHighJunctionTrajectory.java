@@ -15,7 +15,7 @@ public class FollowHighJunctionTrajectory extends CommandBase {
     @Override
     public void initialize() {
         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(37, -11.11, 0))
+                .lineToLinearHeading(new Pose2d(39, -11.11, 0))
                 .build());
     }
 

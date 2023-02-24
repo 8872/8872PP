@@ -98,12 +98,10 @@ public final class TurretSys extends ProfiledServoSubsystem {
         trackingMode = true;
         targetPos = turretPosition;
         time.reset();
-        manualTarget = toDegrees(currentTarget);
     }
 
     public void stopTracking() {
-        currentTarget = toServoMeasurement(turretPosition);
-        CommandScheduler.getInstance().schedule(goTo(toServoMeasurement(manualTarget), maxVelocity, maxAcceleration));
+        trackingMode = false;
     }
 
     public void toggleTracking(){
