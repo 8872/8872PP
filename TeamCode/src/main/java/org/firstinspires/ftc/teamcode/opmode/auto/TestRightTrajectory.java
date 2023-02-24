@@ -42,6 +42,10 @@ public class TestRightTrajectory extends BaseOpMode {
         //set initial pose estimate
         rrDrive.setPoseEstimate(new Pose2d(36, -62, Math.toRadians(90)));
 
+        //TODO: make it so the preload trajectory doesn't crash into the medium junction half the time (i think its partly cuz my roadrunner tuning is bad)
+        //TODO: make the claw start in the correct position (open)
+        //TODO: optimize it to make it faster, and maybe give camera more time
+        //TODO: stress test for consistency (right now its not very consistent, but it would be if you increased camera time and took the 1+4)
         schedule(
                 new SequentialCommandGroup(
                         //grab and lift when the auto starts
