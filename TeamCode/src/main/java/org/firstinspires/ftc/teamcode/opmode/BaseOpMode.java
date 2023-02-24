@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import android.util.Log;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -12,11 +13,16 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.*;
 import org.firstinspires.ftc.teamcode.util.GamepadTrigger;
 import org.firstinspires.ftc.teamcode.util.TriggerGamepadEx;
+import org.firstinspires.ftc.teamcode.vision.pipelines.JunctionWithArea;
+import org.firstinspires.ftc.teamcode.vision.util.TurretPIDF;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,7 +39,7 @@ public class BaseOpMode extends CommandOpMode {
     protected RevIMU imu;
     protected TouchSensor limitSwitch;
 
-    private AnalogInput turretEnc;
+    protected AnalogInput turretEnc;
 
     protected GamepadEx gamepadEx1;
     protected GamepadEx gamepadEx2;
@@ -41,6 +47,10 @@ public class BaseOpMode extends CommandOpMode {
     protected TriggerGamepadEx triggerGamepadEx2;
 
     protected SampleMecanumDrive rrDrive;
+
+    protected JunctionWithArea pipeline;
+    protected OpenCvCamera camera;
+    protected TurretPIDF turretPIDF;
 
     @Override
     public void initialize() {
@@ -56,16 +66,26 @@ public class BaseOpMode extends CommandOpMode {
         imu = new RevIMU(hardwareMap);
         imu.init();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        pipeline = new JunctionWithArea();
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        camera.setPipeline(pipeline);
+
+        turretPIDF = new TurretPIDF();
+
         drive = new DriveSys(fL, fR, bL, bR, imu);
         lift = new LiftSys(dr4bLeftMotor, dr4bRightMotor, limitSwitch);
         lift.goTo(Height.NONE);
 
         claw = new ClawSys(clawServo);
-        turret = new TurretSys(turretServo);
+        turret = new TurretSys(turretServo, turretEnc);
+        //turret = new TurretSys(turretServo, () -> gamepadEx2.getButton(GamepadKeys.Button.DPAD_DOWN), turretEnc);
         arm = new ArmSys(armServo);
         flipper = new FlipperSys(flipperServo);
 
         rrDrive = new SampleMecanumDrive(hardwareMap);
+
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         tad("Mode", "Done initializing");
@@ -82,9 +102,9 @@ public class BaseOpMode extends CommandOpMode {
         // what the proper min and max?
         clawServo = new SimpleServo(hardwareMap, "claw", 0, 120);
         // TODO change to 355 when switch to axon
-        turretServo = new SimpleServo(hardwareMap, "turret", 0, 300);
+        turretServo = new SimpleServo(hardwareMap, "turret", 0, 355);
         armServo = new SimpleServo(hardwareMap, "arm", 0, 355);
-        flipperServo = new SimpleServo(hardwareMap, "flipper", 0, 355);
+        flipperServo = new SimpleServo(hardwareMap, "flipper", 0, 200);
 
         turretEnc = hardwareMap.get(AnalogInput.class, "turretEnc");
 
@@ -120,6 +140,7 @@ public class BaseOpMode extends CommandOpMode {
 
         double turretPosition = turretEnc.getVoltage() / 3.3 * 360;
         tad("turret position", turretPosition);
+
         telemetry.update();
     }
 
