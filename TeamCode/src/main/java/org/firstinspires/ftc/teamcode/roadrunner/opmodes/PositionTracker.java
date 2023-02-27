@@ -32,7 +32,7 @@ public class PositionTracker extends LinearOpMode {
 
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.setPoseEstimate(new Pose2d(36, -62, Math.toRadians(90)));
+        drive.setPoseEstimate(new Pose2d(-36, -62, Math.toRadians(90)));
         turretServo.setPosition(setPosition);
 
         waitForStart();

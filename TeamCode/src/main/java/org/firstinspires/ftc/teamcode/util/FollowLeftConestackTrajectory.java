@@ -7,20 +7,19 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
-public class FollowPreloadTrajectory extends CommandBase {
+public class FollowLeftConestackTrajectory extends CommandBase {
     private final SampleMecanumDrive drive;
 
-    public FollowPreloadTrajectory(SampleMecanumDrive drive) {
+    public FollowLeftConestackTrajectory(SampleMecanumDrive drive) {
         this.drive = drive;
     }
 
     @Override
     public void initialize() {
-        //the velocityconstraint stuff was to limit the velocity, but I don't use it anymore
+        //the SampleMecanumDrive velocity stuff is to cap the velocity at the given value (35 in this case)
         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(36, -20, Math.toRadians(90))) // 36
-                .lineToSplineHeading(new Pose2d(36, -8.5, 0), // 36
-                        SampleMecanumDrive.getVelocityConstraint(50,
+                .lineToLinearHeading(new Pose2d(-60.5,-12,Math.toRadians(180)),
+                        SampleMecanumDrive.getVelocityConstraint(40,
                                 DriveConstants.MAX_ANG_VEL,
                                 DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(

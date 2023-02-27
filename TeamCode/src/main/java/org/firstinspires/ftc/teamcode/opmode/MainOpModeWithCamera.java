@@ -32,18 +32,22 @@ public final class MainOpModeWithCamera extends BaseOpMode {
         super.initialize();
 
         turret.setPipeline(pipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(320, 180, OpenCvCameraRotation.UPRIGHT);
-            }
+        try {
+            camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    camera.startStreaming(320, 180, OpenCvCameraRotation.UPRIGHT);
+                }
 
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
+                @Override
+                public void onError(int errorCode) {
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        gb2(LEFT_STICK_BUTTON).whenPressed(new InstantCommand(() -> turret.toggleTracking()));
+        gb2(LEFT_STICK_BUTTON).whenPressed(new InstantCommand(() -> turret.startTracking()));
 
         gb1(LEFT_BUMPER).whileHeld(
                 drive.slowMode(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));

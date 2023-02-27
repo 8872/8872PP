@@ -5,17 +5,17 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
-public class FollowHighJunctionTrajectory extends CommandBase {
+public class FollowLeftHighJunctionTrajectory extends CommandBase {
     private final SampleMecanumDrive drive;
 
-    public FollowHighJunctionTrajectory(SampleMecanumDrive drive) {
+    public FollowLeftHighJunctionTrajectory(SampleMecanumDrive drive) {
         this.drive = drive;
     }
 
     @Override
     public void initialize() {
         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(39.33, -11.11, 0))
+                .lineToLinearHeading(new Pose2d(-37.5, -12, Math.toRadians(180)))
                 .build());
     }
 

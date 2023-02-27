@@ -5,23 +5,23 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.powerplayutil.Height;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
-import org.firstinspires.ftc.teamcode.subsystem.ClawSys;
 import org.firstinspires.ftc.teamcode.subsystem.LiftSys;
 import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 import org.firstinspires.ftc.teamcode.util.DelayedCommand;
 
-@Config
-public final class DownSequenceWithPosition extends SequentialCommandGroup {
+import java.util.function.DoubleSupplier;
 
-    //command allows me to do the reset command group to a certain height for conestack
-    public DownSequenceWithPosition(LiftSys lift, TurretSys turret, ArmSys arm, ClawSys claw, int height) {
+@Config
+public final class HighSequenceWithAngle extends SequentialCommandGroup {
+    //same as medium sequence but with a given turret set position
+    public HighSequenceWithAngle(LiftSys lift, TurretSys turret, ArmSys arm, double pos) {
         addCommands(
                 new ParallelCommandGroup(
+                        lift.goTo(Height.HIGH),
                         arm.goTo(ArmSys.Pose.VERTICAL),
-                        new DelayedCommand(turret.goTo(TurretSys.Pose.ZERO), 100),
-                        new DelayedCommand(lift.goTo(height), 200),
-                        new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN, 6, 6), 200),
-                        new DelayedCommand(claw.release(), 250)
+                        new DelayedCommand(turret.goTo(pos), 300),
+                        new DelayedCommand(arm.goTo(ArmSys.Pose.HORIZONTAL, 2, 2),
+                                700)
                 )
         );
 

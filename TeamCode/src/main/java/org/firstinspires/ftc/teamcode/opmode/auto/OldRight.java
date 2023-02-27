@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.DelayedCommand;
 import org.firstinspires.ftc.teamcode.util.FollowTrajectoryCommand;
 
 
-public class RightSideAuto extends BaseOpMode {
+public class OldRight extends BaseOpMode {
     private Height[] coneStack = {Height.FIRST, Height.SECOND, Height.THIRD, Height.FOURTH};
 
     private Trajectory preload, toConeStack, toHighJunction;

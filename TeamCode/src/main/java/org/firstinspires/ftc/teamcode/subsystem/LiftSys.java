@@ -25,9 +25,9 @@ public class LiftSys extends SubsystemBase {
     public static double kF = 0.082; //0.06
     public static double maxVelocity = 6000;
     public static double maxAcceleration = 6000;
-    private final ProfiledPIDFController leftPIDF = new ProfiledPIDFController(kP, kI, kD, kF,
+    private ProfiledPIDFController leftPIDF = new ProfiledPIDFController(kP, kI, kD, kF,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), TICKS_IN_DEGREES);
-    private final ProfiledPIDFController rightPIDF = new ProfiledPIDFController(kP, kI, kD, kF,
+    private ProfiledPIDFController rightPIDF = new ProfiledPIDFController(kP, kI, kD, kF,
             new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), TICKS_IN_DEGREES);
     public static double tolerance = 10;
 
@@ -104,5 +104,12 @@ public class LiftSys extends SubsystemBase {
         left.set(output_left);
 //        Log.d("asd", "output left: "+ output_left);
         right.set(output_right);
+    }
+
+    public void setVelocityAccel(double maxVelocity, double maxAcceleration){
+        leftPIDF = new ProfiledPIDFController(kP, kI, kD, kF,
+                new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), TICKS_IN_DEGREES);
+        rightPIDF = new ProfiledPIDFController(kP, kI, kD, kF,
+                new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), TICKS_IN_DEGREES);
     }
 }

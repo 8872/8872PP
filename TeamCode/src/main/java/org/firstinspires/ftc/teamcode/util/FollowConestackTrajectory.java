@@ -18,7 +18,7 @@ public class FollowConestackTrajectory extends CommandBase {
     public void initialize() {
         //the SampleMecanumDrive velocity stuff is to cap the velocity at the given value (35 in this case)
         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(61,-11.11,0),
+                .lineToLinearHeading(new Pose2d(61.4,-11.11,0), // 61
                         SampleMecanumDrive.getVelocityConstraint(35,
                                 DriveConstants.MAX_ANG_VEL,
                                 DriveConstants.TRACK_WIDTH),

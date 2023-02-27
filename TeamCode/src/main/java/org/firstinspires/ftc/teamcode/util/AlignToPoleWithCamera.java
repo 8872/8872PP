@@ -8,15 +8,27 @@ import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 public class AlignToPoleWithCamera extends CommandBase {
     TurretSys turret;
     ElapsedTime time;
+    double setPosition;
+    double delay = -1;
 
-    public AlignToPoleWithCamera(TurretSys turret) {
+    public AlignToPoleWithCamera(TurretSys turret, double setPosition) {
         this.turret = turret;
+        this.setPosition = setPosition;
         time = new ElapsedTime();
+    }
+
+    public AlignToPoleWithCamera(TurretSys turret, double delay, double setPosition){
+        this.turret = turret;
+        this.setPosition = setPosition;
+        time = new ElapsedTime();
+        this.delay = delay;
     }
 
     @Override
     public void initialize() {
         //start tracking and reset the timer
+        turret.setSetPosition(setPosition);
+        turret.setLimited(true);
         turret.startTracking();
         time.reset();
     }
@@ -25,6 +37,9 @@ public class AlignToPoleWithCamera extends CommandBase {
     public boolean isFinished() {
         //finish after 1 second
         //the camera automatically stops tracking when goTo for turret is called
+        if(delay != -1){
+            return time.seconds()>=delay;
+        }
         return time.seconds() >= 1;
     }
 }

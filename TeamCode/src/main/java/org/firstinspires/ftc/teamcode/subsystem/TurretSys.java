@@ -27,6 +27,8 @@ public final class TurretSys extends ProfiledServoSubsystem {
     public double target;
     private double manualTarget;
     Rect rect;
+    private boolean limited = false;
+    private double setPosition;
 
 
     public enum Pose implements Position {
@@ -66,15 +68,10 @@ public final class TurretSys extends ProfiledServoSubsystem {
         if (!trackingMode) {
             super.periodic();
         } else {
-            if((rect = pipeline.getRect()) != null){
-                updateTarget(rect);
-                double error = target-turretPosition;
-                change = TurretPIDF.calculateDSq(error, time);
-                time.reset();
-                if(targetPos+change > 0 && targetPos+change < 355)
-                    targetPos += change;
-                turret.turnToAngle(targetPos);
-            }
+            if(!limited)
+                notLimited();
+            else
+                limited();
         }
     }
 
@@ -124,5 +121,41 @@ public final class TurretSys extends ProfiledServoSubsystem {
     public static double toServoMeasurement(double position){
         return position/355;
     }
+
+    public void notLimited(){
+        if((rect = pipeline.getRect()) != null){
+            updateTarget(rect);
+            double error = target-turretPosition;
+            change = TurretPIDF.calculateDSq(error, time);
+            time.reset();
+            if(targetPos+change > 0 && targetPos+change < 355)
+                targetPos += change;
+            turret.turnToAngle(targetPos);
+        }
+    }
+
+    public void limited(){
+        if((rect = pipeline.getRect()) != null){
+            updateTarget(rect);
+            if(Math.abs(target-setPosition)>30)
+                return;
+            double error = target-turretPosition;
+            change = TurretPIDF.calculateDSq(error, time);
+            time.reset();
+            if(targetPos+change > 0 && targetPos+change < 355)
+                targetPos += change;
+            turret.turnToAngle(targetPos);
+        }
+    }
+
+    public void setSetPosition(double setPosition){
+        this.setPosition = setPosition;
+    }
+
+    public void setLimited(boolean limited){
+        this.limited = limited;
+    }
+
+
 
 }
