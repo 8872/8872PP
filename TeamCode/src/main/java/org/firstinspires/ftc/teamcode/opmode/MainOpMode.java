@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.StartEndCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Function;
@@ -44,6 +45,8 @@ public final class MainOpMode extends BaseOpMode {
 
     private MoveLiftPID moveLiftPID;
 
+    private boolean PhotonFtc = false;
+
     public static int goal = -100;
 
     public static final double PIX_TO_DEGREE = 22.0133;
@@ -56,6 +59,8 @@ public final class MainOpMode extends BaseOpMode {
     public void initialize() {
         super.initialize();
 
+        if (PhotonFtc) PhotonCore.enable();
+        else PhotonCore.disable();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);

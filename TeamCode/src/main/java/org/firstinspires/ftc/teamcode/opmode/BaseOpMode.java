@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.LiftSubsystem;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystem.SlideSubsystem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 public class BaseOpMode extends CommandOpMode {
     protected MotorEx fL, fR, bL, bR, dr4bLeftMotor, dr4bRightMotor;
@@ -74,6 +76,13 @@ public class BaseOpMode extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule module: allHubs) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+
         tad("leftFront Power", round(fL.motor.getPower()));
         tad("leftBack Power", round(bL.motor.getPower()));
         tad("rightFront Power", round(fR.motor.getPower()));
