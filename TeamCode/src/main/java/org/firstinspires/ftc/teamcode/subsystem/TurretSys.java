@@ -140,7 +140,7 @@ public final class TurretSys extends ProfiledServoSubsystem {
             if(Math.abs(target-setPosition)>8)
                 return;
             double error = target-turretPosition;
-            change = TurretPIDF.calculateP(error, time, 2);
+            change = TurretPIDF.calculateP(error, time, 2, 4);
             time.reset();
             if(targetPos+change > 0 && targetPos+change < 355)
                 targetPos += change;

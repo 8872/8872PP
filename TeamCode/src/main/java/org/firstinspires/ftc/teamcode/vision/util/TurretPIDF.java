@@ -12,7 +12,7 @@ public class TurretPIDF {
     public static double Kp = 0.2;//0.15;
     public static double Ki = 0;
     public static double Kd = 3;
-    public static double Kf = 4;
+    public static double Kf = 5;
     public static double MAX_VELOCITY = 100;
     private static double totalError = 0;
     private static double previousError = 0;
@@ -32,7 +32,7 @@ public class TurretPIDF {
     }
 
 
-    public static double calculateP(double error, ElapsedTime time, double Kp){
+    public static double calculateP(double error, ElapsedTime time, double Kp, double Kf){
         double targetVel = error * Kp + Kf * error / Math.abs(error);
         if(targetVel > MAX_VELOCITY) targetVel = MAX_VELOCITY;
         return targetVel*time.seconds();

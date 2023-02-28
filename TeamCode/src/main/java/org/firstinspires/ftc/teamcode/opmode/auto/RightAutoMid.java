@@ -50,13 +50,13 @@ public class RightAutoMid extends BaseOpMode {
                 new SequentialCommandGroup(
                         //grab and lift when the auto starts
 
-                        new DelayedCommand(turret.goTo(0.43), 1),
+                        new DelayedCommand(turret.goTo(0.43), 0),
                         //drive to the medium junction while doing mediumSequence
                         new ParallelCommandGroup(
                                 new DelayedCommand(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 350)), 0),
                                 new DelayedCommand(new FollowPreloadTrajectory(rrDrive), 500),
                                 //this command lets me set it to a specific angle instead of one of the setpositions
-                                new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, 0.81127), 1250)
+                                new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, 0.81127), 1500)
                         ),
 
                         //give the camera half a second to align (isn't enough, should increase for more consistency)
