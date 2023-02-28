@@ -47,7 +47,7 @@ public final class MainOpModeWithCamera extends BaseOpMode {
             e.printStackTrace();
         }
 
-        gb2(LEFT_STICK_BUTTON).whenPressed(new InstantCommand(() -> turret.startTracking()));
+        gb2(DPAD_DOWN).whenPressed(new InstantCommand(() -> turret.startTracking()));
 
         gb1(LEFT_BUMPER).whileHeld(
                 drive.slowMode(gamepadEx1::getLeftX, gamepadEx1::getRightX, gamepadEx1::getLeftY));

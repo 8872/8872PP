@@ -17,10 +17,10 @@ public class RightAutoMid extends BaseOpMode {
 
     //dr4b heights for conestack
     //firstCone is the dr4b height setpoint of the topmost cone
-    public static int firstCone = -175;
-    public static int secondCone = -150;
-    public static int thirdCone = -131;
-    public static int fourthCone = -106;
+    public static int firstCone = -173;
+    public static int secondCone = -148;
+    public static int thirdCone = -129;
+    public static int fourthCone = -103;
     public static int fifthCone = 0;
 
     @Override
@@ -50,12 +50,13 @@ public class RightAutoMid extends BaseOpMode {
                 new SequentialCommandGroup(
                         //grab and lift when the auto starts
 
+                        new DelayedCommand(turret.goTo(0.43), 1),
                         //drive to the medium junction while doing mediumSequence
                         new ParallelCommandGroup(
-                                new DelayedCommand(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 400)), 0),
-                                new DelayedCommand(new FollowPreloadTrajectory(rrDrive), 1250),
+                                new DelayedCommand(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 350)), 0),
+                                new DelayedCommand(new FollowPreloadTrajectory(rrDrive), 500),
                                 //this command lets me set it to a specific angle instead of one of the setpositions
-                                new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, 0.81127), 3000)
+                                new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, 0.81127), 1250)
                         ),
 
                         //give the camera half a second to align (isn't enough, should increase for more consistency)

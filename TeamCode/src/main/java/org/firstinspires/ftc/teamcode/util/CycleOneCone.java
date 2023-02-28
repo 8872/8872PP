@@ -30,7 +30,7 @@ public class CycleOneCone extends SequentialCommandGroup {
                         new DelayedCommand(
                                 new ParallelCommandGroup(
                                         new FollowHighJunctionTrajectory(rrDrive),
-                                        new MediumSequenceWithAngle(lift, turret, arm, 0.82535)
+                                        new MediumSequenceWithAngle(lift, turret, arm, 0.8845)
                                 ), 400
                         )
                 ),
@@ -38,7 +38,7 @@ public class CycleOneCone extends SequentialCommandGroup {
 
                 //camera again
                 new ParallelCommandGroup(
-                        new AlignToPoleWithCamera(turret, 293),
+                        new AlignToPoleWithCamera(turret, 314),
                         new DelayedCommand(claw.release(), 600) // 650
                 ), new WaitCommand(100)
         );

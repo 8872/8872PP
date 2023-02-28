@@ -18,13 +18,9 @@ public class FollowPreloadTrajectory extends CommandBase {
     public void initialize() {
         //the velocityconstraint stuff was to limit the velocity, but I don't use it anymore
         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(36, -20, Math.toRadians(90))) // 36
-                .lineToSplineHeading(new Pose2d(36, -8.5, 0), // 36
-                        SampleMecanumDrive.getVelocityConstraint(50,
-                                DriveConstants.MAX_ANG_VEL,
-                                DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(
-                                DriveConstants.MAX_ACCEL))
+                .lineToSplineHeading(new Pose2d(36, -50, Math.toRadians(90))) // 36
+                .lineToSplineHeading(new Pose2d(36, -32, 0))
+                .lineToSplineHeading(new Pose2d(36, -8.2, 0))
                 .build());
     }
 
