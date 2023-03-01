@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
-public class RightAutoMid extends BaseOpMode {
+public class LeftAutoMid extends BaseOpMode {
 
     //dr4b heights for conestack
     //firstCone is the dr4b height setpoint of the topmost cone
@@ -41,7 +41,7 @@ public class RightAutoMid extends BaseOpMode {
         });
 
         //set initial pose estimate
-        rrDrive.setPoseEstimate(new Pose2d(36, -62, Math.toRadians(90)));
+        rrDrive.setPoseEstimate(new Pose2d(-36, -62, Math.toRadians(90)));
 
 
         turretServo.setPosition(0.43);
@@ -54,23 +54,23 @@ public class RightAutoMid extends BaseOpMode {
                         //drive to the medium junction while doing mediumSequence
                         new ParallelCommandGroup(
                                 new DelayedCommand(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 350)), 0),
-                                new DelayedCommand(new FollowPreloadTrajectory(rrDrive), 500),
+                                new DelayedCommand(new FollowPreloadTrajectoryL(rrDrive), 500),
                                 //this command lets me set it to a specific angle instead of one of the setpositions
-                                new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, 0.81127), 1500)
+                                new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, 0.0422535), 1500)
                         ),
 
                         //give the camera half a second to align (isn't enough, should increase for more consistency)
                         new ParallelCommandGroup(
-                                new DelayedCommand(new AlignToPoleWithCamera(turret, 288),100),
+                                new DelayedCommand(new AlignToPoleWithCamera(turret, 15),100),
                                 //releases after 0.65 seconds, the command group continues after 1
                                 new DelayedCommand(claw.release(), 600)
                         ),
                         //cycle cones
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, firstCone),
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, secondCone),
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, thirdCone),
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, fourthCone),
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, fifthCone),
+                        new CycleOneConeL(rrDrive, lift, turret, arm, claw, firstCone),
+                        new CycleOneConeL(rrDrive, lift, turret, arm, claw, secondCone),
+                        new CycleOneConeL(rrDrive, lift, turret, arm, claw, thirdCone),
+                        new CycleOneConeL(rrDrive, lift, turret, arm, claw, fourthCone),
+                        new CycleOneConeL(rrDrive, lift, turret, arm, claw, fifthCone),
 
                         //reset the lift after everything finishes
                         new DownSequence(lift, turret, arm, claw)
