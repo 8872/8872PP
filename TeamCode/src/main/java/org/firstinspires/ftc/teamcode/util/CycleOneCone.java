@@ -30,7 +30,7 @@ public class CycleOneCone extends SequentialCommandGroup {
                                 new ParallelCommandGroup(
                                         new FollowMidJunctionTrajectory(rrDrive),
                                         new MediumSequenceWithAngle(lift, turret, arm, 0.8845)
-                                ), 400
+                                ), 500
                         )
                 ),
 
