@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.command.group.DownSequence;
 import org.firstinspires.ftc.teamcode.opmode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
-import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 import org.firstinspires.ftc.teamcode.util.*;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -17,10 +16,10 @@ public class RightAutoMid extends BaseOpMode {
 
     //dr4b heights for conestack
     //firstCone is the dr4b height setpoint of the topmost cone
-    public static int firstCone = -173;
-    public static int secondCone = -148;
-    public static int thirdCone = -129;
-    public static int fourthCone = -103;
+    public static int firstCone = -172;
+    public static int secondCone = -150;
+    public static int thirdCone = -131;
+    public static int fourthCone = -105;
     public static int fifthCone = 0;
 
     @Override
@@ -56,21 +55,21 @@ public class RightAutoMid extends BaseOpMode {
                                 new DelayedCommand(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 350)), 0),
                                 new DelayedCommand(new FollowPreloadTrajectory(rrDrive), 500),
                                 //this command lets me set it to a specific angle instead of one of the setpositions
-                                new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, 0.81127), 1500)
+                                new DelayedCommand(new RaisedMediumSequenceWithAngle(lift, turret, arm, 0.81127), 1500)
                         ),
 
                         //give the camera half a second to align (isn't enough, should increase for more consistency)
                         new ParallelCommandGroup(
                                 new DelayedCommand(new AlignToPoleWithCamera(turret, 288),100),
                                 //releases after 0.65 seconds, the command group continues after 1
-                                new DelayedCommand(claw.release(), 600)
+                                new DelayedCommand(claw.release(), 1200)
                         ),
                         //cycle cones
                         new CycleOneCone(rrDrive, lift, turret, arm, claw, firstCone),
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, secondCone),
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, thirdCone),
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, fourthCone),
-                        new CycleOneCone(rrDrive, lift, turret, arm, claw, fifthCone),
+                        new NoAlignCycle(rrDrive, lift, turret, arm, claw, secondCone),
+                        new NoAlignCycle(rrDrive, lift, turret, arm, claw, thirdCone),
+                        new NoAlignCycle(rrDrive, lift, turret, arm, claw, fourthCone),
+                        new NoAlignCycle(rrDrive, lift, turret, arm, claw, fifthCone),
 
                         //reset the lift after everything finishes
                         new DownSequence(lift, turret, arm, claw)

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import android.util.Log;
+import com.arcrobotics.ftclib.command.NoRequirementInstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -9,39 +11,37 @@ import org.firstinspires.ftc.teamcode.subsystem.ClawSys;
 import org.firstinspires.ftc.teamcode.subsystem.LiftSys;
 import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 
-public class CycleOneConeL extends SequentialCommandGroup {
-    public CycleOneConeL(SampleMecanumDrive rrDrive, LiftSys lift, TurretSys turret, ArmSys arm, ClawSys claw, int coneHeight) {
+public class NoAlignCycle extends SequentialCommandGroup {
+
+    public static double turretPosition = 180;
+
+    public NoAlignCycle(SampleMecanumDrive rrDrive, LiftSys lift, TurretSys turret, ArmSys arm, ClawSys claw, int coneHeight) {
         addCommands(
                 //go to the given lift height while moving to the conestack
                 new ParallelCommandGroup(
                         new DownSequenceWithPosition(lift, turret, arm, claw, coneHeight),
-                        new FollowConestackTrajectoryL(rrDrive)
+                        new FollowConestackTrajectory(rrDrive)
                 ),
-
-                //grab and then raise up the arm
-//                new DelayedCommand(
-//                        claw.grab().alongWith(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 300)),
-//                        0),
-
                 //move to high junction while doing the medium junction command group
                 new ParallelCommandGroup(
-                        claw.grab().alongWith(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 300)),
+                        new DelayedCommand(claw.grab().alongWith(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 300)),100),
                         new DelayedCommand(
                                 new ParallelCommandGroup(
-                                        new FollowMidJunctionTrajectoryL(rrDrive),
-                                        new RaisedMediumSequenceWithAngle(lift, turret, arm, 0.0140845)
-                                ), 400
+                                        new FollowMidJunctionTrajectory(rrDrive),
+                                        new MediumSequenceWithAngle(lift, turret, arm, (turretPosition/355))
+                                ), 500
                         )
+                        //new DelayedCommand(new InchDiagonally(rrDrive), 1600),
                 ),
-
-
-                //camera again
-                new ParallelCommandGroup(
-                        new AlignToPoleWithCamera(turret, 5),
-                        new DelayedCommand(claw.release(), 600) // 650
-                ), new WaitCommand(100)
+                new DelayedCommand(claw.release(),0),
+                new WaitCommand(500)
         );
 
         addRequirements(lift, turret, claw, arm);
+    }
+
+    public static void setPos(double pos){
+        Log.d("qwertyuio", ""+pos);
+        turretPosition = pos;
     }
 }

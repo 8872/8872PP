@@ -40,6 +40,11 @@ public class AlignToPoleWithCamera extends CommandBase {
         if(delay != -1){
             return time.seconds()>=delay;
         }
-        return time.seconds() >= 1;
+        Log.d("test", ""+turret.getTarget());
+        if(time.seconds() >= 1.5){
+            Log.d("testSet", "+"+turret.getTarget());
+            NoAlignCycle.setPos(turret.getTarget());
+        }
+        return time.seconds() >= 1.6;
     }
 }

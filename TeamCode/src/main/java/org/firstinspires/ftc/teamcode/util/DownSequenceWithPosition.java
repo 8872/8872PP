@@ -20,7 +20,7 @@ public final class DownSequenceWithPosition extends SequentialCommandGroup {
                         arm.goTo(ArmSys.Pose.VERTICAL),
                         new DelayedCommand(turret.goTo(TurretSys.Pose.ZERO), 80),
                         new DelayedCommand(lift.goTo(height), 200),
-                        new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN, 6, 6), 200),
+                        new DelayedCommand(arm.goTo(ArmSys.Pose.DOWN, 3, 3), 200),
                         new DelayedCommand(claw.release(), 250)
                 )
         );

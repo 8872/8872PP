@@ -10,15 +10,15 @@ import org.firstinspires.ftc.teamcode.subsystem.LiftSys;
 import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 
 @Config
-public final class MediumSequenceWithAngle extends SequentialCommandGroup {
+public final class RaisedMediumSequenceWithAngle extends SequentialCommandGroup {
     //same as medium sequence but with a given turret set position
-    public MediumSequenceWithAngle(LiftSys lift, TurretSys turret, ArmSys arm, double pos) {
-        Log.d("qwerty", ""+pos);
+    public RaisedMediumSequenceWithAngle(LiftSys lift, TurretSys turret, ArmSys arm, double pos) {
+        Log.d("ABC", "" + pos);
         addCommands(
                 new ParallelCommandGroup(
-                        lift.goTo(Height.MEDIUM.getHeight()+5),
+                        lift.goTo(Height.MEDIUM.getHeight()-35),
                         arm.goTo(ArmSys.Pose.VERTICAL),
-                        new DelayedCommand(turret.goTo(), 350),
+                        new DelayedCommand(turret.goTo(pos), 400),
                         new DelayedCommand(arm.goTo(ArmSys.Pose.HORIZONTAL, 2, 2),
                                 600)
                 )

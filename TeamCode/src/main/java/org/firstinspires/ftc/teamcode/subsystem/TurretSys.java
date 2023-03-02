@@ -66,6 +66,13 @@ public final class TurretSys extends ProfiledServoSubsystem {
     public void periodic() {
         updatePosition();
         if (!trackingMode) {
+            if(currentTarget == -1){
+                currentTarget = NoAlignCycle.turretPosition/355;
+                profile = new TrapezoidProfile(
+                        new TrapezoidProfile.Constraints(2, 2),
+                        new TrapezoidProfile.State(currentTarget, 0),
+                        new TrapezoidProfile.State(previousTarget, 0));
+            }
             super.periodic();
         } else {
             if(!limited)
@@ -144,6 +151,7 @@ public final class TurretSys extends ProfiledServoSubsystem {
             time.reset();
             if(targetPos+change > 0 && targetPos+change < 355)
                 targetPos += change;
+            Log.d("bruh", "" + targetPos);
             turret.turnToAngle(targetPos);
         }
     }
@@ -156,6 +164,10 @@ public final class TurretSys extends ProfiledServoSubsystem {
         this.limited = limited;
     }
 
+    public double getTarget(){
+        Log.d("AAAH", ""+targetPos);
+        return targetPos;
+    }
 
 
 }

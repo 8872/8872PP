@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.command.group.DownSequence;
 import org.firstinspires.ftc.teamcode.opmode.BaseOpMode;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
-import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 import org.firstinspires.ftc.teamcode.util.*;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -56,7 +55,7 @@ public class LeftAutoMid extends BaseOpMode {
                                 new DelayedCommand(claw.grab().andThen(new DelayedCommand(arm.goTo(ArmSys.Pose.GRAB), 350)), 0),
                                 new DelayedCommand(new FollowPreloadTrajectoryL(rrDrive), 500),
                                 //this command lets me set it to a specific angle instead of one of the setpositions
-                                new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, 0.0422535), 1500)
+                                new DelayedCommand(new RaisedMediumSequenceWithAngle(lift, turret, arm, 0.0422535), 1500)
                         ),
 
                         //give the camera half a second to align (isn't enough, should increase for more consistency)

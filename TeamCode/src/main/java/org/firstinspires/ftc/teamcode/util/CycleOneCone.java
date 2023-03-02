@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -29,7 +30,7 @@ public class CycleOneCone extends SequentialCommandGroup {
                         new DelayedCommand(
                                 new ParallelCommandGroup(
                                         new FollowMidJunctionTrajectory(rrDrive),
-                                        new MediumSequenceWithAngle(lift, turret, arm, 0.8845)
+                                        new RaisedMediumSequenceWithAngle(lift, turret, arm, 0.8845)
                                 ), 500
                         )
                 ),
@@ -38,7 +39,8 @@ public class CycleOneCone extends SequentialCommandGroup {
                 //camera again
                 new ParallelCommandGroup(
                         new AlignToPoleWithCamera(turret, 314),
-                        new DelayedCommand(claw.release(), 600) // 650
+                        //new DelayedCommand(new SetTargetPos(turret.targetPos),1500),
+                        new DelayedCommand(claw.release(), 1250) // 650
                 ), new WaitCommand(100)
         );
 
