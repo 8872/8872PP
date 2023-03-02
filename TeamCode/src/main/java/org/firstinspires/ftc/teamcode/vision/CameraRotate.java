@@ -21,6 +21,10 @@ public final class CameraRotate extends BaseOpMode {
     public final double PIX_TO_DEGREE = 22.0133;
         private DefaultRobotCentricDrive robotCentricDrive;
 
+    protected CameraRotate(boolean usePhoton, boolean useBulkRead) {
+        super(usePhoton, useBulkRead);
+    }
+
 
     @Override
     public void initialize() {

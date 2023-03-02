@@ -49,6 +49,10 @@ public class TestAuto extends BaseOpMode {
     int pickupPosition = -120;
     int coneCounter = 3;
 
+    protected TestAuto(boolean usePhoton, boolean useBulkRead) {
+        super(usePhoton, useBulkRead);
+    }
+
     private enum DRIVE_PHASE {
         INITIAL_GRAB,
         WAIT_FOR_PRELOAD,

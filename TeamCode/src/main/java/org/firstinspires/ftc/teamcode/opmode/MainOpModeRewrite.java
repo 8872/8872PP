@@ -41,6 +41,9 @@ public final class MainOpModeRewrite extends BaseOpMode {
     private List<GamepadKeys.Button> oneButtons;
     private List<GamepadKeys.Button> twoButtons;
 
+    protected MainOpModeRewrite(boolean photon) {
+        super(photon);
+    }
 
 
     @Override

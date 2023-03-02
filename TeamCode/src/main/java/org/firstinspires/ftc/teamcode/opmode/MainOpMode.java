@@ -45,8 +45,6 @@ public final class MainOpMode extends BaseOpMode {
 
     private MoveLiftPID moveLiftPID;
 
-    private boolean PhotonFtc = false;
-
     public static int goal = -100;
 
     public static final double PIX_TO_DEGREE = 22.0133;
@@ -55,12 +53,14 @@ public final class MainOpMode extends BaseOpMode {
     private OpenCvCamera camera;
     private JunctionDetection pipeline;
 
+    protected MainOpMode(boolean usePhoton, boolean useBulkRead) {
+        super(usePhoton, useBulkRead);
+    }
+
     @Override
     public void initialize() {
         super.initialize();
 
-        if (PhotonFtc) PhotonCore.enable();
-        else PhotonCore.disable();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);

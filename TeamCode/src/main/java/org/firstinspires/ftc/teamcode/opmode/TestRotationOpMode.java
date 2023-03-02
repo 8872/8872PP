@@ -10,6 +10,10 @@ import org.firstinspires.ftc.teamcode.command.drive.*;
 public final class TestRotationOpMode extends BaseOpMode {
     private HeadingPID headingPID;
 
+    protected TestRotationOpMode(boolean usePhoton, boolean useBulkRead) {
+        super(usePhoton, useBulkRead);
+    }
+
     @Override
     public void initialize() {
         super.initialize();

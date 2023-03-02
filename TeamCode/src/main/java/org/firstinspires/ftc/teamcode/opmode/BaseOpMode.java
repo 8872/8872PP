@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.subsystem.ClawSubsystem;
@@ -34,10 +35,20 @@ public class BaseOpMode extends CommandOpMode {
     protected GamepadEx gamepadEx1;
     protected GamepadEx gamepadEx2;
 
+    private final boolean usePhoton;
+    private final boolean useBulkRead;
+
+    protected BaseOpMode(boolean usePhoton, boolean useBulckRead) {
+        this.usePhoton = usePhoton;
+        this.useBulkRead = useBulckRead;
+    }
+
     @Override
     public void initialize() {
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
+
+        if (usePhoton) PhotonCore.enable();
 
         initHardware();
         setUpHardwareDevices();
@@ -77,10 +88,13 @@ public class BaseOpMode extends CommandOpMode {
     public void run() {
         super.run();
 
+        //bulk read set to auto
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
-        for (LynxModule module: allHubs) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        if (useBulkRead) {
+            for (LynxModule module : allHubs) {
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            }
         }
 
         tad("leftFront Power", round(fL.motor.getPower()));
