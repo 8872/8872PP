@@ -51,7 +51,7 @@ public class BaseOpMode extends CommandOpMode {
         //Photon ftc enabled
         if (usePhoton) PhotonCore.enable();
 
-        //bulk read set to auto
+        //bulk read set to auto when true
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         if (useBulkRead) {

@@ -5,13 +5,16 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.drive.*;
-
+@Config
 @TeleOp(name = "Test Rotation OpMode")
 public final class TestRotationOpMode extends BaseOpMode {
     private HeadingPID headingPID;
 
-    protected TestRotationOpMode(boolean usePhoton, boolean useBulkRead) {
-        super(usePhoton, useBulkRead);
+    private static final boolean usePhoton = true;
+    private static final boolean useBulkread = false;
+
+    protected TestRotationOpMode() {
+        super(usePhoton, useBulkread);
     }
 
     @Override

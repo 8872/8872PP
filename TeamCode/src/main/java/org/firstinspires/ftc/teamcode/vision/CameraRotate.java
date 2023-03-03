@@ -18,11 +18,15 @@ public final class CameraRotate extends BaseOpMode {
     private DriveWithJunctionRotation driveWithJunctionRotation;
     private OpenCvCamera camera;
     JunctionDetection pipeline;
+
+    private static final boolean usePhoton = true;
+    private static final boolean useBulkread = false;
+
     public final double PIX_TO_DEGREE = 22.0133;
         private DefaultRobotCentricDrive robotCentricDrive;
 
-    protected CameraRotate(boolean usePhoton, boolean useBulkRead) {
-        super(usePhoton, useBulkRead);
+    protected CameraRotate() {
+        super(usePhoton, useBulkread);
     }
 
 

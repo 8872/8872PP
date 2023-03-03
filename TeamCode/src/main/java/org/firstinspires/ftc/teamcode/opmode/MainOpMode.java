@@ -45,6 +45,9 @@ public final class MainOpMode extends BaseOpMode {
 
     private MoveLiftPID moveLiftPID;
 
+    private static final boolean usePhoton = true;
+    private static final boolean useBulkread = false;
+
     public static int goal = -100;
 
     public static final double PIX_TO_DEGREE = 22.0133;
@@ -53,8 +56,8 @@ public final class MainOpMode extends BaseOpMode {
     private OpenCvCamera camera;
     private JunctionDetection pipeline;
 
-    protected MainOpMode(boolean usePhoton, boolean useBulkRead) {
-        super(usePhoton, useBulkRead);
+    protected MainOpMode() {
+        super(usePhoton, useBulkread);
     }
 
     @Override

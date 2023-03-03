@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-
+@Config
 @TeleOp
 public class SlideTest extends BaseOpMode{
-    protected SlideTest(boolean usePhoton, boolean useBulkRead) {
-        super(usePhoton, useBulkRead);
+
+    private static final boolean usePhoton = true;
+    private static final boolean useBulkread = false;
+    protected SlideTest() {
+        super(usePhoton, useBulkread);
     }
 
     @Override

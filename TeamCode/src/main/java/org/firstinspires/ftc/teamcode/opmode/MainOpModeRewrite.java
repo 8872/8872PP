@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -29,7 +30,7 @@ like forEachIndexed { i, button -> gamepad2.getGamepadButton(button).whenPressed
 would work cleanest imo
 so ur two arrays would be { dpad_down, x, a } and { none, ground, low }
  */
-
+@Config
 @TeleOp(name = "test opmode")
 public final class MainOpModeRewrite extends BaseOpMode {
 
@@ -38,11 +39,14 @@ public final class MainOpModeRewrite extends BaseOpMode {
 
     private MoveLiftPID moveLiftPID;
 
+    private static final boolean usePhoton = true;
+    private static final boolean useBulkread = false;
+
     private List<GamepadKeys.Button> oneButtons;
     private List<GamepadKeys.Button> twoButtons;
 
-    protected MainOpModeRewrite(boolean photon) {
-        super(photon);
+    protected MainOpModeRewrite() {
+        super(usePhoton, useBulkread);
     }
 
 

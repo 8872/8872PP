@@ -35,6 +35,9 @@ public class TestAuto extends BaseOpMode {
     public static double x_change = 0.3;
     public static double y_change = 0.3;
 
+    private static final boolean usePhoton = true;
+    private static final boolean useBulkread = false;
+
     private MotorEx dr4bLeftMotor, dr4bRightMotor;
     private SimpleServo claw, slide;
     private TouchSensor limitSwitch;
@@ -49,8 +52,8 @@ public class TestAuto extends BaseOpMode {
     int pickupPosition = -120;
     int coneCounter = 3;
 
-    protected TestAuto(boolean usePhoton, boolean useBulkRead) {
-        super(usePhoton, useBulkRead);
+    protected TestAuto() {
+        super(usePhoton, useBulkread);
     }
 
     private enum DRIVE_PHASE {
