@@ -48,7 +48,17 @@ public class BaseOpMode extends CommandOpMode {
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
+        //Photon ftc enabled
         if (usePhoton) PhotonCore.enable();
+
+        //bulk read set to auto
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        if (useBulkRead) {
+            for (LynxModule module : allHubs) {
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            }
+        }
 
         initHardware();
         setUpHardwareDevices();
@@ -87,15 +97,6 @@ public class BaseOpMode extends CommandOpMode {
     @Override
     public void run() {
         super.run();
-
-        //bulk read set to auto
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-
-        if (useBulkRead) {
-            for (LynxModule module : allHubs) {
-                module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-            }
-        }
 
         tad("leftFront Power", round(fL.motor.getPower()));
         tad("leftBack Power", round(bL.motor.getPower()));
