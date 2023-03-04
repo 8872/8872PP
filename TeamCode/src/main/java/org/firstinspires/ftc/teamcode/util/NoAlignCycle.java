@@ -28,7 +28,7 @@ public class NoAlignCycle extends SequentialCommandGroup {
                         new DelayedCommand(
                                 new ParallelCommandGroup(
                                         new FollowMidJunctionTrajectory(rrDrive),
-                                        new MediumSequenceWithAngle(lift, turret, arm, (turretPosition/355))
+                                        new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, (turretPosition/355)),100)
                                 ), 500
                         )
                         //new DelayedCommand(new InchDiagonally(rrDrive), 1600),

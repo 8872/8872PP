@@ -66,10 +66,9 @@ public class BaseOpMode extends CommandOpMode {
         imu = new RevIMU(hardwareMap);
         imu.init();
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         pipeline = new JunctionWithArea();
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
         camera.setPipeline(pipeline);
 
         turretPIDF = new TurretPIDF();
