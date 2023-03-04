@@ -8,8 +8,10 @@ import com.arcrobotics.ftclib.command.StartEndCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Function;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.command.claw.GrabCone;
@@ -44,6 +46,9 @@ public final class MainOpMode extends BaseOpMode {
 
     private MoveLiftPID moveLiftPID;
 
+    private static final boolean usePhoton = false;
+    private static final boolean useBulkread = false;
+
     public static int goal = -100;
 
     public static final double PIX_TO_DEGREE = 22.0133;
@@ -51,6 +56,12 @@ public final class MainOpMode extends BaseOpMode {
 
     private OpenCvCamera camera;
     private JunctionDetection pipeline;
+
+    ElapsedTime timer = new ElapsedTime();
+
+    protected MainOpMode() {
+        super(usePhoton, useBulkread);
+    }
 
     @Override
     public void initialize() {
@@ -144,6 +155,7 @@ public final class MainOpMode extends BaseOpMode {
 
     @Override
     public void run() {
+        timer.reset();
         super.run();
         tad("Target", lift.getTargetPosition());
 
@@ -152,5 +164,6 @@ public final class MainOpMode extends BaseOpMode {
             double error = (center.x-640)/PIX_TO_DEGREE;
             drive.setHeading(imu.getHeading()-error);
         }
+        tad("Loop-time", timer.milliseconds());
     }
 }
