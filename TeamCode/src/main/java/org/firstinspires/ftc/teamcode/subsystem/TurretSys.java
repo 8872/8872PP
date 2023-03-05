@@ -73,6 +73,13 @@ public final class TurretSys extends ProfiledServoSubsystem {
                         new TrapezoidProfile.State(currentTarget, 0),
                         new TrapezoidProfile.State(previousTarget, 0));
             }
+            if(currentTarget == -2){
+                currentTarget = NoAlignCycle.turretPosition/355-0.002;
+                profile = new TrapezoidProfile(
+                        new TrapezoidProfile.Constraints(2, 2),
+                        new TrapezoidProfile.State(currentTarget, 0),
+                        new TrapezoidProfile.State(previousTarget, 0));
+            }
             super.periodic();
         } else {
             if(!limited)

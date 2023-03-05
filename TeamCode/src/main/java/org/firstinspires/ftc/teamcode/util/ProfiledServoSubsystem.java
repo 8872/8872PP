@@ -64,6 +64,9 @@ public class ProfiledServoSubsystem extends SubsystemBase {
     public Command goTo(){
         return goTo(-1, maxVelocity, maxAcceleration);
     }
+    public Command goTo(boolean bruh){
+        return goTo(-2, maxVelocity,maxAcceleration);
+    }
 
     private boolean atTarget() {
         return turret.getPosition() == currentTarget;

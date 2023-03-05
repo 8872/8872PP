@@ -49,9 +49,9 @@ public class LeftAutoMid extends BaseOpMode {
 
     //dr4b heights for conestack
     //firstCone is the dr4b height setpoint of the topmost cone
-    public static int firstCone = -165;
+    public static int firstCone = -163;
     public static int secondCone = -142;
-    public static int thirdCone = -122;
+    public static int thirdCone = -121;
     public static int fourthCone = -100;
     public static int fifthCone = 0;
 

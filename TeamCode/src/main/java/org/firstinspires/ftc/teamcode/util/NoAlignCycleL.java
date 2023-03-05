@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystem.TurretSys;
 
 public class NoAlignCycleL extends SequentialCommandGroup {
 
-    public static double turretPosition = 180;
+    public static double turretPosition = 350;
 
     public NoAlignCycleL(SampleMecanumDrive rrDrive, LiftSys lift, TurretSys turret, ArmSys arm, ClawSys claw, int coneHeight) {
         addCommands(
@@ -28,7 +28,7 @@ public class NoAlignCycleL extends SequentialCommandGroup {
                         new DelayedCommand(
                                 new ParallelCommandGroup(
                                         new FollowMidJunctionTrajectoryL(rrDrive),
-                                        new MediumSequenceWithAngle(lift, turret, arm, (turretPosition/355))
+                                        new DelayedCommand(new MediumSequenceWithAngleL(lift, turret, arm, (NoAlignCycle.turretPosition/355)),50)
                                 ), 500
                         )
                         //new DelayedCommand(new InchDiagonally(rrDrive), 1600),
