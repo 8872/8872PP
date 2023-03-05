@@ -42,6 +42,8 @@ public class LeftAutoMid extends BaseOpMode {
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
+    public static double yDrift = 0;
+    public static double xDrift = 0;
 
     boolean finished = false;
     boolean followPark = false;
@@ -51,8 +53,8 @@ public class LeftAutoMid extends BaseOpMode {
     //firstCone is the dr4b height setpoint of the topmost cone
     public static int firstCone = -163;
     public static int secondCone = -142;
-    public static int thirdCone = -121;
-    public static int fourthCone = -100;
+    public static int thirdCone = -119;
+    public static int fourthCone = -98;
     public static int fifthCone = 0;
 
     @Override
@@ -129,7 +131,7 @@ public class LeftAutoMid extends BaseOpMode {
                                 new InstantCommand(() -> finished = true),
 
                                 //reset the lift aft    er everything finishes
-                                new DownSequence(lift, turret, arm, claw)
+                                new DownSequenceWithPosition(lift, turret, arm, claw,0)
                         )
                 )
         );
@@ -178,7 +180,7 @@ public class LeftAutoMid extends BaseOpMode {
             followPark = true;
             if(tagOfInterest == null){
                 rrDrive.followTrajectoryAsync(rrDrive.trajectoryBuilder(rrDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-59,-10,0))
+                        .lineToLinearHeading(new Pose2d(-59,-10,Math.toRadians(180)))
                         .build());
             }
             else{

@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import android.util.Log;
+import com.arcrobotics.ftclib.command.*;
 import com.arcrobotics.ftclib.command.NoRequirementInstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
+import org.firstinspires.ftc.teamcode.opmode.auto.LeftAutoMid;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.ArmSys;
 import org.firstinspires.ftc.teamcode.subsystem.ClawSys;
@@ -28,13 +27,15 @@ public class NoAlignCycleL extends SequentialCommandGroup {
                         new DelayedCommand(
                                 new ParallelCommandGroup(
                                         new FollowMidJunctionTrajectoryL(rrDrive),
+                                        new InstantCommand(() -> LeftAutoMid.yDrift += 0.075),
+                                        new InstantCommand(() -> LeftAutoMid.xDrift += 0.05),
                                         new DelayedCommand(new MediumSequenceWithAngleL(lift, turret, arm, (NoAlignCycle.turretPosition/355)),50)
                                 ), 500
                         )
                         //new DelayedCommand(new InchDiagonally(rrDrive), 1600),
                 ),
                 new DelayedCommand(claw.release(),0),
-                new WaitCommand(500)
+                new WaitCommand(200)
         );
 
         addRequirements(lift, turret, claw, arm);

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
+import org.firstinspires.ftc.teamcode.opmode.auto.LeftAutoMid;
+import org.firstinspires.ftc.teamcode.opmode.auto.RightAutoMid;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 public class FollowMidJunctionTrajectoryL extends CommandBase {
@@ -14,7 +16,7 @@ public class FollowMidJunctionTrajectoryL extends CommandBase {
     @Override
     public void initialize() {
         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-38.4, -10.2, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-38.3, -10.5, Math.toRadians(180)))
                 .build());
     }
 

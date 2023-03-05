@@ -20,7 +20,7 @@ public class FollowPreloadTrajectoryL extends CommandBase {
         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
                 .lineToSplineHeading(new Pose2d(-36, -50, Math.toRadians(90))) // 36
                 .lineToSplineHeading(new Pose2d(-36, -36, Math.toRadians(180)))
-                .lineToSplineHeading(new Pose2d(-36, -7.75, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-36, -7.85, Math.toRadians(180)))
                 .build());
     }
 

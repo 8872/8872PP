@@ -28,13 +28,13 @@ public class NoAlignCycle extends SequentialCommandGroup {
                         new DelayedCommand(
                                 new ParallelCommandGroup(
                                         new FollowMidJunctionTrajectory(rrDrive),
-                                        new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, (turretPosition/355)),100)
+                                        new DelayedCommand(new MediumSequenceWithAngle(lift, turret, arm, (turretPosition/355)),0)
                                 ), 500
                         )
                         //new DelayedCommand(new InchDiagonally(rrDrive), 1600),
                 ),
-                new DelayedCommand(claw.release(),0),
-                new WaitCommand(500)
+                new DelayedCommand(claw.release(),250),
+                new WaitCommand(100)
         );
 
         addRequirements(lift, turret, claw, arm);

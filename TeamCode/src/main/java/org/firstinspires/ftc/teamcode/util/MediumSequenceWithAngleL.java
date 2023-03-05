@@ -19,7 +19,7 @@ public final class MediumSequenceWithAngleL extends SequentialCommandGroup {
                         lift.goTo(Height.MEDIUM.getHeight()+5),
                         arm.goTo(ArmSys.Pose.VERTICAL),
                         new DelayedCommand(turret.goTo(false), 350),
-                        new DelayedCommand(arm.goTo(0.9, 0.7, 0.7),
+                        new DelayedCommand(arm.goTo(0.9, 0.6, 0.6),
                                 600)
                 )
         );

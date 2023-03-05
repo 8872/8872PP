@@ -16,7 +16,7 @@ public final class MediumSequenceWithAngle extends SequentialCommandGroup {
         Log.d("qwerty", ""+pos);
         addCommands(
                 new ParallelCommandGroup(
-                        lift.goTo(Height.MEDIUM.getHeight()+5),
+                        lift.goTo(Height.MEDIUM.getHeight()-10),
                         arm.goTo(ArmSys.Pose.VERTICAL),
                         new DelayedCommand(turret.goTo(), 350),
                         new DelayedCommand(arm.goTo(ArmSys.Pose.HORIZONTAL, 2, 2),

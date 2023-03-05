@@ -129,7 +129,7 @@ public class RightAutoMid extends BaseOpMode {
                                 new InstantCommand(() -> finished = true),
 
                                 //reset the lift aft    er everything finishes
-                                new DownSequence(lift, turret, arm, claw)
+                                new DownSequenceWithPosition(lift, turret, arm, claw,0)
                         )
                 )
         );
