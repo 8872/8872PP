@@ -14,7 +14,7 @@ public class FollowMidJunctionTrajectory extends CommandBase {
     @Override
     public void initialize() {
         drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(39, -11.5, 0))
+                .lineToLinearHeading(new Pose2d(39, -11.7, 0))
                 .build());
     }
 
